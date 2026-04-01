@@ -75,6 +75,25 @@ async function pgOne(text, params = []) {
   return rows[0] ?? null;
 }
 
+async function pgWithTransaction(callback) {
+  if (!pgPool) {
+    throw new Error("Postgres runtime is not configured");
+  }
+
+  const client = await pgPool.connect();
+  try {
+    await client.query("BEGIN");
+    const result = await callback(client);
+    await client.query("COMMIT");
+    return result;
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 function getLocalHostnames() {
   const hosts = new Set(["localhost", "127.0.0.1"]);
   const machineName = os.hostname()?.trim();
@@ -4666,8 +4685,8 @@ app.post("/api/orders/:id/communication", async (req, res) => {
   appendAuditLog({ actor: sender === "internal" ? "Internal Note" : "Technician", type: "Communication", tone: sender === "internal" ? "warning" : "primary", message: `Added communication to ${order.orderNo}`, meta: sender });
 });
 
-app.post("/api/orders/:id/parts", (req, res) => {
-  const order = getOrderById(req.params.id);
+app.post("/api/orders/:id/parts", async (req, res) => {
+  const order = usePostgresRuntime ? await pgGetOrderById(req.params.id) : getOrderById(req.params.id);
 
   if (!order) {
     res.status(404).json({ message: "Order not found" });
@@ -4692,25 +4711,42 @@ app.post("/api/orders/:id/parts", (req, res) => {
   }
 
   const uniqueIds = [...new Set(normalizedItems.map((item) => item.partId))];
-  const placeholders = uniqueIds.map(() => "?").join(", ");
-  const partRows = db.prepare(`
-    SELECT
-      id,
-      name,
-      sku,
-      stock,
-      reorder_level AS reorderLevel,
-      unit_price AS unitPrice
-    FROM parts
-    WHERE id IN (${placeholders})
-  `).all(...uniqueIds);
+  const partRows = usePostgresRuntime
+    ? await pgQuery(`
+      SELECT
+        id,
+        name,
+        sku,
+        stock,
+        reorder_level AS "reorderLevel",
+        unit_price AS "unitPrice"
+      FROM parts
+      WHERE id = ANY($1::int[])
+    `, [uniqueIds])
+    : db.prepare(`
+      SELECT
+        id,
+        name,
+        sku,
+        stock,
+        reorder_level AS reorderLevel,
+        unit_price AS unitPrice
+      FROM parts
+      WHERE id IN (${uniqueIds.map(() => "?").join(", ")})
+    `).all(...uniqueIds);
 
   if (partRows.length !== uniqueIds.length) {
     res.status(404).json({ message: "One or more parts were not found" });
     return;
   }
 
-  const partMap = new Map(partRows.map((row) => [row.id, row]));
+  const partMap = new Map(partRows.map((row) => [Number(row.id), {
+    ...row,
+    id: Number(row.id),
+    stock: toNumber(row.stock),
+    reorderLevel: toNumber(row.reorderLevel),
+    unitPrice: toNumber(row.unitPrice),
+  }]));
   const stockRequirement = normalizedItems.reduce((acc, item) => {
     acc.set(item.partId, (acc.get(item.partId) ?? 0) + item.quantity);
     return acc;
@@ -4723,47 +4759,84 @@ app.post("/api/orders/:id/parts", (req, res) => {
     return;
   }
 
-  db.transaction(() => {
-    let addedAmount = 0;
+  if (usePostgresRuntime) {
+    await pgWithTransaction(async (client) => {
+      let addedAmount = 0;
+      for (const item of normalizedItems) {
+        const part = partMap.get(item.partId);
+        addedAmount += part.unitPrice * item.quantity;
 
-    normalizedItems.forEach((item) => {
-      const part = partMap.get(item.partId);
-      addedAmount += part.unitPrice * item.quantity;
+        const existing = await client.query(`
+          SELECT id, quantity
+          FROM order_parts
+          WHERE order_id = $1 AND part_id = $2
+        `, [order.id, item.partId]);
 
-      const existing = db.prepare(`
-        SELECT id, quantity
-        FROM order_parts
-        WHERE order_id = ? AND part_id = ?
-      `).get(order.id, item.partId);
+        if (existing.rows[0]) {
+          await client.query(`
+            UPDATE order_parts
+            SET quantity = $1, unit_price = $2
+            WHERE id = $3
+          `, [toNumber(existing.rows[0].quantity) + item.quantity, part.unitPrice, existing.rows[0].id]);
+        } else {
+          await client.query(`
+            INSERT INTO order_parts (order_id, part_id, quantity, unit_price)
+            VALUES ($1, $2, $3, $4)
+          `, [order.id, item.partId, item.quantity, part.unitPrice]);
+        }
 
-      if (existing) {
-        db.prepare(`
-          UPDATE order_parts
-          SET quantity = ?, unit_price = ?
-          WHERE id = ?
-        `).run(existing.quantity + item.quantity, part.unitPrice, existing.id);
-      } else {
-        db.prepare(`
-          INSERT INTO order_parts (order_id, part_id, quantity, unit_price)
-          VALUES (?, ?, ?, ?)
-        `).run(order.id, item.partId, item.quantity, part.unitPrice);
+        await client.query("UPDATE parts SET stock = stock - $1 WHERE id = $2", [item.quantity, item.partId]);
+        await client.query(`
+          INSERT INTO inventory_movements (part_id, movement_type, quantity, note)
+          VALUES ($1, 'out', $2, $3)
+        `, [item.partId, item.quantity, `Allocated to order ${order.orderNo}`]);
       }
 
-      db.prepare("UPDATE parts SET stock = stock - ? WHERE id = ?").run(item.quantity, item.partId);
-      db.prepare(`
-        INSERT INTO inventory_movements (part_id, movement_type, quantity, note)
-        VALUES (?, 'out', ?, ?)
-      `).run(item.partId, item.quantity, `Allocated to order ${order.orderNo}`);
+      await client.query("UPDATE orders SET amount = amount + $1 WHERE id = $2", [addedAmount, order.id]);
     });
+  } else {
+    db.transaction(() => {
+      let addedAmount = 0;
 
-    db.prepare("UPDATE orders SET amount = amount + ? WHERE id = ?").run(addedAmount, order.id);
-  })();
+      normalizedItems.forEach((item) => {
+        const part = partMap.get(item.partId);
+        addedAmount += part.unitPrice * item.quantity;
+
+        const existing = db.prepare(`
+          SELECT id, quantity
+          FROM order_parts
+          WHERE order_id = ? AND part_id = ?
+        `).get(order.id, item.partId);
+
+        if (existing) {
+          db.prepare(`
+            UPDATE order_parts
+            SET quantity = ?, unit_price = ?
+            WHERE id = ?
+          `).run(existing.quantity + item.quantity, part.unitPrice, existing.id);
+        } else {
+          db.prepare(`
+            INSERT INTO order_parts (order_id, part_id, quantity, unit_price)
+            VALUES (?, ?, ?, ?)
+          `).run(order.id, item.partId, item.quantity, part.unitPrice);
+        }
+
+        db.prepare("UPDATE parts SET stock = stock - ? WHERE id = ?").run(item.quantity, item.partId);
+        db.prepare(`
+          INSERT INTO inventory_movements (part_id, movement_type, quantity, note)
+          VALUES (?, 'out', ?, ?)
+        `).run(item.partId, item.quantity, `Allocated to order ${order.orderNo}`);
+      });
+
+      db.prepare("UPDATE orders SET amount = amount + ? WHERE id = ?").run(addedAmount, order.id);
+    })();
+  }
 
   res.status(201).json({
     ok: true,
     order: {
-      ...mapOrder(getOrderById(order.id)),
-      parts: getOrderParts(order.id).map((part) => ({
+      ...mapOrder(usePostgresRuntime ? await pgGetOrderById(order.id) : getOrderById(order.id)),
+      parts: (usePostgresRuntime ? await pgGetOrderParts(order.id) : getOrderParts(order.id)).map((part) => ({
         ...part,
         unitPriceFormatted: formatMoney(part.unitPrice),
         subtotalFormatted: formatMoney(part.subtotal),
@@ -4773,8 +4846,8 @@ app.post("/api/orders/:id/parts", (req, res) => {
   appendAuditLog({ actor: "Inventory Bot", type: "Stock Move", tone: "success", message: `Allocated parts to ${order.orderNo}`, meta: `Items: ${normalizedItems.length}` });
 });
 
-app.patch("/api/orders/:id/parts", (req, res) => {
-  const order = getOrderById(req.params.id);
+app.patch("/api/orders/:id/parts", async (req, res) => {
+  const order = usePostgresRuntime ? await pgGetOrderById(req.params.id) : getOrderById(req.params.id);
 
   if (!order) {
     res.status(404).json({ message: "Order not found" });
@@ -4795,7 +4868,7 @@ app.patch("/api/orders/:id/parts", (req, res) => {
     return;
   }
 
-  const existingItems = getOrderParts(order.id);
+  const existingItems = usePostgresRuntime ? await pgGetOrderParts(order.id) : getOrderParts(order.id);
   const existingMap = new Map(existingItems.map((item) => [item.id, item]));
   const nextPartIds = normalizedItems.map((item) => item.partId);
 
@@ -4804,22 +4877,43 @@ app.patch("/api/orders/:id/parts", (req, res) => {
     return;
   }
 
-  db.transaction(() => {
-    normalizedItems.forEach((item) => {
-      db.prepare(`
-        UPDATE order_parts
-        SET quantity = ?, unit_price = ?
-        WHERE order_id = ? AND part_id = ?
-      `).run(item.quantity, Math.round(item.unitPrice), order.id, item.partId);
+  if (usePostgresRuntime) {
+    await pgWithTransaction(async (client) => {
+      for (const item of normalizedItems) {
+        await client.query(`
+          UPDATE order_parts
+          SET quantity = $1, unit_price = $2
+          WHERE order_id = $3 AND part_id = $4
+        `, [item.quantity, Math.round(item.unitPrice), order.id, item.partId]);
+      }
+
+      const refreshedParts = await client.query(`
+        SELECT quantity, unit_price AS "unitPrice", quantity * unit_price AS subtotal
+        FROM order_parts
+        WHERE order_id = $1
+      `, [order.id]);
+      const partsTotal = refreshedParts.rows.reduce((sum, item) => sum + toNumber(item.subtotal), 0);
+      const laborTotal = Math.max(0, order.amount - existingItems.reduce((sum, item) => sum + toNumber(item.subtotal), 0));
+      await client.query("UPDATE orders SET amount = $1 WHERE id = $2", [partsTotal + laborTotal, order.id]);
     });
+  } else {
+    db.transaction(() => {
+      normalizedItems.forEach((item) => {
+        db.prepare(`
+          UPDATE order_parts
+          SET quantity = ?, unit_price = ?
+          WHERE order_id = ? AND part_id = ?
+        `).run(item.quantity, Math.round(item.unitPrice), order.id, item.partId);
+      });
 
-    const refreshedParts = getOrderParts(order.id);
-    const partsTotal = refreshedParts.reduce((sum, item) => sum + item.subtotal, 0);
-    const laborTotal = Math.max(0, order.amount - existingItems.reduce((sum, item) => sum + item.subtotal, 0));
-    db.prepare("UPDATE orders SET amount = ? WHERE id = ?").run(partsTotal + laborTotal, order.id);
-  })();
+      const refreshedParts = getOrderParts(order.id);
+      const partsTotal = refreshedParts.reduce((sum, item) => sum + item.subtotal, 0);
+      const laborTotal = Math.max(0, order.amount - existingItems.reduce((sum, item) => sum + item.subtotal, 0));
+      db.prepare("UPDATE orders SET amount = ? WHERE id = ?").run(partsTotal + laborTotal, order.id);
+    })();
+  }
 
-  const updatedOrder = getOrderById(order.id);
+  const updatedOrder = usePostgresRuntime ? await pgGetOrderById(order.id) : getOrderById(order.id);
   appendAuditLog({
     actor: updatedOrder.technician,
     type: "Parts Update",
@@ -4832,7 +4926,7 @@ app.patch("/api/orders/:id/parts", (req, res) => {
     ok: true,
     order: {
       ...mapOrder(updatedOrder),
-      parts: getOrderParts(order.id).map((part) => ({
+      parts: (usePostgresRuntime ? await pgGetOrderParts(order.id) : getOrderParts(order.id)).map((part) => ({
         ...part,
         unitPriceFormatted: formatMoney(part.unitPrice),
         subtotalFormatted: formatMoney(part.subtotal),
@@ -4841,8 +4935,8 @@ app.patch("/api/orders/:id/parts", (req, res) => {
   });
 });
 
-app.delete("/api/orders/:id/parts/:partId", (req, res) => {
-  const order = getOrderById(req.params.id);
+app.delete("/api/orders/:id/parts/:partId", async (req, res) => {
+  const order = usePostgresRuntime ? await pgGetOrderById(req.params.id) : getOrderById(req.params.id);
 
   if (!order) {
     res.status(404).json({ message: "Order not found" });
@@ -4855,42 +4949,74 @@ app.delete("/api/orders/:id/parts/:partId", (req, res) => {
     return;
   }
 
-  const existing = db.prepare(`
-    SELECT
-      op.id,
-      op.part_id AS partId,
-      op.quantity,
-      op.unit_price AS unitPrice,
-      p.name,
-      p.stock
-    FROM order_parts op
-    JOIN parts p ON p.id = op.part_id
-    WHERE op.order_id = ? AND op.part_id = ?
-  `).get(order.id, partId);
+  const existing = usePostgresRuntime
+    ? await pgOne(`
+      SELECT
+        op.id,
+        op.part_id AS "partId",
+        op.quantity,
+        op.unit_price AS "unitPrice",
+        p.name,
+        p.stock
+      FROM order_parts op
+      JOIN parts p ON p.id = op.part_id
+      WHERE op.order_id = $1 AND op.part_id = $2
+    `, [order.id, partId])
+    : db.prepare(`
+      SELECT
+        op.id,
+        op.part_id AS partId,
+        op.quantity,
+        op.unit_price AS unitPrice,
+        p.name,
+        p.stock
+      FROM order_parts op
+      JOIN parts p ON p.id = op.part_id
+      WHERE op.order_id = ? AND op.part_id = ?
+    `).get(order.id, partId);
 
   if (!existing) {
     res.status(404).json({ message: "Order part not found" });
     return;
   }
 
-  const currentParts = getOrderParts(order.id);
+  const currentParts = usePostgresRuntime ? await pgGetOrderParts(order.id) : getOrderParts(order.id);
   const currentPartsTotal = currentParts.reduce((sum, item) => sum + item.subtotal, 0);
   const laborTotal = Math.max(0, order.amount - currentPartsTotal);
 
-  db.transaction(() => {
-    db.prepare("DELETE FROM order_parts WHERE order_id = ? AND part_id = ?").run(order.id, partId);
-    db.prepare("UPDATE parts SET stock = stock + ? WHERE id = ?").run(existing.quantity, partId);
-    db.prepare(`
-      INSERT INTO inventory_movements (part_id, movement_type, quantity, note)
-      VALUES (?, 'in', ?, ?)
-    `).run(partId, existing.quantity, `Returned from order ${order.orderNo}`);
+  if (usePostgresRuntime) {
+    await pgWithTransaction(async (client) => {
+      await client.query("DELETE FROM order_parts WHERE order_id = $1 AND part_id = $2", [order.id, partId]);
+      await client.query("UPDATE parts SET stock = stock + $1 WHERE id = $2", [toNumber(existing.quantity), partId]);
+      await client.query(`
+        INSERT INTO inventory_movements (part_id, movement_type, quantity, note)
+        VALUES ($1, 'in', $2, $3)
+      `, [partId, toNumber(existing.quantity), `Returned from order ${order.orderNo}`]);
 
-    const refreshedParts = getOrderParts(order.id);
-    const refreshedPartsTotal = refreshedParts.reduce((sum, item) => sum + item.subtotal, 0);
-    db.prepare("UPDATE orders SET amount = ? WHERE id = ?").run(refreshedPartsTotal + laborTotal, order.id);
-  })();
+      const refreshedParts = await client.query(`
+        SELECT quantity * unit_price AS subtotal
+        FROM order_parts
+        WHERE order_id = $1
+      `, [order.id]);
+      const refreshedPartsTotal = refreshedParts.rows.reduce((sum, item) => sum + toNumber(item.subtotal), 0);
+      await client.query("UPDATE orders SET amount = $1 WHERE id = $2", [refreshedPartsTotal + laborTotal, order.id]);
+    });
+  } else {
+    db.transaction(() => {
+      db.prepare("DELETE FROM order_parts WHERE order_id = ? AND part_id = ?").run(order.id, partId);
+      db.prepare("UPDATE parts SET stock = stock + ? WHERE id = ?").run(existing.quantity, partId);
+      db.prepare(`
+        INSERT INTO inventory_movements (part_id, movement_type, quantity, note)
+        VALUES (?, 'in', ?, ?)
+      `).run(partId, existing.quantity, `Returned from order ${order.orderNo}`);
 
-  const updatedOrder = getOrderById(order.id);
+      const refreshedParts = getOrderParts(order.id);
+      const refreshedPartsTotal = refreshedParts.reduce((sum, item) => sum + item.subtotal, 0);
+      db.prepare("UPDATE orders SET amount = ? WHERE id = ?").run(refreshedPartsTotal + laborTotal, order.id);
+    })();
+  }
+
+  const updatedOrder = usePostgresRuntime ? await pgGetOrderById(order.id) : getOrderById(order.id);
   appendAuditLog({
     actor: updatedOrder.technician,
     type: "Parts Removal",
@@ -4903,7 +5029,7 @@ app.delete("/api/orders/:id/parts/:partId", (req, res) => {
     ok: true,
     order: {
       ...mapOrder(updatedOrder),
-      parts: getOrderParts(order.id).map((part) => ({
+      parts: (usePostgresRuntime ? await pgGetOrderParts(order.id) : getOrderParts(order.id)).map((part) => ({
         ...part,
         unitPriceFormatted: formatMoney(part.unitPrice),
         subtotalFormatted: formatMoney(part.subtotal),
@@ -5495,19 +5621,32 @@ app.post("/api/parts/movements", (req, res) => {
   });
 });
 
-app.post("/api/parts/:id/reorder", (req, res) => {
-  const part = db.prepare(`
-    SELECT
-      id,
-      name,
-      sku,
-      stock,
-      reorder_level AS reorderLevel,
-      unit_price AS unitPrice,
-      supplier
-    FROM parts
-    WHERE id = ?
-  `).get(req.params.id);
+app.post("/api/parts/:id/reorder", async (req, res) => {
+  const part = usePostgresRuntime
+    ? await pgOne(`
+      SELECT
+        id,
+        name,
+        sku,
+        stock,
+        reorder_level AS "reorderLevel",
+        unit_price AS "unitPrice",
+        supplier
+      FROM parts
+      WHERE id = $1
+    `, [Number(req.params.id)])
+    : db.prepare(`
+      SELECT
+        id,
+        name,
+        sku,
+        stock,
+        reorder_level AS reorderLevel,
+        unit_price AS unitPrice,
+        supplier
+      FROM parts
+      WHERE id = ?
+    `).get(req.params.id);
 
   if (!part) {
     res.status(404).json({ message: "Part not found" });
@@ -5520,11 +5659,18 @@ app.post("/api/parts/:id/reorder", (req, res) => {
     return;
   }
 
-  const procurementNo = getNextProcurementNo();
-  db.prepare(`
-    INSERT INTO procurements (procurement_no, supplier, part_id, quantity, unit_price, source_currency, source_unit_price, exchange_rate, shipping_fee, customs_fee, other_fee, status)
-    VALUES (?, ?, ?, ?, ?, 'VUV', ?, 1, 0, 0, 0, '运输中')
-  `).run(procurementNo, part.supplier, part.id, Math.round(quantity), part.unitPrice, part.unitPrice);
+  const procurementNo = usePostgresRuntime ? await pgGetNextProcurementNo() : getNextProcurementNo();
+  if (usePostgresRuntime) {
+    await pgQuery(`
+      INSERT INTO procurements (procurement_no, supplier, part_id, quantity, unit_price, source_currency, source_unit_price, exchange_rate, shipping_fee, customs_fee, other_fee, status)
+      VALUES ($1, $2, $3, $4, $5, 'VUV', $6, 1, 0, 0, 0, '运输中')
+    `, [procurementNo, part.supplier, part.id, Math.round(quantity), toNumber(part.unitPrice), toNumber(part.unitPrice)]);
+  } else {
+    db.prepare(`
+      INSERT INTO procurements (procurement_no, supplier, part_id, quantity, unit_price, source_currency, source_unit_price, exchange_rate, shipping_fee, customs_fee, other_fee, status)
+      VALUES (?, ?, ?, ?, ?, 'VUV', ?, 1, 0, 0, 0, '运输中')
+    `).run(procurementNo, part.supplier, part.id, Math.round(quantity), part.unitPrice, part.unitPrice);
+  }
 
   appendAuditLog({ actor: "Inventory Manager", type: "Reorder", tone: "warning", message: `Created procurement ${procurementNo} for ${part.name}`, meta: part.supplier });
 
@@ -5533,7 +5679,7 @@ app.post("/api/parts/:id/reorder", (req, res) => {
     procurementNo,
     supplier: part.supplier,
     quantity: Math.round(quantity),
-    amountFormatted: formatMoney(Math.round(quantity) * part.unitPrice),
+    amountFormatted: formatMoney(Math.round(quantity) * toNumber(part.unitPrice)),
   });
 });
 
@@ -5836,15 +5982,24 @@ app.get("/api/procurements/:id", async (req, res) => {
   res.json(procurement);
 });
 
-app.patch("/api/procurements/:id/costing", (req, res) => {
-  const procurement = db.prepare(`
-    SELECT
-      procurement_no AS procurementNo,
-      part_id AS partId,
-      quantity
-    FROM procurements
-    WHERE procurement_no = ?
-  `).get(req.params.id);
+app.patch("/api/procurements/:id/costing", async (req, res) => {
+  const procurement = usePostgresRuntime
+    ? await pgOne(`
+      SELECT
+        procurement_no AS "procurementNo",
+        part_id AS "partId",
+        quantity
+      FROM procurements
+      WHERE procurement_no = $1
+    `, [req.params.id])
+    : db.prepare(`
+      SELECT
+        procurement_no AS procurementNo,
+        part_id AS partId,
+        quantity
+      FROM procurements
+      WHERE procurement_no = ?
+    `).get(req.params.id);
 
   if (!procurement) {
     res.status(404).json({ message: "Procurement order not found" });
@@ -5872,28 +6027,53 @@ app.patch("/api/procurements/:id/costing", (req, res) => {
     otherFee,
   });
 
-  db.transaction(() => {
-    db.prepare(`
-      UPDATE procurements
-      SET source_currency = ?, source_unit_price = ?, exchange_rate = ?, shipping_fee = ?, customs_fee = ?, other_fee = ?, unit_price = ?
-      WHERE procurement_no = ?
-    `).run(
-      sourceCurrency,
-      sourceUnitPrice,
-      exchangeRate,
-      costing.shippingFee,
-      costing.customsFee,
-      costing.otherFee,
-      costing.landedUnitCost,
-      procurement.procurementNo,
-    );
+  if (usePostgresRuntime) {
+    await pgWithTransaction(async (client) => {
+      await client.query(`
+        UPDATE procurements
+        SET source_currency = $1, source_unit_price = $2, exchange_rate = $3, shipping_fee = $4, customs_fee = $5, other_fee = $6, unit_price = $7
+        WHERE procurement_no = $8
+      `, [
+        sourceCurrency,
+        sourceUnitPrice,
+        exchangeRate,
+        costing.shippingFee,
+        costing.customsFee,
+        costing.otherFee,
+        costing.landedUnitCost,
+        procurement.procurementNo,
+      ]);
 
-    db.prepare(`
-      UPDATE parts
-      SET cost_price = ?
-      WHERE id = ?
-    `).run(costing.landedUnitCost, procurement.partId);
-  })();
+      await client.query(`
+        UPDATE parts
+        SET cost_price = $1
+        WHERE id = $2
+      `, [costing.landedUnitCost, procurement.partId]);
+    });
+  } else {
+    db.transaction(() => {
+      db.prepare(`
+        UPDATE procurements
+        SET source_currency = ?, source_unit_price = ?, exchange_rate = ?, shipping_fee = ?, customs_fee = ?, other_fee = ?, unit_price = ?
+        WHERE procurement_no = ?
+      `).run(
+        sourceCurrency,
+        sourceUnitPrice,
+        exchangeRate,
+        costing.shippingFee,
+        costing.customsFee,
+        costing.otherFee,
+        costing.landedUnitCost,
+        procurement.procurementNo,
+      );
+
+      db.prepare(`
+        UPDATE parts
+        SET cost_price = ?
+        WHERE id = ?
+      `).run(costing.landedUnitCost, procurement.partId);
+    })();
+  }
 
   appendAuditLog({
     actor: "Inventory Manager",
@@ -5903,27 +6083,45 @@ app.patch("/api/procurements/:id/costing", (req, res) => {
     meta: `${sourceCurrency} ${sourceUnitPrice} · ${costing.landedUnitCostFormatted}/件`,
   });
 
-  res.json(getProcurementById(procurement.procurementNo));
+  res.json(usePostgresRuntime ? await pgGetProcurementById(procurement.procurementNo) : getProcurementById(procurement.procurementNo));
 });
 
-app.post("/api/procurements/:id/receive", (req, res) => {
-  const procurement = db.prepare(`
-    SELECT
-      procurement_no AS procurementNo,
-      supplier,
-      part_id AS partId,
-      quantity,
-      unit_price AS unitPrice,
-      source_currency AS sourceCurrency,
-      source_unit_price AS sourceUnitPrice,
-      exchange_rate AS exchangeRate,
-      shipping_fee AS shippingFee,
-      customs_fee AS customsFee,
-      other_fee AS otherFee,
-      status
-    FROM procurements
-    WHERE procurement_no = ?
-  `).get(req.params.id);
+app.post("/api/procurements/:id/receive", async (req, res) => {
+  const procurement = usePostgresRuntime
+    ? await pgOne(`
+      SELECT
+        procurement_no AS "procurementNo",
+        supplier,
+        part_id AS "partId",
+        quantity,
+        unit_price AS "unitPrice",
+        source_currency AS "sourceCurrency",
+        source_unit_price AS "sourceUnitPrice",
+        exchange_rate AS "exchangeRate",
+        shipping_fee AS "shippingFee",
+        customs_fee AS "customsFee",
+        other_fee AS "otherFee",
+        status
+      FROM procurements
+      WHERE procurement_no = $1
+    `, [req.params.id])
+    : db.prepare(`
+      SELECT
+        procurement_no AS procurementNo,
+        supplier,
+        part_id AS partId,
+        quantity,
+        unit_price AS unitPrice,
+        source_currency AS sourceCurrency,
+        source_unit_price AS sourceUnitPrice,
+        exchange_rate AS exchangeRate,
+        shipping_fee AS shippingFee,
+        customs_fee AS customsFee,
+        other_fee AS otherFee,
+        status
+      FROM procurements
+      WHERE procurement_no = ?
+    `).get(req.params.id);
 
   if (!procurement) {
     res.status(404).json({ message: "Procurement order not found" });
@@ -5935,29 +6133,66 @@ app.post("/api/procurements/:id/receive", (req, res) => {
       ok: true,
       alreadyReceived: true,
       procurementNo: procurement.procurementNo,
-      part: mapPart(getPartById(procurement.partId)),
+      part: usePostgresRuntime ? mapPart(await pgGetPartById(procurement.partId)) : mapPart(getPartById(procurement.partId)),
     });
     return;
   }
 
-  const updatedPart = db.transaction(() => {
-    const currentPart = getPartById(procurement.partId);
-    const costing = calculateProcurementCosting({
-      quantity: procurement.quantity,
-      sourceUnitPrice: procurement.sourceUnitPrice || procurement.unitPrice,
-      exchangeRate: procurement.exchangeRate || 1,
-      shippingFee: procurement.shippingFee || 0,
-      customsFee: procurement.customsFee || 0,
-      otherFee: procurement.otherFee || 0,
-    });
-    db.prepare("UPDATE procurements SET status = '已交付' WHERE procurement_no = ?").run(procurement.procurementNo);
-    db.prepare("UPDATE parts SET stock = stock + ?, cost_price = ? WHERE id = ?").run(procurement.quantity, costing.landedUnitCost, procurement.partId);
-    db.prepare(`
-      INSERT INTO inventory_movements (part_id, movement_type, quantity, note)
-      VALUES (?, 'in', ?, ?)
-    `).run(procurement.partId, procurement.quantity, `Procurement received ${procurement.procurementNo}`);
-    return mapPart({ ...currentPart, stock: currentPart.stock + procurement.quantity, costPrice: costing.landedUnitCost });
-  })();
+  const updatedPart = usePostgresRuntime
+    ? await pgWithTransaction(async (client) => {
+      const currentPart = await pgOne(`
+        SELECT
+          id,
+          name,
+          sku,
+          stock,
+          reorder_level AS "reorderLevel",
+          unit_price AS "unitPrice",
+          cost_price AS "costPrice",
+          supplier
+        FROM parts
+        WHERE id = $1
+      `, [procurement.partId]);
+      const costing = calculateProcurementCosting({
+        quantity: toNumber(procurement.quantity),
+        sourceUnitPrice: Number(procurement.sourceUnitPrice || procurement.unitPrice),
+        exchangeRate: Number(procurement.exchangeRate || 1),
+        shippingFee: toNumber(procurement.shippingFee),
+        customsFee: toNumber(procurement.customsFee),
+        otherFee: toNumber(procurement.otherFee),
+      });
+      await client.query("UPDATE procurements SET status = '已交付' WHERE procurement_no = $1", [procurement.procurementNo]);
+      await client.query("UPDATE parts SET stock = stock + $1, cost_price = $2 WHERE id = $3", [toNumber(procurement.quantity), costing.landedUnitCost, procurement.partId]);
+      await client.query(`
+        INSERT INTO inventory_movements (part_id, movement_type, quantity, note)
+        VALUES ($1, 'in', $2, $3)
+      `, [procurement.partId, toNumber(procurement.quantity), `Procurement received ${procurement.procurementNo}`]);
+      return mapPart({
+        ...currentPart,
+        stock: toNumber(currentPart.stock) + toNumber(procurement.quantity),
+        reorderLevel: toNumber(currentPart.reorderLevel),
+        unitPrice: toNumber(currentPart.unitPrice),
+        costPrice: costing.landedUnitCost,
+      });
+    })
+    : db.transaction(() => {
+      const currentPart = getPartById(procurement.partId);
+      const costing = calculateProcurementCosting({
+        quantity: procurement.quantity,
+        sourceUnitPrice: procurement.sourceUnitPrice || procurement.unitPrice,
+        exchangeRate: procurement.exchangeRate || 1,
+        shippingFee: procurement.shippingFee || 0,
+        customsFee: procurement.customsFee || 0,
+        otherFee: procurement.otherFee || 0,
+      });
+      db.prepare("UPDATE procurements SET status = '已交付' WHERE procurement_no = ?").run(procurement.procurementNo);
+      db.prepare("UPDATE parts SET stock = stock + ?, cost_price = ? WHERE id = ?").run(procurement.quantity, costing.landedUnitCost, procurement.partId);
+      db.prepare(`
+        INSERT INTO inventory_movements (part_id, movement_type, quantity, note)
+        VALUES (?, 'in', ?, ?)
+      `).run(procurement.partId, procurement.quantity, `Procurement received ${procurement.procurementNo}`);
+      return mapPart({ ...currentPart, stock: currentPart.stock + procurement.quantity, costPrice: costing.landedUnitCost });
+    })();
 
   appendAuditLog({
     actor: "Warehouse Clerk",
@@ -5974,7 +6209,7 @@ app.post("/api/procurements/:id/receive", (req, res) => {
   });
 });
 
-app.post("/api/inventory/adjustments", (req, res) => {
+app.post("/api/inventory/adjustments", async (req, res) => {
   const {
     partId,
     adjustmentType = "scrap",
@@ -5991,7 +6226,21 @@ app.post("/api/inventory/adjustments", (req, res) => {
     return;
   }
 
-  const part = getPartById(partId);
+  const part = usePostgresRuntime
+    ? await pgOne(`
+      SELECT
+        id,
+        name,
+        sku,
+        stock,
+        reorder_level AS "reorderLevel",
+        unit_price AS "unitPrice",
+        cost_price AS "costPrice",
+        supplier
+      FROM parts
+      WHERE id = $1
+    `, [partId])
+    : getPartById(partId);
   if (!part) {
     res.status(404).json({ message: "Part not found" });
     return;
@@ -6003,18 +6252,33 @@ app.post("/api/inventory/adjustments", (req, res) => {
     return;
   }
 
-  const adjustmentId = db.transaction(() => {
-    db.prepare("UPDATE parts SET stock = ? WHERE id = ?").run(nextStock, partId);
-      db.prepare(`
+  const adjustmentId = usePostgresRuntime
+    ? await pgWithTransaction(async (client) => {
+      await client.query("UPDATE parts SET stock = $1 WHERE id = $2", [nextStock, partId]);
+      await client.query(`
         INSERT INTO inventory_movements (part_id, movement_type, quantity, note)
-        VALUES (?, 'out', ?, ?)
-      `).run(partId, numericQuantity, `${source === "requisition" ? "Requisition" : source === "loss" ? "Loss" : "Adjustment"} · ${adjustmentType} · ${note.trim()}`.trim());
+        VALUES ($1, 'out', $2, $3)
+      `, [partId, numericQuantity, `${source === "requisition" ? "Requisition" : source === "loss" ? "Loss" : "Adjustment"} · ${adjustmentType} · ${note.trim()}`.trim()]);
 
-    return Number(db.prepare(`
-      INSERT INTO inventory_adjustments (part_id, adjustment_type, quantity, unit, note, operator, source)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    `).run(partId, adjustmentType, numericQuantity, unit, note.trim(), operator.trim(), source).lastInsertRowid);
-  })();
+      const inserted = await client.query(`
+        INSERT INTO inventory_adjustments (part_id, adjustment_type, quantity, unit, note, operator, source)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        RETURNING id
+      `, [partId, adjustmentType, numericQuantity, unit, note.trim(), operator.trim(), source]);
+      return Number(inserted.rows[0]?.id);
+    })
+    : db.transaction(() => {
+      db.prepare("UPDATE parts SET stock = ? WHERE id = ?").run(nextStock, partId);
+        db.prepare(`
+          INSERT INTO inventory_movements (part_id, movement_type, quantity, note)
+          VALUES (?, 'out', ?, ?)
+        `).run(partId, numericQuantity, `${source === "requisition" ? "Requisition" : source === "loss" ? "Loss" : "Adjustment"} · ${adjustmentType} · ${note.trim()}`.trim());
+
+      return Number(db.prepare(`
+        INSERT INTO inventory_adjustments (part_id, adjustment_type, quantity, unit, note, operator, source)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+      `).run(partId, adjustmentType, numericQuantity, unit, note.trim(), operator.trim(), source).lastInsertRowid);
+    })();
 
     appendAuditLog({
       actor: operator.trim(),
@@ -6027,7 +6291,9 @@ app.post("/api/inventory/adjustments", (req, res) => {
   res.status(201).json({
     ok: true,
     adjustmentId,
-    part: mapPart(getPartById(partId)),
+    part: usePostgresRuntime
+      ? mapPart(await pgGetPartById(partId))
+      : mapPart(getPartById(partId)),
   });
 });
 
