@@ -864,15 +864,41 @@ app.use((req, res, next) => {
     return;
   }
 
-  res.on("finish", () => {
-    if (
-      req.path.startsWith("/api/")
-      && !["GET", "HEAD", "OPTIONS"].includes(req.method)
-      && res.statusCode < 400
-    ) {
-      queueDatabaseSnapshot(`${req.method} ${req.path}`);
-    }
-  });
+  const shouldPersistBeforeRespond = req.path.startsWith("/api/") && !["GET", "HEAD", "OPTIONS"].includes(req.method);
+
+  if (shouldPersistBeforeRespond) {
+    const originalJson = res.json.bind(res);
+    const originalSend = res.send.bind(res);
+    let handled = false;
+
+    const persistThenRespond = async (sender, payload) => {
+      if (!handled) {
+        handled = true;
+
+        if (res.statusCode < 400) {
+          try {
+            await persistQueue
+              .catch(() => undefined)
+              .then(() => persistDatabaseSnapshot(`${req.method} ${req.path}`));
+          } catch (error) {
+            console.error("Failed to persist Vercel Blob database snapshot:", error?.stack ?? error?.message ?? String(error));
+          }
+        }
+      }
+
+      return sender(payload);
+    };
+
+    res.json = function jsonWithPersistence(body) {
+      void persistThenRespond(originalJson, body);
+      return res;
+    };
+
+    res.send = function sendWithPersistence(body) {
+      void persistThenRespond(originalSend, body);
+      return res;
+    };
+  }
 
   next();
 });
