@@ -1899,6 +1899,77 @@ async function pgGetProcurementById(id) {
   };
 }
 
+async function pgGetNextSerialValue(tableName, columnName, prefix, seed = 20260000) {
+  const rows = await pgQuery(`SELECT ${columnName} AS value FROM ${tableName}`);
+  const maxNumeric = rows.reduce((currentMax, row) => {
+    const match = /(\d+)$/.exec(String(row.value ?? ""));
+    return Math.max(currentMax, match ? Number(match[1]) : 0);
+  }, seed);
+  return `${prefix}-${maxNumeric + 1}`;
+}
+
+async function pgGetNextProcurementNo() {
+  return pgGetNextSerialValue("procurements", "procurement_no", "PO");
+}
+
+async function pgGetNextInboundBatchNo() {
+  return pgGetNextSerialValue("inbound_batches", "batch_no", "IB");
+}
+
+async function pgGetNextAuditSessionNo() {
+  return pgGetNextSerialValue("inventory_audits", "session_no", "AD");
+}
+
+async function pgGetNextIntakeCode() {
+  return pgGetNextSerialValue("order_intake", "intake_code", "IN");
+}
+
+async function pgGetNextOrderNo() {
+  const rows = await pgQuery(`SELECT order_no AS value FROM orders`);
+  const maxNumeric = rows.reduce((currentMax, row) => {
+    const match = /(\d+)$/.exec(String(row.value ?? ""));
+    return Math.max(currentMax, match ? Number(match[1]) : 0);
+  }, 0);
+  return `RO-${maxNumeric + 1}`;
+}
+
+async function pgGetOrderExecutionRecord(orderId) {
+  return pgOne(`
+    SELECT
+      order_id AS "orderId",
+      phase,
+      checklist_json AS "checklistJson",
+      elapsed_minutes AS "elapsedMinutes",
+      updated_at AS "updatedAt"
+    FROM order_execution
+    WHERE order_id = $1
+  `, [orderId]);
+}
+
+async function pgGetOrderCompletionRecord(orderId) {
+  return pgOne(`
+    SELECT
+      order_id AS "orderId",
+      warranty,
+      checklist_json AS "checklistJson",
+      final_notes AS "finalNotes",
+      updated_at AS "updatedAt"
+    FROM order_completion
+    WHERE order_id = $1
+  `, [orderId]);
+}
+
+async function pgGetReceiptMeta(orderId) {
+  return pgOne(`
+    SELECT
+      order_id AS "orderId",
+      printed_at AS "printedAt",
+      picked_up_at AS "pickedUpAt"
+    FROM receipt_meta
+    WHERE order_id = $1
+  `, [orderId]);
+}
+
 function getOrderParts(orderId) {
   return db.prepare(`
     SELECT
@@ -2165,9 +2236,19 @@ function getFollowupRows(customerId) {
 }
 
 function appendAuditLog({ actor, type, tone = "primary", message, meta = "" }) {
+  if (usePostgresRuntime) {
+    pgQuery(`
+      INSERT INTO audit_logs (actor, type, tone, message, meta)
+      VALUES ($1, $2, $3, $4, $5)
+    `, [actor, type, tone, message, meta]).catch((error) => {
+      console.error("Failed to append audit log:", error?.message ?? error);
+    });
+    return;
+  }
+
   db.prepare(`
-    INSERT INTO audit_logs (actor, type, tone, message, meta)
-    VALUES (?, ?, ?, ?, ?)
+      INSERT INTO audit_logs (actor, type, tone, message, meta)
+      VALUES (?, ?, ?, ?, ?)
   `).run(actor, type, tone, message, meta);
 }
 
@@ -4526,8 +4607,8 @@ app.post("/api/orders", (req, res) => {
   res.status(201).json(mapOrder(created));
 });
 
-app.post("/api/orders/:id/communication", (req, res) => {
-  const order = getOrderById(req.params.id);
+app.post("/api/orders/:id/communication", async (req, res) => {
+  const order = usePostgresRuntime ? await pgGetOrderById(req.params.id) : getOrderById(req.params.id);
 
   if (!order) {
     res.status(404).json({ message: "Order not found" });
@@ -4543,22 +4624,36 @@ app.post("/api/orders/:id/communication", (req, res) => {
     return;
   }
 
-  const result = db.prepare(`
-    INSERT INTO order_messages (order_id, sender, type, body, meta_json)
-    VALUES (?, ?, ?, ?, ?)
-  `).run(order.id, sender, type, rawBody, JSON.stringify({}));
+  const created = usePostgresRuntime
+    ? await pgOne(`
+      INSERT INTO order_messages (order_id, sender, type, body, meta_json)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING
+        id,
+        sender,
+        type,
+        body,
+        meta_json AS "metaJson",
+        created_at AS "createdAt"
+    `, [order.id, sender, type, rawBody, JSON.stringify({})])
+    : (() => {
+      const result = db.prepare(`
+        INSERT INTO order_messages (order_id, sender, type, body, meta_json)
+        VALUES (?, ?, ?, ?, ?)
+      `).run(order.id, sender, type, rawBody, JSON.stringify({}));
 
-  const created = db.prepare(`
-    SELECT
-      id,
-      sender,
-      type,
-      body,
-      meta_json AS metaJson,
-      created_at AS createdAt
-    FROM order_messages
-    WHERE id = ?
-  `).get(result.lastInsertRowid);
+      return db.prepare(`
+        SELECT
+          id,
+          sender,
+          type,
+          body,
+          meta_json AS metaJson,
+          created_at AS createdAt
+        FROM order_messages
+        WHERE id = ?
+      `).get(result.lastInsertRowid);
+    })();
 
   res.status(201).json({
     id: `db-${created.id}`,
@@ -4817,8 +4912,8 @@ app.delete("/api/orders/:id/parts/:partId", (req, res) => {
   });
 });
 
-app.post("/api/orders/:id/completion/confirm", (req, res) => {
-  const order = getOrderById(req.params.id);
+app.post("/api/orders/:id/completion/confirm", async (req, res) => {
+  const order = usePostgresRuntime ? await pgGetOrderById(req.params.id) : getOrderById(req.params.id);
 
   if (!order) {
     res.status(404).json({ message: "Order not found" });
@@ -4840,26 +4935,44 @@ app.post("/api/orders/:id/completion/confirm", (req, res) => {
 
   const warranty = String(req.body?.warranty ?? "Standard Warranty Applied").trim() || "Standard Warranty Applied";
 
-  db.transaction(() => {
-    db.prepare(`
+  if (usePostgresRuntime) {
+    await pgQuery(`
       INSERT INTO order_completion (order_id, warranty, checklist_json, final_notes, updated_at)
-      VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
-      ON CONFLICT(order_id) DO UPDATE SET
-        warranty = excluded.warranty,
-        checklist_json = excluded.checklist_json,
-        final_notes = excluded.final_notes,
+      VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
+      ON CONFLICT (order_id) DO UPDATE SET
+        warranty = EXCLUDED.warranty,
+        checklist_json = EXCLUDED.checklist_json,
+        final_notes = EXCLUDED.final_notes,
         updated_at = CURRENT_TIMESTAMP
-    `).run(order.id, warranty, JSON.stringify(normalizedChecklist), finalNotes);
+    `, [order.id, warranty, JSON.stringify(normalizedChecklist), finalNotes]);
 
-    db.prepare(`
+    await pgQuery(`
       UPDATE orders
-      SET status = 'completed', notes = ?
-      WHERE id = ?
-    `).run(finalNotes, order.id);
-  })();
+      SET status = 'completed', notes = $1
+      WHERE id = $2
+    `, [finalNotes, order.id]);
+  } else {
+    db.transaction(() => {
+      db.prepare(`
+        INSERT INTO order_completion (order_id, warranty, checklist_json, final_notes, updated_at)
+        VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
+        ON CONFLICT(order_id) DO UPDATE SET
+          warranty = excluded.warranty,
+          checklist_json = excluded.checklist_json,
+          final_notes = excluded.final_notes,
+          updated_at = CURRENT_TIMESTAMP
+      `).run(order.id, warranty, JSON.stringify(normalizedChecklist), finalNotes);
 
-  const updatedOrder = getOrderById(order.id);
-  const completion = getOrderCompletionRecord(order.id);
+      db.prepare(`
+        UPDATE orders
+        SET status = 'completed', notes = ?
+        WHERE id = ?
+      `).run(finalNotes, order.id);
+    })();
+  }
+
+  const updatedOrder = usePostgresRuntime ? await pgGetOrderById(order.id) : getOrderById(order.id);
+  const completion = usePostgresRuntime ? await pgGetOrderCompletionRecord(order.id) : getOrderCompletionRecord(order.id);
 
   res.json({
     ok: true,
@@ -4874,8 +4987,8 @@ app.post("/api/orders/:id/completion/confirm", (req, res) => {
   appendAuditLog({ actor: "Technician", type: "Completion", tone: "success", message: `Completed repair for ${updatedOrder.orderNo}`, meta: warranty });
 });
 
-app.post("/api/orders/:id/photo-upload", (req, res) => {
-  const order = getOrderById(req.params.id);
+app.post("/api/orders/:id/photo-upload", async (req, res) => {
+  const order = usePostgresRuntime ? await pgGetOrderById(req.params.id) : getOrderById(req.params.id);
 
   if (!order) {
     res.status(404).json({ message: "Order not found" });
@@ -4896,36 +5009,54 @@ app.post("/api/orders/:id/photo-upload", (req, res) => {
     return;
   }
 
-  db.transaction(() => {
-    normalizedPhotos.forEach((photo) => {
-      db.prepare(`
+  if (usePostgresRuntime) {
+    for (const photo of normalizedPhotos) {
+      await pgQuery(`
         INSERT INTO order_photos (order_id, stage, image_url, note)
-        VALUES (?, ?, ?, ?)
-      `).run(order.id, photo.stage, photo.imageUrl, photo.note);
-    });
-  })();
+        VALUES ($1, $2, $3, $4)
+      `, [order.id, photo.stage, photo.imageUrl, photo.note]);
+    }
+  } else {
+    db.transaction(() => {
+      normalizedPhotos.forEach((photo) => {
+        db.prepare(`
+          INSERT INTO order_photos (order_id, stage, image_url, note)
+          VALUES (?, ?, ?, ?)
+        `).run(order.id, photo.stage, photo.imageUrl, photo.note);
+      });
+    })();
+  }
 
   res.status(201).json({
     ok: true,
     count: normalizedPhotos.length,
-    photos: getStoredPhotos(order.id),
+    photos: usePostgresRuntime ? await pgGetStoredPhotos(order.id) : getStoredPhotos(order.id),
   });
 });
 
-app.post("/api/orders/:id/receipt/print", (req, res) => {
-  const order = getOrderById(req.params.id);
+app.post("/api/orders/:id/receipt/print", async (req, res) => {
+  const order = usePostgresRuntime ? await pgGetOrderById(req.params.id) : getOrderById(req.params.id);
 
   if (!order) {
     res.status(404).json({ message: "Order not found" });
     return;
   }
 
-  db.prepare(`
-    INSERT INTO receipt_meta (order_id, printed_at, picked_up_at)
-    VALUES (?, CURRENT_TIMESTAMP, NULL)
-    ON CONFLICT(order_id) DO UPDATE SET
-      printed_at = CURRENT_TIMESTAMP
-  `).run(order.id);
+  if (usePostgresRuntime) {
+    await pgQuery(`
+      INSERT INTO receipt_meta (order_id, printed_at, picked_up_at)
+      VALUES ($1, CURRENT_TIMESTAMP, NULL)
+      ON CONFLICT (order_id) DO UPDATE SET
+        printed_at = CURRENT_TIMESTAMP
+    `, [order.id]);
+  } else {
+    db.prepare(`
+      INSERT INTO receipt_meta (order_id, printed_at, picked_up_at)
+      VALUES (?, CURRENT_TIMESTAMP, NULL)
+      ON CONFLICT(order_id) DO UPDATE SET
+        printed_at = CURRENT_TIMESTAMP
+    `).run(order.id);
+  }
 
   res.json({
     ok: true,
@@ -4934,23 +5065,33 @@ app.post("/api/orders/:id/receipt/print", (req, res) => {
   });
 });
 
-app.post("/api/orders/:id/pickup", (req, res) => {
-  const order = getOrderById(req.params.id);
+app.post("/api/orders/:id/pickup", async (req, res) => {
+  const order = usePostgresRuntime ? await pgGetOrderById(req.params.id) : getOrderById(req.params.id);
 
   if (!order) {
     res.status(404).json({ message: "Order not found" });
     return;
   }
 
-  db.transaction(() => {
-    db.prepare("UPDATE orders SET status = 'picked_up' WHERE id = ?").run(order.id);
-    db.prepare(`
+  if (usePostgresRuntime) {
+    await pgQuery("UPDATE orders SET status = 'picked_up' WHERE id = $1", [order.id]);
+    await pgQuery(`
       INSERT INTO receipt_meta (order_id, printed_at, picked_up_at)
-      VALUES (?, NULL, CURRENT_TIMESTAMP)
-      ON CONFLICT(order_id) DO UPDATE SET
+      VALUES ($1, NULL, CURRENT_TIMESTAMP)
+      ON CONFLICT (order_id) DO UPDATE SET
         picked_up_at = CURRENT_TIMESTAMP
-    `).run(order.id);
-  })();
+    `, [order.id]);
+  } else {
+    db.transaction(() => {
+      db.prepare("UPDATE orders SET status = 'picked_up' WHERE id = ?").run(order.id);
+      db.prepare(`
+        INSERT INTO receipt_meta (order_id, printed_at, picked_up_at)
+        VALUES (?, NULL, CURRENT_TIMESTAMP)
+        ON CONFLICT(order_id) DO UPDATE SET
+          picked_up_at = CURRENT_TIMESTAMP
+      `).run(order.id);
+    })();
+  }
 
   res.json({
     ok: true,
@@ -4982,8 +5123,8 @@ app.patch("/api/orders/:id/status", async (req, res) => {
   res.json(mapOrder(updated));
 });
 
-app.patch("/api/orders/:id", (req, res) => {
-  const order = getOrderById(req.params.id);
+app.patch("/api/orders/:id", async (req, res) => {
+  const order = usePostgresRuntime ? await pgGetOrderById(req.params.id) : getOrderById(req.params.id);
 
   if (!order) {
     res.status(404).json({ message: "Order not found" });
@@ -5000,9 +5141,10 @@ app.patch("/api/orders/:id", (req, res) => {
   const customerName = String(req.body?.customerName ?? order.customerName).trim();
   const customerPhone = String(req.body?.customerPhone ?? order.customerPhone).trim();
   const customerEmail = String(req.body?.customerEmail ?? order.customerEmail).trim();
-  const imeiSerial = String(req.body?.imeiSerial ?? getOrderIntake(order.id)?.imeiSerial ?? "").trim();
-  const customerSignature = String(req.body?.customerSignature ?? getOrderIntake(order.id)?.customerSignature ?? order.customerName).trim();
-  const intakeCode = getOrderIntake(order.id)?.intakeCode ?? getNextIntakeCode();
+  const intake = usePostgresRuntime ? await pgGetOrderIntake(order.id) : getOrderIntake(order.id);
+  const imeiSerial = String(req.body?.imeiSerial ?? intake?.imeiSerial ?? "").trim();
+  const customerSignature = String(req.body?.customerSignature ?? intake?.customerSignature ?? order.customerName).trim();
+  const intakeCode = intake?.intakeCode ?? (usePostgresRuntime ? await pgGetNextIntakeCode() : getNextIntakeCode());
 
   if (!title || !technician || !scheduledDate || !issueSummary || !customerName || !customerPhone || !customerEmail || !imeiSerial || !customerSignature) {
     res.status(400).json({ message: "Title, technician, scheduled date, customer and intake fields are required" });
@@ -5024,29 +5166,51 @@ app.patch("/api/orders/:id", (req, res) => {
     return;
   }
 
-  db.transaction(() => {
-    db.prepare(`
+  if (usePostgresRuntime) {
+    await pgQuery(`
       UPDATE orders
-      SET title = ?, technician = ?, scheduled_date = ?, amount = ?, deposit = ?, issue_summary = ?, notes = ?
-      WHERE id = ?
-    `).run(title, technician, scheduledDate, Math.round(numericAmount), Math.round(numericDeposit), issueSummary, notes, order.id);
+      SET title = $1, technician = $2, scheduled_date = $3, amount = $4, deposit = $5, issue_summary = $6, notes = $7
+      WHERE id = $8
+    `, [title, technician, scheduledDate, Math.round(numericAmount), Math.round(numericDeposit), issueSummary, notes, order.id]);
 
-    db.prepare(`
+    await pgQuery(`
       UPDATE customers
-      SET name = ?, phone = ?, email = ?
-      WHERE id = ?
-    `).run(customerName, customerPhone, customerEmail, order.customerId);
+      SET name = $1, phone = $2, email = $3
+      WHERE id = $4
+    `, [customerName, customerPhone, customerEmail, order.customerId]);
 
-    db.prepare(`
+    await pgQuery(`
       INSERT INTO order_intake (order_id, intake_code, imei_serial, customer_signature)
-      VALUES (?, ?, ?, ?)
-      ON CONFLICT(order_id) DO UPDATE SET
-        imei_serial = excluded.imei_serial,
-        customer_signature = excluded.customer_signature
-    `).run(order.id, intakeCode, imeiSerial, customerSignature);
-  })();
+      VALUES ($1, $2, $3, $4)
+      ON CONFLICT (order_id) DO UPDATE SET
+        imei_serial = EXCLUDED.imei_serial,
+        customer_signature = EXCLUDED.customer_signature
+    `, [order.id, intakeCode, imeiSerial, customerSignature]);
+  } else {
+    db.transaction(() => {
+      db.prepare(`
+        UPDATE orders
+        SET title = ?, technician = ?, scheduled_date = ?, amount = ?, deposit = ?, issue_summary = ?, notes = ?
+        WHERE id = ?
+      `).run(title, technician, scheduledDate, Math.round(numericAmount), Math.round(numericDeposit), issueSummary, notes, order.id);
 
-  const updated = getOrderById(order.id);
+      db.prepare(`
+        UPDATE customers
+        SET name = ?, phone = ?, email = ?
+        WHERE id = ?
+      `).run(customerName, customerPhone, customerEmail, order.customerId);
+
+      db.prepare(`
+        INSERT INTO order_intake (order_id, intake_code, imei_serial, customer_signature)
+        VALUES (?, ?, ?, ?)
+        ON CONFLICT(order_id) DO UPDATE SET
+          imei_serial = excluded.imei_serial,
+          customer_signature = excluded.customer_signature
+      `).run(order.id, intakeCode, imeiSerial, customerSignature);
+    })();
+  }
+
+  const updated = usePostgresRuntime ? await pgGetOrderById(order.id) : getOrderById(order.id);
   appendAuditLog({
     actor: updated.technician,
     type: "Order Update",
