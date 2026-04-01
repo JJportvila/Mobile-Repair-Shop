@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-low": "#f6fafa",
+              "error-container": "#fee2e2",
+              "primary-container": "#e0f2f3",
+              "outline-variant": "#bdc9c9",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "on-surface-variant": "#5e8a8d",
+              "surface-container-highest": "#dae6e7",
+              "background": "#f9fafa",
+              "surface-container": "#ffffff",
+              "primary-fixed": "#94f1f9",
+              "on-surface": "#101818",
+              "on-tertiary-fixed": "#321200",
+              "surface-tint": "#007e85",
+              "secondary": "#436466",
+              "error": "#ef4444",
+              "on-background": "#101818",
+              "tertiary-fixed-dim": "#ffb68b",
+              "surface-dim": "#d7dbdb",
+              "on-primary-container": "#002022",
+              "on-secondary": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "inverse-surface": "#222a34",
+              "primary-fixed-dim": "#78d5dc",
+              "on-tertiary-container": "#321200",
+              "secondary-fixed-dim": "#aacdd0",
+              "on-primary-fixed-variant": "#004f54",
+              "on-tertiary-fixed-variant": "#71370c",
+              "on-primary": "#ffffff",
+              "tertiary-fixed": "#ffdbc8",
+              "on-secondary-container": "#48686b",
+              "inverse-on-surface": "#f9fafa",
+              "surface-bright": "#ffffff",
+              "surface-container-high": "#ebefee",
+              "inverse-primary": "#78d5dc",
+              "tertiary": "#f7a072",
+              "primary": "#007e85",
+              "on-secondary-fixed": "#002022",
+              "tertiary-container": "#ffdbc8",
+              "secondary-container": "#c3e6e9",
+              "on-error-container": "#93000a",
+              "surface": "#f9fafa",
+              "on-tertiary": "#ffffff",
+              "on-error": "#ffffff",
+              "on-primary-fixed": "#002022",
+              "secondary-fixed": "#c6e9ec",
+              "surface-variant": "#f0f4f4",
+              "outline": "#dae6e7"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md fixed top-0 w-full z-50 border-b border-[#DAE6E7] dark:border-slate-800 shadow-sm flex items-center justify-between px-4 h-16 w-full">
+<div class="flex items-center gap-4">
+<button class="text-[#007E85] active:scale-95 duration-200 hover:bg-[#F9FAFA] p-2 rounded-full">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-manrope font-extrabold text-xl tracking-tight text-[#007E85]">Repair Support</h1>
+</div>
+<button class="text-[#5E8A8D] active:scale-95 duration-200 hover:bg-[#F9FAFA] p-2 rounded-full">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</header>
+<main class="mt-16 pb-32 px-4 pt-6 max-w-2xl mx-auto w-full flex-grow">
+<!-- Report Summary Header -->
+<div class="mb-8 p-6 bg-surface-container rounded-xl shadow-sm border border-outline">
+<div class="flex items-start justify-between">
+<div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Report ID</span>
+<h2 class="text-2xl font-extrabold text-on-surface tracking-tight">RO-8892</h2>
+</div>
+<div class="bg-primary/10 text-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                    Ready to Send
+                </div>
+</div>
+<p class="mt-2 text-on-surface-variant text-sm">Select a customer contact to share the digital repair report.</p>
+</div>
+<!-- Search Bar -->
+<div class="relative mb-8">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full h-14 pl-12 pr-4 bg-surface-container border-none rounded-xl shadow-sm focus:ring-2 focus:ring-primary text-on-surface placeholder:text-on-surface-variant/50" placeholder="Search contacts or numbers..." type="text"/>
+</div>
+<!-- Recent Chats Section -->
+<section>
+<h3 class="text-lg font-extrabold text-on-surface mb-4 px-1">Recent Chats</h3>
+<div class="space-y-3">
+<!-- Contact Card 1 -->
+<label class="flex items-center p-4 bg-surface-container rounded-xl shadow-sm cursor-pointer border-2 border-transparent has-[:checked]:border-primary transition-all">
+<input checked="" class="hidden peer" name="contact" type="radio"/>
+<div class="relative w-12 h-12 rounded-full overflow-hidden bg-primary-container flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="professional portrait of a smiling middle-aged man in a linen shirt with a soft tropical background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCeT2p-ot-LZUdmdNd3gO768BnYKnRbGGRVbeOM0Yp62bnvxPtZusSaX7-sYAUxHN4Kg5Xr7oJSOcr7Ky7btD5tby5KPErTSKaMBqfCGvhjrWM0VrDAxrkcr2iHxmjCS7Cn7fmZJKNKRuwycEjXqd53CvBxCb7BpOXFKFMGVUhrd6c3KXjisphB_3_-Dpb8n62zBSyI0ar1RZNs8uk3OnDr7yWlKdF04JGydNAdpqEDHf7uyKG9Pmk87yhI-IwYl8DKvBhj9fa5lCGB"/>
+</div>
+<div class="ml-4 flex-grow">
+<div class="font-bold text-on-surface">Jean-Pierre</div>
+<div class="text-on-surface-variant text-xs">+678 774 2931</div>
+</div>
+<div class="peer-checked:flex hidden w-6 h-6 bg-primary rounded-full items-center justify-center">
+<span class="material-symbols-outlined text-white text-sm" style="font-variation-settings: 'wght' 700;">check</span>
+</div>
+</label>
+<!-- Contact Card 2 -->
+<label class="flex items-center p-4 bg-surface-container rounded-xl shadow-sm cursor-pointer border-2 border-transparent has-[:checked]:border-primary transition-all">
+<input class="hidden peer" name="contact" type="radio"/>
+<div class="relative w-12 h-12 rounded-full overflow-hidden bg-primary-container flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="portrait of a confident woman with curly dark hair wearing a teal blouse in a bright modern office" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbHcjgCRsno5D70qwfwfllKsbvZXPZDF2F_LW1dBYcT6FDqDVvSMXrxoe2PHR5KBDmV_RTAG2T_ZkthrKXHI_aWjTBt6F6uxhayRaz97u88WAJpuQgbZLa6H0Yv8b22wABr5CR1XAa4_Z2x_I_fLZ7HWYiJx6W73kruk5t3NPPZBlQzBRyjoODmdci1aqcLDIEnmATHQRRlRTgnWwQ3QMgu1pKfxGOuJ4qMrbvAI97bdd4cnoGcHpzgcgS-mXEseyA_8UmWyWE9z39"/>
+</div>
+<div class="ml-4 flex-grow">
+<div class="font-bold text-on-surface">Marie Kalmet</div>
+<div class="text-on-surface-variant text-xs">+678 552 1084</div>
+</div>
+<div class="peer-checked:flex hidden w-6 h-6 bg-primary rounded-full items-center justify-center">
+<span class="material-symbols-outlined text-white text-sm" style="font-variation-settings: 'wght' 700;">check</span>
+</div>
+</label>
+<!-- Contact Card 3 -->
+<label class="flex items-center p-4 bg-surface-container rounded-xl shadow-sm cursor-pointer border-2 border-transparent has-[:checked]:border-primary transition-all">
+<input class="hidden peer" name="contact" type="radio"/>
+<div class="relative w-12 h-12 rounded-full overflow-hidden bg-primary-container flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="close-up of a smiling young man outdoors in Port Vila with palm trees blurred in the background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCx0Qux297IcpE8YfIQ73E48F0uF7tVR3oHZapv-UK-eyR1kCKNT6Oxag9v_LdgJBCx0te55daFSagbRwYYzXlHGc-IrOfKb8HaBT-cRYZZbRWCAFFjtsgNwu_gTmnhRo8foANEPxlp4v62TJItmqaJBOja1ELAvXtwZ-xeNIGDtvGejngMVi1nAEBEKN9gtllubijxUCEP9jVu_KpROCUDRgsL3Y0VdzDnqdCTKHmDul7WAIVJ9-xGkDh0RQ_Z4iVNg_iGbeA1NSYF"/>
+</div>
+<div class="ml-4 flex-grow">
+<div class="font-bold text-on-surface">Samuel Vira</div>
+<div class="text-on-surface-variant text-xs">+678 229 4480</div>
+</div>
+<div class="peer-checked:flex hidden w-6 h-6 bg-primary rounded-full items-center justify-center">
+<span class="material-symbols-outlined text-white text-sm" style="font-variation-settings: 'wght' 700;">check</span>
+</div>
+</label>
+</div>
+</section>
+<!-- Preview Message Section -->
+<section class="mt-8">
+<h3 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-2 px-1">Preview Message</h3>
+<div class="bg-surface-container-high p-4 rounded-xl border-l-4 border-primary">
+<p class="text-on-surface text-sm leading-relaxed">
+                    Hi <span class="font-bold text-primary">Jean-Pierre</span>, your repair report for <span class="font-bold">RO-8892</span> is ready. View it here: <span class="text-blue-600 underline">repair.port/RO8892</span>
+</p>
+</div>
+</section>
+</main>
+<!-- Bottom Actions Container -->
+<div class="fixed bottom-0 w-full z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-outline px-4 py-6 flex flex-col gap-4">
+<button class="w-full h-14 bg-primary text-white rounded-xl font-bold flex items-center justify-center gap-3 shadow-xl shadow-primary/20 active:scale-95 transition-all duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">send</span>
+<span>Send via WhatsApp</span>
+</button>
+</div>
+<!-- BottomNavBar (Hidden for focused transactional screen as per Shell Visibility Rule) -->
+<!-- Suppressed to prioritize the "Send" task -->
+</body></html>

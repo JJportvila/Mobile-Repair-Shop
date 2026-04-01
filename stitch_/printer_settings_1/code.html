@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Printer Settings - Vila Port Cyan</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "tertiary-container": "#ffdbc8",
+              "surface-bright": "#ffffff",
+              "on-primary-container": "#002022",
+              "surface": "#f9fafa",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "on-surface-variant": "#5e8a8d",
+              "inverse-primary": "#78d5dc",
+              "secondary-fixed-dim": "#aacdd0",
+              "surface-container-highest": "#dae6e7",
+              "secondary": "#436466",
+              "on-error": "#ffffff",
+              "error-container": "#fee2e2",
+              "secondary-fixed": "#c6e9ec",
+              "tertiary-fixed-dim": "#ffb68b",
+              "surface-tint": "#007e85",
+              "surface-container-lowest": "#ffffff",
+              "inverse-on-surface": "#f9fafa",
+              "secondary-container": "#c3e6e9",
+              "on-tertiary-container": "#321200",
+              "surface-dim": "#d7dbdb",
+              "on-tertiary": "#ffffff",
+              "primary": "#007e85",
+              "on-secondary": "#ffffff",
+              "inverse-surface": "#222a34",
+              "tertiary": "#f7a072",
+              "surface-container-high": "#ebefee",
+              "on-primary": "#ffffff",
+              "on-background": "#101818",
+              "on-surface": "#101818",
+              "surface-container": "#ffffff",
+              "surface-variant": "#f0f4f4",
+              "on-tertiary-fixed-variant": "#71370c",
+              "on-secondary-fixed": "#002022",
+              "on-secondary-container": "#48686b",
+              "background": "#f9fafa",
+              "tertiary-fixed": "#ffdbc8",
+              "on-primary-fixed": "#002022",
+              "surface-container-low": "#f6fafa",
+              "on-error-container": "#93000a",
+              "on-primary-fixed-variant": "#004f54",
+              "error": "#ef4444",
+              "primary-fixed": "#94f1f9",
+              "primary-container": "#e0f2f3",
+              "outline-variant": "#bdc9c9",
+              "on-tertiary-fixed": "#321200",
+              "primary-fixed-dim": "#78d5dc",
+              "outline": "#dae6e7"
+            },
+            fontFamily: {
+              "headline": ["Manrope", "sans-serif"],
+              "body": ["Manrope", "sans-serif"],
+              "label": ["Manrope", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .tap-highlight-transparent { -webkit-tap-highlight-color: transparent; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md shadow-sm border-b border-outline flex items-center justify-between px-4 h-16 w-full">
+<div class="flex items-center gap-4">
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-container transition-colors active:scale-95">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<h1 class="font-manrope font-bold tracking-tight text-[20px] text-on-surface">Printer Settings</h1>
+</div>
+<div class="flex items-center">
+<span class="material-symbols-outlined text-on-surface-variant">more_vert</span>
+</div>
+</header>
+<main class="pt-20 px-4 max-w-2xl mx-auto space-y-6">
+<!-- Printer Enable Switch -->
+<section class="bg-surface-container rounded-xl p-4 shadow-sm flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">print</span>
+</div>
+<div>
+<h2 class="text-on-surface font-bold">Printer Enable</h2>
+<p class="text-[12px] text-on-surface-variant uppercase tracking-wider font-bold">Global printing toggle</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</section>
+<!-- Connected Printer Section -->
+<section class="space-y-3">
+<h3 class="text-[12px] font-bold text-on-surface-variant uppercase tracking-widest px-1">Connected Printer</h3>
+<div class="bg-surface-container rounded-xl p-5 shadow-sm border border-primary/20 bg-gradient-to-br from-white to-primary-container/20">
+<div class="flex justify-between items-start mb-4">
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">print</span>
+</div>
+<div>
+<h4 class="font-bold text-on-surface">POS-58-Thermal (Default)</h4>
+<div class="flex items-center gap-2 mt-1">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+<span class="text-sm font-semibold text-emerald-600">Connected</span>
+</div>
+</div>
+</div>
+</div>
+<button class="w-full py-2.5 rounded-xl border-2 border-error/20 text-error font-bold text-sm hover:bg-error/5 transition-colors active:scale-95">
+                    Disconnect
+                </button>
+</div>
+</section>
+<!-- Printer Search Section -->
+<section class="space-y-3">
+<div class="flex items-center justify-between px-1">
+<h3 class="text-[12px] font-bold text-on-surface-variant uppercase tracking-widest">Printer Search</h3>
+<span class="text-[10px] font-bold text-primary flex items-center gap-1 bg-primary/10 px-2 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-[14px]">bluetooth</span> SCANNING
+                </span>
+</div>
+<button class="w-full flex items-center justify-center gap-3 bg-primary text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/30 active:scale-95 transition-transform">
+<span class="material-symbols-outlined">bluetooth_searching</span>
+                Search for New Devices
+            </button>
+<div class="space-y-2">
+<!-- Discovered Device 1 -->
+<div class="flex items-center justify-between p-4 bg-white rounded-xl shadow-sm hover:bg-surface-variant transition-colors cursor-pointer group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary">devices_other</span>
+<div>
+<p class="font-bold text-on-surface">XP-N160II_7782</p>
+<p class="text-[12px] text-on-surface-variant">Nearby Bluetooth Device</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">signal_cellular_3_bar</span>
+</div>
+<!-- Discovered Device 2 -->
+<div class="flex items-center justify-between p-4 bg-white rounded-xl shadow-sm hover:bg-surface-variant transition-colors cursor-pointer group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary">print</span>
+<div>
+<p class="font-bold text-on-surface">Office_Jet_Pro_8020</p>
+<p class="text-[12px] text-on-surface-variant">Wi-Fi Network Printer</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">signal_cellular_1_bar</span>
+</div>
+</div>
+</section>
+<!-- Print Configuration Section -->
+<section class="space-y-3">
+<h3 class="text-[12px] font-bold text-on-surface-variant uppercase tracking-widest px-1">Print Configuration</h3>
+<div class="bg-surface-container rounded-xl shadow-sm overflow-hidden divide-y divide-outline">
+<!-- Receipt Copies -->
+<div class="p-4 flex items-center justify-between">
+<div>
+<p class="font-bold text-on-surface">Receipt Copies</p>
+<p class="text-[12px] text-on-surface-variant">Number of copies per transaction</p>
+</div>
+<div class="flex items-center gap-4 bg-surface-variant rounded-lg p-1">
+<button class="w-8 h-8 flex items-center justify-center bg-white rounded shadow-sm text-primary active:scale-90">-</button>
+<span class="font-extrabold text-on-surface w-4 text-center">1</span>
+<button class="w-8 h-8 flex items-center justify-center bg-white rounded shadow-sm text-primary active:scale-90">+</button>
+</div>
+</div>
+<!-- Auto-print -->
+<div class="p-4 flex items-center justify-between">
+<p class="font-bold text-on-surface">Auto-print on Settlement</p>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-10 h-5 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<!-- Logo Toggle -->
+<div class="p-4 flex items-center justify-between">
+<p class="font-bold text-on-surface">Logo on Receipt</p>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-10 h-5 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<!-- Footer Message -->
+<div class="p-4 space-y-2">
+<p class="font-bold text-on-surface">Footer Message</p>
+<textarea class="w-full bg-surface-variant border-none rounded-xl p-3 text-sm text-on-surface focus:ring-2 focus:ring-primary/20 placeholder:text-on-surface-variant/50 min-h-[80px]" placeholder="Enter custom message...">Thank you for choosing Vila Port Repair!</textarea>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Actions & Navigation -->
+<div class="fixed bottom-20 left-0 w-full px-4 mb-4 z-40">
+<button class="w-full bg-white border-2 border-primary text-primary font-extrabold py-4 rounded-xl shadow-xl hover:bg-primary/5 transition-colors active:scale-95 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">print_connect</span>
+            Test Print
+        </button>
+</div>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-2 pb-safe h-20 bg-white/95 backdrop-blur-lg border-t border-outline shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50">
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] tap-highlight-transparent active:scale-90 transition-transform">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">Dashboard</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] tap-highlight-transparent active:scale-90 transition-transform">
+<span class="material-symbols-outlined">build</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">Repairs</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] tap-highlight-transparent active:scale-90 transition-transform">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">Inventory</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-[#007E85]/10 text-[#007E85] rounded-xl px-3 py-1 tap-highlight-transparent active:scale-90 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">Settings</span>
+</div>
+</nav>
+</body></html>

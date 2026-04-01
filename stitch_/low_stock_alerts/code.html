@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Low Stock Alerts - Vila Port Cyan</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-background": "#101818",
+              "error": "#ef4444",
+              "on-primary": "#ffffff",
+              "inverse-surface": "#222a34",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "on-secondary": "#ffffff",
+              "on-surface": "#101818",
+              "surface-dim": "#d7dbdb",
+              "primary-fixed": "#94f1f9",
+              "surface-container": "#ffffff",
+              "outline-variant": "#bdc9c9",
+              "surface-container-high": "#ebefee",
+              "secondary-fixed-dim": "#aacdd0",
+              "primary-container": "#e0f2f3",
+              "inverse-on-surface": "#f9fafa",
+              "tertiary-fixed": "#ffdbc8",
+              "on-tertiary": "#ffffff",
+              "on-primary-fixed": "#002022",
+              "surface-tint": "#007e85",
+              "on-primary-fixed-variant": "#004f54",
+              "on-secondary-container": "#48686b",
+              "primary-fixed-dim": "#78d5dc",
+              "on-tertiary-container": "#321200",
+              "secondary-container": "#c3e6e9",
+              "surface-container-highest": "#dae6e7",
+              "on-tertiary-fixed-variant": "#71370c",
+              "on-surface-variant": "#5e8a8d",
+              "on-secondary-fixed": "#002022",
+              "outline": "#dae6e7",
+              "surface-variant": "#f0f4f4",
+              "surface": "#f9fafa",
+              "surface-bright": "#ffffff",
+              "secondary-fixed": "#c6e9ec",
+              "on-tertiary-fixed": "#321200",
+              "on-error-container": "#93000a",
+              "on-error": "#ffffff",
+              "secondary": "#436466",
+              "tertiary": "#f7a072",
+              "error-container": "#fee2e2",
+              "tertiary-container": "#ffdbc8",
+              "background": "#f9fafa",
+              "surface-container-low": "#f6fafa",
+              "primary": "#007e85",
+              "on-primary-container": "#002022",
+              "tertiary-fixed-dim": "#ffb68b"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-[#DAE6E7] dark:border-slate-800 shadow-sm flex items-center justify-between px-4 h-16">
+<div class="flex items-center gap-3">
+<button class="text-[#007E85] active:scale-95 duration-200 transition-colors p-2 rounded-full hover:bg-[#F9FAFA]">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="font-manrope font-extrabold text-[20px] tracking-tight text-[#007E85]">Low Stock Alerts</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-on-surface-variant hover:bg-[#F9FAFA] rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="filter_list">filter_list</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-[#F9FAFA] rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+</div>
+</header>
+<main class="pt-20 px-4 max-w-2xl mx-auto space-y-4">
+<!-- Summary Bento Grid Section -->
+<section class="grid grid-cols-2 gap-3 mb-6">
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border border-outline flex flex-col gap-1">
+<span class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Critical Items</span>
+<div class="flex items-end gap-2">
+<span class="text-3xl font-extrabold text-error">02</span>
+<span class="text-on-surface-variant text-xs mb-1">Immediate Action</span>
+</div>
+</div>
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border border-outline flex flex-col gap-1">
+<span class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Low Stock</span>
+<div class="flex items-end gap-2">
+<span class="text-3xl font-extrabold text-tertiary">02</span>
+<span class="text-on-surface-variant text-xs mb-1">Refill Required</span>
+</div>
+</div>
+</section>
+<!-- Alert Cards List -->
+<div class="space-y-3">
+<!-- Item 1: iPhone 14 Screens -->
+<div class="bg-surface-container p-5 rounded-xl shadow-sm border border-outline relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-error"></div>
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-bold text-lg text-on-surface leading-tight">iPhone 14 Screens</h3>
+<p class="text-xs font-medium text-on-surface-variant tracking-wide">SKU: DIS-IPH14-OLED</p>
+</div>
+<span class="px-2 py-1 bg-error-container text-on-error-container text-[10px] font-extrabold rounded-md uppercase tracking-widest">Critical</span>
+</div>
+<div class="space-y-2 mb-6">
+<div class="flex justify-between text-xs font-bold text-on-surface-variant uppercase">
+<span>Stock: 2 units</span>
+<span>Target: 15</span>
+</div>
+<div class="h-2 w-full bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-error rounded-full" style="width: 13.3%"></div>
+</div>
+</div>
+<button class="w-full bg-primary text-on-primary py-3 rounded-xl font-bold flex items-center justify-center gap-2 active:scale-95 duration-150 shadow-sm shadow-primary/20">
+<span class="material-symbols-outlined text-[20px]" data-icon="shopping_cart">shopping_cart</span>
+<span>Create Order</span>
+</button>
+</div>
+<!-- Item 2: MacBook M2 Keyboards -->
+<div class="bg-surface-container p-5 rounded-xl shadow-sm border border-outline relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-error"></div>
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-bold text-lg text-on-surface leading-tight">MacBook M2 Keyboards</h3>
+<p class="text-xs font-medium text-on-surface-variant tracking-wide">SKU: KYB-MACM2-US</p>
+</div>
+<span class="px-2 py-1 bg-error-container text-on-error-container text-[10px] font-extrabold rounded-md uppercase tracking-widest">Critical</span>
+</div>
+<div class="space-y-2 mb-6">
+<div class="flex justify-between text-xs font-bold text-on-surface-variant uppercase">
+<span>Stock: 1 unit</span>
+<span>Target: 10</span>
+</div>
+<div class="h-2 w-full bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-error rounded-full" style="width: 10%"></div>
+</div>
+</div>
+<button class="w-full bg-primary text-on-primary py-3 rounded-xl font-bold flex items-center justify-center gap-2 active:scale-95 duration-150 shadow-sm shadow-primary/20">
+<span class="material-symbols-outlined text-[20px]" data-icon="shopping_cart">shopping_cart</span>
+<span>Create Order</span>
+</button>
+</div>
+<!-- Item 3: 5000mAh Batteries -->
+<div class="bg-surface-container p-5 rounded-xl shadow-sm border border-outline relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-tertiary"></div>
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-bold text-lg text-on-surface leading-tight">5000mAh Batteries</h3>
+<p class="text-xs font-medium text-on-surface-variant tracking-wide">SKU: BAT-UNV-5000</p>
+</div>
+<span class="px-2 py-1 bg-tertiary-container text-on-tertiary-container text-[10px] font-extrabold rounded-md uppercase tracking-widest">Low Stock</span>
+</div>
+<div class="space-y-2 mb-6">
+<div class="flex justify-between text-xs font-bold text-on-surface-variant uppercase">
+<span>Stock: 8 units</span>
+<span>Target: 25</span>
+</div>
+<div class="h-2 w-full bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-tertiary rounded-full" style="width: 32%"></div>
+</div>
+</div>
+<button class="w-full bg-primary text-on-primary py-3 rounded-xl font-bold flex items-center justify-center gap-2 active:scale-95 duration-150 shadow-sm shadow-primary/20">
+<span class="material-symbols-outlined text-[20px]" data-icon="shopping_cart">shopping_cart</span>
+<span>Create Order</span>
+</button>
+</div>
+<!-- Item 4: USB-C Ports -->
+<div class="bg-surface-container p-5 rounded-xl shadow-sm border border-outline relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-tertiary"></div>
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-bold text-lg text-on-surface leading-tight">USB-C Ports</h3>
+<p class="text-xs font-medium text-on-surface-variant tracking-wide">SKU: PRT-USBC-SMD</p>
+</div>
+<span class="px-2 py-1 bg-tertiary-container text-on-tertiary-container text-[10px] font-extrabold rounded-md uppercase tracking-widest">Low Stock</span>
+</div>
+<div class="space-y-2 mb-6">
+<div class="flex justify-between text-xs font-bold text-on-surface-variant uppercase">
+<span>Stock: 12 units</span>
+<span>Target: 50</span>
+</div>
+<div class="h-2 w-full bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-tertiary rounded-full" style="width: 24%"></div>
+</div>
+</div>
+<button class="w-full bg-primary text-on-primary py-3 rounded-xl font-bold flex items-center justify-center gap-2 active:scale-95 duration-150 shadow-sm shadow-primary/20">
+<span class="material-symbols-outlined text-[20px]" data-icon="shopping_cart">shopping_cart</span>
+<span>Create Order</span>
+</button>
+</div>
+</div>
+<!-- Optional: Action Button for Batch Ordering -->
+<div class="py-6 flex justify-center">
+<button class="text-primary font-bold text-sm uppercase tracking-widest flex items-center gap-2 px-6 py-2 rounded-full border border-primary/20 hover:bg-primary/5 transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="playlist_add_check">playlist_add_check</span>
+                Select Multiple Items
+            </button>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-[#DAE6E7] dark:border-slate-800 shadow-xl shadow-[#007E85]/10 flex justify-around items-center px-4 h-20 pb-safe">
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] px-3 py-1 hover:text-[#007E85] transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider">Inventory</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-[#007E85]/10 text-[#007E85] rounded-xl px-3 py-1 transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="notifications_active" style="font-variation-settings: 'FILL' 1;">notifications_active</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider">Alerts</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] px-3 py-1 hover:text-[#007E85] transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider">Orders</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] px-3 py-1 hover:text-[#007E85] transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider">Profile</span>
+</a>
+</nav>
+</body></html>

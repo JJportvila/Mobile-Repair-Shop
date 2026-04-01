@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+
+<html class="light" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>供应商快速订货 - Vila Port</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-high": "#ebefee",
+              "secondary": "#436466",
+              "tertiary": "#f7a072",
+              "on-tertiary-fixed-variant": "#71370c",
+              "on-error-container": "#93000a",
+              "surface-tint": "#007e85",
+              "surface-container-low": "#f6fafa",
+              "background": "#f9fafa",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "surface-container-lowest": "#ffffff",
+              "on-error": "#ffffff",
+              "on-tertiary-container": "#321200",
+              "on-tertiary-fixed": "#321200",
+              "on-secondary-container": "#48686b",
+              "on-primary-fixed-variant": "#004f54",
+              "on-primary-fixed": "#002022",
+              "outline": "#dae6e7",
+              "inverse-surface": "#222a34",
+              "primary-fixed-dim": "#78d5dc",
+              "on-secondary": "#ffffff",
+              "secondary-fixed-dim": "#aacdd0",
+              "secondary-container": "#c3e6e9",
+              "error": "#ef4444",
+              "primary-container": "#e0f2f3",
+              "surface-variant": "#f0f4f4",
+              "on-primary-container": "#002022",
+              "surface-dim": "#d7dbdb",
+              "surface-container-highest": "#dae6e7",
+              "on-secondary-fixed": "#002022",
+              "inverse-primary": "#78d5dc",
+              "surface-bright": "#ffffff",
+              "on-surface": "#101818",
+              "tertiary-fixed": "#ffdbc8",
+              "surface": "#f9fafa",
+              "on-surface-variant": "#5e8a8d",
+              "on-tertiary": "#ffffff",
+              "tertiary-container": "#ffdbc8",
+              "error-container": "#fee2e2",
+              "surface-container": "#ffffff",
+              "on-primary": "#ffffff",
+              "inverse-on-surface": "#f9fafa",
+              "secondary-fixed": "#c6e9ec",
+              "tertiary-fixed-dim": "#ffb68b",
+              "primary-fixed": "#94f1f9",
+              "primary": "#007e85",
+              "outline-variant": "#bdc9c9",
+              "on-background": "#101818"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-[#DAE6E7] dark:border-slate-800 shadow-sm h-14 flex items-center justify-between px-4 max-w-md mx-auto left-0 right-0">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#007E85]">arrow_back</span>
+<h1 class="font-['Manrope'] font-bold text-lg tracking-tight text-[#007E85]">供应商快速订货</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#5E8A8D]">search</span>
+<span class="material-symbols-outlined text-[#007E85]">account_circle</span>
+</div>
+</header>
+<main class="pt-20 px-4 max-w-md mx-auto">
+<!-- Supplier Header Card -->
+<section class="mb-6">
+<div class="bg-surface-container rounded-xl p-5 shadow-sm border border-outline/50 overflow-hidden relative">
+<div class="absolute top-0 right-0 p-4 opacity-10">
+<span class="material-symbols-outlined text-6xl" style="font-variation-settings: 'FILL' 1;">local_shipping</span>
+</div>
+<div class="relative z-10">
+<h2 class="text-xl font-extrabold text-on-surface mb-1">PrecisionParts Ltd</h2>
+<p class="text-sm text-on-surface-variant font-medium mb-4">优质工业零件供应商 • 瓦努阿图分部</p>
+<div class="flex items-center gap-2">
+<span class="bg-primary/10 text-primary text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">活跃合作伙伴</span>
+<span class="bg-tertiary/10 text-on-tertiary-fixed-variant text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">48小时送达</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Summary Metrics -->
+<div class="grid grid-cols-2 gap-4 mb-8">
+<div class="bg-white p-4 rounded-xl shadow-sm border border-outline/30">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">低库存预警</p>
+<div class="flex items-end gap-2">
+<span class="text-2xl font-extrabold text-error leading-none">08</span>
+<span class="text-xs font-semibold text-on-surface-variant mb-1">项零件</span>
+</div>
+</div>
+<div class="bg-white p-4 rounded-xl shadow-sm border border-outline/30">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">本月订单总额</p>
+<div class="flex items-end gap-1">
+<span class="text-xl font-extrabold text-primary leading-none">1.2M</span>
+<span class="text-xs font-semibold text-on-surface-variant mb-1">VUV</span>
+</div>
+</div>
+</div>
+<!-- Section Title -->
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-extrabold text-on-surface">畅销零件清单</h3>
+<span class="text-xs font-bold text-primary flex items-center gap-1">
+                筛选 <span class="material-symbols-outlined text-sm">filter_list</span>
+</span>
+</div>
+<!-- Parts List -->
+<div class="space-y-4">
+<!-- Part Item 1 -->
+<div class="bg-surface-container rounded-xl p-4 shadow-sm border border-outline/20 flex gap-4 items-start transition-all active:scale-[0.98]">
+<div class="w-16 h-16 rounded-lg overflow-hidden bg-surface-container-low shrink-0 border border-outline/50">
+<img class="w-full h-full object-cover" data-alt="close-up of a high precision metal ball bearing on a clean industrial workshop surface with soft technical lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-CTmMPesTwErfGl-wjR_Jt2F5b32TWYdkYPGT9-zegEPZho_CRCmdbZ9hfXEGiA8l_KWbJaSMQcd0H3lgOERzdyigg9_khge-McbdCSQBw_7YPhSwgxRF28YtyOWYnDOvprT7IrHMnsTXwgkP9bu56z_aVTXCnrGRce_a5cV1ZOVn_AGnLaE_HX5RlI63utKKC4DL8u9akGS1kpWbmaiiLiirvING2fb2o6yJ6jcKgcvo4yv88hLf2KuEqbWR_MtraHzXr2Kjvisd"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-bold text-on-surface text-sm">密封滚珠轴承 6204-2RS</h4>
+<span class="text-xs font-black text-on-surface">1,450 VUV</span>
+</div>
+<p class="text-xs text-on-surface-variant mb-3">SKU: PP-B-0042 • 直径 20mm</p>
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase">当前库存</span>
+<div class="flex items-center gap-2">
+<div class="w-24 h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+<div class="bg-error h-full w-[15%]"></div>
+</div>
+<span class="text-xs font-bold text-error">12 件</span>
+</div>
+</div>
+<button class="bg-primary text-white flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold shadow-md shadow-primary/20 active:opacity-80">
+<span class="material-symbols-outlined text-sm">add</span>
+                            快速添加
+                        </button>
+</div>
+</div>
+</div>
+<!-- Part Item 2 -->
+<div class="bg-surface-container rounded-xl p-4 shadow-sm border border-outline/20 flex gap-4 items-start transition-all active:scale-[0.98]">
+<div class="w-16 h-16 rounded-lg overflow-hidden bg-surface-container-low shrink-0 border border-outline/50">
+<img class="w-full h-full object-cover" data-alt="assortment of high-quality industrial hydraulic valves and fittings on a technical blueprint background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvNrSr8zYJbxWV_RG2h4jz3xiCdlwX-dSiePz_fxZMg5MFf0QQQ4eJAlyh8udyyXVTQkiZMOYdEg5Tv3yGuyEvNMYd0N5wxKZiI7DbIoIkSLof4MsDE8zux6swOCBo4_y9J76N-JDKTc5qtvYwx4HeBJHnabuyLTrLr6mQwk6nijSyZ3oYgw8urb8M0FEtjnuKwRbW4kYBuHwcZxw5fzEE6dGSKeZ4Lv1OtXzm2NkHp8SwMz3pERRO-tAoOjlx92vfsG9uOLmk2HNt"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-bold text-on-surface text-sm">液压控制阀组件</h4>
+<span class="text-xs font-black text-on-surface">24,800 VUV</span>
+</div>
+<p class="text-xs text-on-surface-variant mb-3">SKU: PP-H-9811 • 重型工业级</p>
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase">当前库存</span>
+<div class="flex items-center gap-2">
+<div class="w-24 h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+<div class="bg-tertiary h-full w-[45%]"></div>
+</div>
+<span class="text-xs font-bold text-tertiary">4 件</span>
+</div>
+</div>
+<button class="bg-primary text-white flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold shadow-md shadow-primary/20 active:opacity-80">
+<span class="material-symbols-outlined text-sm">add</span>
+                            快速添加
+                        </button>
+</div>
+</div>
+</div>
+<!-- Part Item 3 -->
+<div class="bg-surface-container rounded-xl p-4 shadow-sm border border-outline/20 flex gap-4 items-start transition-all active:scale-[0.98]">
+<div class="w-16 h-16 rounded-lg overflow-hidden bg-surface-container-low shrink-0 border border-outline/50">
+<img class="w-full h-full object-cover" data-alt="macro photo of stainless steel industrial bolts and fasteners neatly organized in a bright workspace" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRf8gGQkhKZ1me7lWtKDCZlSI5nvPfdlyD0g71K_eRczlCNLjREZFOGzxqTWHD5Z26rrNy3tO7pICyHy_E3LM9R6ueKSJ8wSbouoQGWNl_tM6XtNH2iQfi50lg_HY4xFloKT2SQJm50HUlyUsAyu611LEg1vpHwymYJJeYk6YAki8viaE21wvLH-fPjgGElXO6JaaEAMZDq2MLx42wW_YXvhB6RxpjkXbA77D6lzxuQ4PKlDu2rAUIisryZTTDqVvisQ7qx3112Amn"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-bold text-on-surface text-sm">不锈钢螺栓套装 (M12)</h4>
+<span class="text-xs font-black text-on-surface">5,200 VUV</span>
+</div>
+<p class="text-xs text-on-surface-variant mb-3">SKU: PP-F-2210 • 50件装</p>
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase">当前库存</span>
+<div class="flex items-center gap-2">
+<div class="w-24 h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[85%]"></div>
+</div>
+<span class="text-xs font-bold text-primary">21 盒</span>
+</div>
+</div>
+<button class="bg-primary text-white flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold shadow-md shadow-primary/20 active:opacity-80">
+<span class="material-symbols-outlined text-sm">add</span>
+                            快速添加
+                        </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Order Summary Drawer (Pseudo-floating) -->
+<div class="mt-8 mb-4 p-4 bg-primary-container rounded-2xl border border-primary/20">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">shopping_cart</span>
+<span class="font-bold text-on-primary-container">待生成订单列表 (2)</span>
+</div>
+<span class="text-xs font-black text-primary">编辑清单</span>
+</div>
+<div class="flex justify-between items-center border-t border-primary/10 pt-4">
+<div>
+<p class="text-[10px] font-bold text-on-primary-container/60 uppercase">预计总金额</p>
+<p class="text-lg font-black text-on-primary-container">26,250 VUV</p>
+</div>
+<button class="bg-[#007E85] text-white px-6 py-3 rounded-xl font-extrabold shadow-xl shadow-primary/30 flex items-center gap-2 transition-transform active:scale-95">
+                    生成采购单
+                    <span class="material-symbols-outlined text-sm">description</span>
+</button>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-[#DAE6E7] dark:border-slate-800 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] h-16 flex justify-around items-center px-4 pb-safe z-50">
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 px-3 py-1 transition-transform active:scale-95 hover:text-[#007E85]">
+<span class="material-symbols-outlined">build</span>
+<span class="font-['Manrope'] font-bold text-[10px] uppercase tracking-wider">维修</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 px-3 py-1 transition-transform active:scale-95 hover:text-[#007E85]">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-['Manrope'] font-bold text-[10px] uppercase tracking-wider">库存</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#007E85] dark:text-[#007E85] bg-[#007E85]/10 rounded-xl px-3 py-1 transition-transform active:scale-95">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-['Manrope'] font-bold text-[10px] uppercase tracking-wider">供应商</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 px-3 py-1 transition-transform active:scale-95 hover:text-[#007E85]">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-['Manrope'] font-bold text-[10px] uppercase tracking-wider">财务</span>
+</div>
+</nav>
+<!-- Floating Action Button (Contextual: Print/Export) -->
+<button class="fixed bottom-24 right-6 w-14 h-14 bg-primary text-white rounded-full shadow-2xl shadow-primary/40 flex items-center justify-center z-40 active:scale-90 transition-transform">
+<span class="material-symbols-outlined">print</span>
+</button>
+</body></html>

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>维修管理 - 供应商管理</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-highest": "#dae6e7",
+              "inverse-surface": "#222a34",
+              "secondary-fixed": "#c6e9ec",
+              "tertiary-container": "#ffdbc8",
+              "secondary-fixed-dim": "#aacdd0",
+              "surface-tint": "#007e85",
+              "error": "#ef4444",
+              "outline-variant": "#bdc9c9",
+              "primary-fixed-dim": "#78d5dc",
+              "on-primary-container": "#002022",
+              "secondary-container": "#c3e6e9",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "on-error": "#ffffff",
+              "primary-container": "#e0f2f3",
+              "on-secondary": "#ffffff",
+              "on-surface-variant": "#5e8a8d",
+              "inverse-on-surface": "#f9fafa",
+              "surface-container-low": "#f6fafa",
+              "on-primary": "#ffffff",
+              "tertiary-fixed": "#ffdbc8",
+              "on-primary-fixed": "#002022",
+              "surface-container-high": "#ebefee",
+              "on-surface": "#101818",
+              "on-secondary-fixed": "#002022",
+              "tertiary": "#f7a072",
+              "on-tertiary-fixed-variant": "#71370c",
+              "on-tertiary-fixed": "#321200",
+              "secondary": "#436466",
+              "outline": "#dae6e7",
+              "surface-container": "#ffffff",
+              "primary-fixed": "#94f1f9",
+              "on-primary-fixed-variant": "#004f54",
+              "surface": "#f9fafa",
+              "surface-bright": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "surface-variant": "#f0f4f4",
+              "on-tertiary-container": "#321200",
+              "tertiary-fixed-dim": "#ffb68b",
+              "inverse-primary": "#78d5dc",
+              "surface-dim": "#d7dbdb",
+              "on-background": "#101818",
+              "primary": "#007e85",
+              "error-container": "#fee2e2",
+              "on-error-container": "#93000a",
+              "background": "#f9fafa",
+              "on-secondary-container": "#48686b",
+              "on-tertiary": "#ffffff"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-[#DAE6E7] dark:border-slate-800 shadow-sm flex items-center justify-between px-4 h-14">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#007E85] dark:text-[#00A3AD] active:opacity-70 transition-opacity cursor-pointer">arrow_back</span>
+<h1 class="font-manrope font-extrabold text-xl tracking-tight text-[#007E85] dark:text-[#00A3AD]">维修管理</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#5E8A8D] hover:bg-[#F9FAFA] p-2 rounded-full transition-colors cursor-pointer">search</span>
+<span class="material-symbols-outlined text-[#5E8A8D] hover:bg-[#F9FAFA] p-2 rounded-full transition-colors cursor-pointer">filter_list</span>
+</div>
+</header>
+<main class="pt-20 px-4 max-w-5xl mx-auto space-y-6">
+<!-- Metrics Section (Editorial Style) -->
+<section class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border-l-4 border-primary">
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">供应商总数</p>
+<div class="flex items-end gap-2 mt-1">
+<span class="text-2xl font-extrabold tracking-tight">24</span>
+<span class="text-primary text-xs font-bold mb-1">+2 本月</span>
+</div>
+</div>
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border-l-4 border-tertiary">
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">待入库订单</p>
+<div class="flex items-end gap-2 mt-1">
+<span class="text-2xl font-extrabold tracking-tight">08</span>
+<span class="text-tertiary text-xs font-bold mb-1">需关注</span>
+</div>
+</div>
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border-l-4 border-secondary">
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">本月采购额</p>
+<div class="flex items-end gap-2 mt-1">
+<span class="text-2xl font-extrabold tracking-tight">¥12.8k</span>
+</div>
+</div>
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border-l-4 border-on-secondary-container">
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">交付准时率</p>
+<div class="flex items-end gap-2 mt-1">
+<span class="text-2xl font-extrabold tracking-tight">98%</span>
+</div>
+</div>
+</section>
+<!-- Main Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Left Column: Supplier Directory -->
+<section class="lg:col-span-2 space-y-4">
+<div class="flex items-center justify-between mb-2">
+<h2 class="text-lg font-extrabold tracking-tight text-on-surface">主要供应商</h2>
+<button class="text-primary text-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">add_circle</span>
+                        新增供应商
+                    </button>
+</div>
+<!-- Supplier Cards -->
+<div class="space-y-3">
+<!-- Supplier 1 -->
+<div class="bg-surface-container p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow group cursor-pointer border border-transparent hover:border-outline">
+<div class="flex items-start justify-between">
+<div class="flex gap-4">
+<div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">precision_manufacturing</span>
+</div>
+<div>
+<h3 class="font-bold text-on-surface">宏达精密零件有限公司</h3>
+<div class="flex items-center gap-3 mt-1">
+<span class="flex items-center gap-1 text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">person</span>
+                                            张建国 (经理)
+                                        </span>
+<span class="flex items-center gap-1 text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">call</span>
+                                            138-9988-7766
+                                        </span>
+</div>
+</div>
+</div>
+<span class="bg-primary/10 text-primary px-2 py-1 rounded text-[10px] font-extrabold uppercase">核心伙伴</span>
+</div>
+<div class="mt-4 pt-4 border-t border-surface-variant flex items-center justify-between">
+<div class="flex gap-2">
+<span class="text-[10px] font-bold text-on-secondary-container bg-secondary-container px-2 py-0.5 rounded-full">液压系统</span>
+<span class="text-[10px] font-bold text-on-secondary-container bg-secondary-container px-2 py-0.5 rounded-full">传动轴</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform">chevron_right</span>
+</div>
+</div>
+<!-- Supplier 2 -->
+<div class="bg-surface-container p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow group cursor-pointer border border-transparent hover:border-outline">
+<div class="flex items-start justify-between">
+<div class="flex gap-4">
+<div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</div>
+<div>
+<h3 class="font-bold text-on-surface">捷力电气供应部</h3>
+<div class="flex items-center gap-3 mt-1">
+<span class="flex items-center gap-1 text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">person</span>
+                                            李美丽
+                                        </span>
+<span class="flex items-center gap-1 text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">call</span>
+                                            135-0011-2233
+                                        </span>
+</div>
+</div>
+</div>
+<span class="bg-secondary-container text-on-secondary-container px-2 py-1 rounded text-[10px] font-extrabold uppercase">普通</span>
+</div>
+<div class="mt-4 pt-4 border-t border-surface-variant flex items-center justify-between">
+<div class="flex gap-2">
+<span class="text-[10px] font-bold text-on-secondary-container bg-secondary-container px-2 py-0.5 rounded-full">传感器</span>
+<span class="text-[10px] font-bold text-on-secondary-container bg-secondary-container px-2 py-0.5 rounded-full">线束</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform">chevron_right</span>
+</div>
+</div>
+<!-- Supplier 3 -->
+<div class="bg-surface-container p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow group cursor-pointer border border-transparent hover:border-outline">
+<div class="flex items-start justify-between">
+<div class="flex gap-4">
+<div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">architecture</span>
+</div>
+<div>
+<h3 class="font-bold text-on-surface">森马五金模具厂</h3>
+<div class="flex items-center gap-3 mt-1">
+<span class="flex items-center gap-1 text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">person</span>
+                                            王大力
+                                        </span>
+<span class="flex items-center gap-1 text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">call</span>
+                                            021-66554433
+                                        </span>
+</div>
+</div>
+</div>
+<span class="bg-tertiary-container text-on-tertiary-container px-2 py-1 rounded text-[10px] font-extrabold uppercase">待评估</span>
+</div>
+<div class="mt-4 pt-4 border-t border-surface-variant flex items-center justify-between">
+<div class="flex gap-2">
+<span class="text-[10px] font-bold text-on-secondary-container bg-secondary-container px-2 py-0.5 rounded-full">铸铁件</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform">chevron_right</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Column: Order History -->
+<section class="space-y-4">
+<div class="flex items-center justify-between mb-2">
+<h2 class="text-lg font-extrabold tracking-tight text-on-surface">历史订单</h2>
+<span class="text-on-surface-variant text-xs font-medium cursor-pointer hover:underline">查看全部</span>
+</div>
+<div class="bg-surface-container rounded-xl shadow-sm overflow-hidden border border-outline-variant">
+<!-- History List Item -->
+<div class="p-4 border-b border-surface-variant hover:bg-surface-variant/50 transition-colors">
+<div class="flex justify-between items-start mb-2">
+<span class="text-[10px] font-extrabold text-[#078832] bg-[#078832]/10 px-2 py-0.5 rounded">已交付</span>
+<span class="text-xs text-on-surface-variant">2023-10-24</span>
+</div>
+<h4 class="text-sm font-bold text-on-surface">PO-20231024-01</h4>
+<p class="text-xs text-on-surface-variant mt-1">供应商: 宏达精密零件有限公司</p>
+<div class="mt-3 flex justify-between items-center">
+<span class="text-sm font-extrabold text-on-surface">¥4,200.00</span>
+<button class="text-xs font-bold text-primary">详情</button>
+</div>
+</div>
+<!-- History List Item -->
+<div class="p-4 border-b border-surface-variant hover:bg-surface-variant/50 transition-colors">
+<div class="flex justify-between items-start mb-2">
+<span class="text-[10px] font-extrabold text-tertiary bg-tertiary-container px-2 py-0.5 rounded">运输中</span>
+<span class="text-xs text-on-surface-variant">2023-10-22</span>
+</div>
+<h4 class="text-sm font-bold text-on-surface">PO-20231022-04</h4>
+<p class="text-xs text-on-surface-variant mt-1">供应商: 捷力电气供应部</p>
+<div class="mt-3 flex justify-between items-center">
+<span class="text-sm font-extrabold text-on-surface">¥1,850.00</span>
+<button class="text-xs font-bold text-primary">详情</button>
+</div>
+</div>
+<!-- History List Item -->
+<div class="p-4 hover:bg-surface-variant/50 transition-colors">
+<div class="flex justify-between items-start mb-2">
+<span class="text-[10px] font-extrabold text-[#078832] bg-[#078832]/10 px-2 py-0.5 rounded">已交付</span>
+<span class="text-xs text-on-surface-variant">2023-10-15</span>
+</div>
+<h4 class="text-sm font-bold text-on-surface">PO-20231015-12</h4>
+<p class="text-xs text-on-surface-variant mt-1">供应商: 宏达精密零件有限公司</p>
+<div class="mt-3 flex justify-between items-center">
+<span class="text-sm font-extrabold text-on-surface">¥6,500.00</span>
+<button class="text-xs font-bold text-primary">详情</button>
+</div>
+</div>
+</div>
+<!-- Featured Image Card -->
+<div class="relative h-40 rounded-xl overflow-hidden shadow-sm group">
+<img class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="industrial warehouse interior with organized metal racks and high-tech components in a clean modern factory setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDO1y45dhm0c7lviKNvmKlfJLMDNQR-tSd4iYqrw2avTM9EUe2Vlqtsu9juApNo5jFeio75CWRT_YSAG8juT3jZi_KikHwhr-kFPXyCL9O4e18uqo6UyV519qkUNrUwq7LSbYmbdCekr2EdRoeaUYFY6qaE9v6gEltaW6hXm5OkLOZNWuE9pS1M_XTHCXdWI9_DZNFbwSsT9iiTRjjtt9qnYWTZxeRNM31jPPrNHS8pd2y7qZNMogRXnwq7JrG8obqNn-Jgul09Ze5o"/>
+<div class="absolute inset-0 bg-gradient-to-t from-[#002022]/80 to-transparent flex flex-col justify-end p-4">
+<p class="text-white font-extrabold text-lg">库存预警</p>
+<p class="text-white/80 text-xs">3类常用备件库存低于阈值，建议尽快采购。</p>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- FAB -->
+<button class="fixed right-6 bottom-24 w-14 h-14 bg-[#007E85] text-white rounded-full shadow-xl shadow-[#007E85]/40 flex items-center justify-center active:scale-95 transition-transform z-40">
+<span class="material-symbols-outlined text-3xl">add_shopping_cart</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-2 py-3 pb-safe bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-[#DAE6E7] dark:border-slate-800 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50">
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 px-3 py-1 hover:text-[#007E85] transition-all cursor-pointer active:scale-95 duration-200">
+<span class="material-symbols-outlined mb-1">handyman</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">工作台</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 px-3 py-1 hover:text-[#007E85] transition-all cursor-pointer active:scale-95 duration-200">
+<span class="material-symbols-outlined mb-1">inventory_2</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">库存</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 px-3 py-1 hover:text-[#007E85] transition-all cursor-pointer active:scale-95 duration-200">
+<span class="material-symbols-outlined mb-1">payments</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">财务</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#007E85] dark:text-[#00A3AD] bg-[#007E85]/10 dark:bg-[#007E85]/20 rounded-xl px-3 py-1 cursor-pointer active:scale-95 duration-200">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">客户</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 px-3 py-1 hover:text-[#007E85] transition-all cursor-pointer active:scale-95 duration-200">
+<span class="material-symbols-outlined mb-1">settings</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">设置</span>
+</div>
+</nav>
+</body></html>

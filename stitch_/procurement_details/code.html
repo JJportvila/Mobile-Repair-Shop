@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-highest": "#dae6e7",
+              "surface-variant": "#f0f4f4",
+              "surface-container-lowest": "#ffffff",
+              "error-container": "#fee2e2",
+              "on-secondary-fixed": "#002022",
+              "surface-tint": "#007e85",
+              "on-tertiary": "#ffffff",
+              "inverse-on-surface": "#f9fafa",
+              "on-tertiary-container": "#321200",
+              "on-secondary": "#ffffff",
+              "on-background": "#101818",
+              "surface-dim": "#d7dbdb",
+              "surface-container": "#ffffff",
+              "on-primary-fixed-variant": "#004f54",
+              "on-surface-variant": "#5e8a8d",
+              "primary-fixed-dim": "#78d5dc",
+              "inverse-primary": "#78d5dc",
+              "tertiary-container": "#ffdbc8",
+              "on-primary": "#ffffff",
+              "outline-variant": "#bdc9c9",
+              "outline": "#dae6e7",
+              "surface-container-low": "#f6fafa",
+              "secondary": "#436466",
+              "on-tertiary-fixed-variant": "#71370c",
+              "on-secondary-container": "#48686b",
+              "surface": "#f9fafa",
+              "error": "#ef4444",
+              "surface-bright": "#ffffff",
+              "primary-fixed": "#94f1f9",
+              "on-tertiary-fixed": "#321200",
+              "on-error-container": "#93000a",
+              "tertiary-fixed": "#ffdbc8",
+              "on-surface": "#101818",
+              "secondary-fixed": "#c6e9ec",
+              "tertiary": "#f7a072",
+              "secondary-fixed-dim": "#aacdd0",
+              "primary-container": "#e0f2f3",
+              "on-primary-container": "#002022",
+              "background": "#f9fafa",
+              "on-error": "#ffffff",
+              "surface-container-high": "#ebefee",
+              "primary": "#007e85",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "on-primary-fixed": "#002022",
+              "inverse-surface": "#222a34",
+              "secondary-container": "#c3e6e9",
+              "tertiary-fixed-dim": "#ffb68b"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="bg-white/90 backdrop-blur-md fixed top-0 w-full z-50 border-b border-[#DAE6E7] shadow-sm flex items-center justify-between px-4 h-16 w-full">
+<div class="flex items-center gap-4">
+<button class="text-[#007E85] active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="font-manrope font-extrabold text-xl tracking-tight text-[#101818]">PO-882934</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-[#5E8A8D] hover:bg-[#DAE6E7]/50 rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</header>
+<main class="pt-20 px-4 space-y-6">
+<!-- Header Section (Bento Style) -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="bg-surface-container p-6 rounded-xl shadow-sm border-l-4 border-primary">
+<div class="flex justify-between items-start mb-4">
+<div>
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">采购订单状态</p>
+<span class="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wide">
+                            已交付
+                        </span>
+</div>
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="verified">verified</span>
+</div>
+<div class="space-y-1">
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">总金额</p>
+<h2 class="text-3xl font-extrabold text-on-surface tracking-tight">4,200 VUV</h2>
+</div>
+</div>
+<div class="bg-surface-container p-6 rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-variant flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+</div>
+<div>
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">下单日期</p>
+<p class="text-lg font-bold text-on-surface">2023-10-24</p>
+</div>
+</div>
+<div class="mt-4 pt-4 border-t border-outline flex items-center gap-2 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-sm" data-icon="info">info</span>
+<span>瓦努阿图 维拉港中心仓库</span>
+</div>
+</div>
+</section>
+<!-- Supplier Info Card -->
+<section class="bg-surface-container rounded-xl shadow-sm overflow-hidden">
+<div class="p-4 bg-surface-variant/50 border-b border-outline">
+<h3 class="text-sm font-extrabold uppercase tracking-wider text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-lg" data-icon="factory">factory</span>
+                    供应商信息
+                </h3>
+</div>
+<div class="p-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
+<div class="space-y-4">
+<div>
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">公司名称</p>
+<p class="text-lg font-bold text-on-surface">宏达精密零件有限公司</p>
+</div>
+<div class="flex gap-8">
+<div>
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">联系人</p>
+<p class="font-bold text-on-surface">张建国</p>
+</div>
+<div>
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">联系电话</p>
+<p class="font-bold text-primary">+678 123 4567</p>
+</div>
+</div>
+</div>
+<button class="flex items-center justify-center gap-2 bg-primary text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-primary/20 active:scale-95 transition-all">
+<span class="material-symbols-outlined" data-icon="call">call</span>
+                    立即联系
+                </button>
+</div>
+</section>
+<!-- Parts List Section -->
+<section class="space-y-4">
+<div class="flex items-center justify-between px-2">
+<h3 class="text-lg font-extrabold tracking-tight text-on-surface">采购清单</h3>
+<span class="text-xs font-bold text-on-surface-variant">2 个项目</span>
+</div>
+<div class="space-y-3">
+<!-- Item 1 -->
+<div class="bg-surface-container p-4 rounded-xl shadow-sm flex items-center gap-4">
+<div class="w-16 h-16 rounded-lg bg-surface-variant flex-shrink-0 relative overflow-hidden">
+<img alt="iPhone Screen" class="w-full h-full object-cover" data-alt="close-up of a high-end smartphone screen replacement component with delicate flex cables on a clean white background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCS_i38IYjFtIZJZaA_YbgeJdm2lf9H7ih54rZVrfJ7CaMSM6DcFjyKdfMRpUh2Wn0c8_TwrVqXafMJQJdCbGeukJ9pz1APO2X_xr8ZbjJT2o9rj81NfCY5fC9pH4pP8EOP2ZvkeadUNACjGKAbCz6M6VPEH6QlovValrGKbmUG2tXQ2Ak443KV9N8DOh8XXO3Y-3M3Yjw5HkusFAdfuJe5zashEm8eJmLJLeFddCOOm8GOuO0h6FkQnaIHjq6Nda4cj_jf0jahSgKS"/>
+</div>
+<div class="flex-grow">
+<h4 class="font-bold text-on-surface leading-tight">iPhone 14 Pro Screen Assembly</h4>
+<p class="text-xs text-on-surface-variant mt-1">单价: 1,500 VUV</p>
+</div>
+<div class="text-right">
+<p class="text-sm font-extrabold text-on-surface">x2</p>
+<p class="text-sm font-bold text-primary">3,000 VUV</p>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="bg-surface-container p-4 rounded-xl shadow-sm flex items-center gap-4">
+<div class="w-16 h-16 rounded-lg bg-surface-variant flex-shrink-0 relative overflow-hidden">
+<img alt="USB-C Port" class="w-full h-full object-cover" data-alt="macro photography of several universal USB-C charging ports neatly arranged on a high-tech electronic workshop surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBT4u1VqpIQ6QGFsAFDa6ZN7fYTyQR2QP5h1kOFmKZtheq_BfqQeZA0RIz4LeIrwaxQmmGq2cvnaCrDuCFLfVEOYj1X-3JgHoMq1wwS8ayqiC84kRvSHrsas9_xHlekd2AuURHSZlJhXJmYMCC8_u4pZ-7_bZZkBM4KRpCV3wDf4P4yJJQRbZzzmwhvBQRISZ3bsDacc_5eoHCOE6Ukcceqsusqcziyy7QcqV_cLoy-86SCqIBb9cRRRZb-NnU__zHLd7vrgECNT9Vt"/>
+</div>
+<div class="flex-grow">
+<h4 class="font-bold text-on-surface leading-tight">Universal USB-C Port</h4>
+<p class="text-xs text-on-surface-variant mt-1">单价: 120 VUV</p>
+</div>
+<div class="text-right">
+<p class="text-sm font-extrabold text-on-surface">x10</p>
+<p class="text-sm font-bold text-primary">1,200 VUV</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Logistics & Inbound -->
+<section class="bg-surface-container rounded-xl shadow-sm overflow-hidden mb-8">
+<div class="p-4 bg-surface-variant/50 border-b border-outline">
+<h3 class="text-sm font-extrabold uppercase tracking-wider text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-lg" data-icon="local_shipping">local_shipping</span>
+                    物流与入库信息
+                </h3>
+</div>
+<div class="p-6 space-y-6">
+<!-- Timeline/Inbound Info -->
+<div class="relative pl-8 space-y-8 before:content-[''] before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[2px] before:bg-outline">
+<div class="relative">
+<div class="absolute -left-8 w-6 h-6 rounded-full bg-primary flex items-center justify-center ring-4 ring-white">
+<span class="material-symbols-outlined text-[14px] text-white" data-icon="inventory_2" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+</div>
+<div>
+<h4 class="font-bold text-on-surface">已入库 - Zone B-42</h4>
+<p class="text-xs text-on-surface-variant mt-1">物品已成功登记并分类至 B-42 货位。</p>
+<div class="mt-2 flex items-center gap-4 text-xs">
+<span class="flex items-center gap-1 font-bold text-on-surface">
+<span class="material-symbols-outlined text-sm" data-icon="person">person</span>
+                                    Admin User
+                                </span>
+<span class="text-on-surface-variant">2023-10-25 09:30</span>
+</div>
+</div>
+</div>
+<div class="relative">
+<div class="absolute -left-8 w-6 h-6 rounded-full bg-surface-variant flex items-center justify-center ring-4 ring-white">
+<span class="material-symbols-outlined text-[14px] text-on-surface-variant" data-icon="check_circle">check_circle</span>
+</div>
+<div>
+<h4 class="font-bold text-on-surface-variant">物流签收</h4>
+<p class="text-xs text-on-surface-variant mt-1">包裹已在维拉港配送中心完成签收。</p>
+<p class="text-[10px] text-on-surface-variant font-mono mt-1">TRACKING: VUV-9982-X2</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- FAB for printing (only on relevant screen) -->
+<button class="fixed bottom-24 right-6 w-14 h-14 bg-primary text-white rounded-full shadow-xl shadow-primary/40 flex items-center justify-center active:scale-90 transition-all z-40">
+<span class="material-symbols-outlined" data-icon="print">print</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-lg border-t border-[#DAE6E7] shadow-xl shadow-[#007E85]/10 flex justify-around items-center px-2 pb-4 pt-2 z-50">
+<a class="flex flex-col items-center justify-center bg-[#007E85]/10 text-[#007E85] rounded-xl px-3 py-1 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="shopping_cart" style="font-variation-settings: 'FILL' 1;">shopping_cart</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Orders</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] px-3 py-1 hover:text-[#007E85] transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Inventory</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] px-3 py-1 hover:text-[#007E85] transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Suppliers</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] px-3 py-1 hover:text-[#007E85] transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Settings</span>
+</a>
+</nav>
+</body></html>

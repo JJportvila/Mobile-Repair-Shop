@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Share Report - Vila Port Repair</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-surface": "#101818",
+                        "on-secondary-fixed": "#002022",
+                        "background": "#f9fafa",
+                        "secondary-fixed": "#c6e9ec",
+                        "outline": "#dae6e7",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f6fafa",
+                        "surface-tint": "#007e85",
+                        "surface-container": "#ffffff",
+                        "on-tertiary-fixed-variant": "#71370c",
+                        "secondary-container": "#c3e6e9",
+                        "on-primary-fixed": "#002022",
+                        "surface-bright": "#ffffff",
+                        "secondary-fixed-dim": "#aacdd0",
+                        "surface-container-highest": "#dae6e7",
+                        "on-primary": "#ffffff",
+                        "primary-fixed": "#94f1f9",
+                        "tertiary-fixed-dim": "#ffb68b",
+                        "surface-dim": "#d7dbdb",
+                        "on-secondary-fixed-variant": "#2b4c4f",
+                        "on-primary-fixed-variant": "#004f54",
+                        "tertiary": "#f7a072",
+                        "primary-container": "#e0f2f3",
+                        "outline-variant": "#bdc9c9",
+                        "inverse-primary": "#78d5dc",
+                        "error": "#ef4444",
+                        "on-surface-variant": "#5e8a8d",
+                        "surface-container-high": "#ebefee",
+                        "on-secondary-container": "#48686b",
+                        "secondary": "#436466",
+                        "on-primary-container": "#002022",
+                        "on-tertiary-container": "#321200",
+                        "error-container": "#fee2e2",
+                        "tertiary-container": "#ffdbc8",
+                        "primary": "#007e85",
+                        "tertiary-fixed": "#ffdbc8",
+                        "surface-variant": "#f0f4f4",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed": "#321200",
+                        "inverse-surface": "#222a34",
+                        "inverse-on-surface": "#f9fafa",
+                        "primary-fixed-dim": "#78d5dc",
+                        "on-background": "#101818",
+                        "surface": "#f9fafa",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-secondary": "#ffffff"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md font-manrope font-extrabold text-xl tracking-tight docked full-width top-0 sticky z-50 shadow-sm flex items-center w-full px-4 h-16">
+<button class="p-2 mr-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-[#007E85] dark:text-[#26A69A]">arrow_back</span>
+</button>
+<h1 class="text-[#101818] dark:text-[#F9FAFA] font-extrabold">Share Report</h1>
+</header>
+<main class="max-w-xl mx-auto px-4 py-6 space-y-8">
+<!-- PDF Preview Container -->
+<section class="relative group">
+<div class="bg-surface-container rounded-2xl shadow-xl overflow-hidden border border-outline/50 aspect-[1/1.414] flex flex-col">
+<!-- PDF Header -->
+<div class="p-6 border-b border-outline bg-surface-container-low flex justify-between items-start">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">build</span>
+</div>
+<span class="text-primary font-extrabold tracking-tight">Vila Repair Hub</span>
+</div>
+<p class="text-[10px] text-on-surface-variant leading-tight">Port Vila, Vanuatu<br/>Lini Highway, Efate</p>
+</div>
+<div class="text-right">
+<p class="text-[10px] font-bold text-primary uppercase tracking-widest">Repair Report</p>
+<p class="text-sm font-extrabold text-on-surface">#RO-8892</p>
+</div>
+</div>
+<!-- PDF Content -->
+<div class="p-8 flex-grow space-y-6">
+<div class="space-y-1">
+<p class="text-[10px] uppercase font-bold text-on-surface-variant tracking-wider">Client Details</p>
+<p class="text-lg font-bold text-on-surface">Johnathan Tavea</p>
+</div>
+<!-- Service Table -->
+<div class="space-y-3">
+<div class="flex justify-between border-b border-outline pb-2">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase">Description</span>
+<span class="text-[10px] font-bold text-on-surface-variant uppercase">Amount</span>
+</div>
+<div class="flex justify-between items-center py-1">
+<span class="text-xs font-medium text-on-surface">iPhone 14 Screen Replacement</span>
+<span class="text-xs font-bold text-on-surface">24,500 VUV</span>
+</div>
+<div class="flex justify-between items-center py-1">
+<span class="text-xs font-medium text-on-surface">Labor Charges</span>
+<span class="text-xs font-bold text-on-surface">5,000 VUV</span>
+</div>
+<div class="flex justify-between items-center py-1">
+<div class="flex items-center gap-1">
+<span class="text-xs font-medium text-on-surface">Tempered Glass</span>
+<span class="text-[9px] bg-tertiary-container text-on-tertiary-container px-1 rounded font-bold uppercase">Gift</span>
+</div>
+<span class="text-xs font-bold text-on-surface">0 VUV</span>
+</div>
+</div>
+<!-- Total -->
+<div class="pt-4 border-t-2 border-primary/20 flex justify-between items-end">
+<span class="text-xs font-bold text-on-surface uppercase">Total Payable</span>
+<span class="text-xl font-extrabold text-primary tracking-tight">29,500 VUV</span>
+</div>
+</div>
+<!-- PDF Footer -->
+<div class="p-6 mt-auto bg-surface-container-lowest flex justify-between items-center">
+<div class="space-y-1">
+<p class="text-[9px] text-on-surface-variant">Generated on: Oct 24, 2023</p>
+<p class="text-[9px] text-on-surface-variant font-medium">Verified by Vila Port Repair</p>
+</div>
+<div class="w-12 h-12 bg-white p-1 border border-outline rounded flex items-center justify-center">
+<img alt="Verification QR Code" class="w-full h-full grayscale opacity-80" data-alt="minimalist black and white qr code for digital verification on a clean document background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxvMy5lwhVePfK4mDTxWO9yPzZ-qKLe41bDsERoh5ddotaLOiFbiqOZOrwTz99WY5hHSynV3PfjYnSc7TLONwAtlJITM1SNw-1DfFtWqxkiPgvLWAtiDZLPCaqQUabQBGQkVOMjNhF5mvFTYhGtfpw9bmWenY0MaMo-ERjStgfrEV7O9XKEFYRjpWdwe3nrzlZr8CFXiMdUGCRDkJQ_L9Lso0AB_-D5exyfDEsk5KfwcRoAJFKCLvDSwCh292ClaKKDLgjy12bIrsb"/>
+</div>
+</div>
+</div>
+<!-- Magnify Overlay Suggestion -->
+<div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none flex items-center justify-center">
+<div class="bg-white/80 backdrop-blur px-4 py-2 rounded-full shadow-lg flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">visibility</span>
+<span class="text-xs font-bold text-primary">Tap to Expand</span>
+</div>
+</div>
+</section>
+<!-- Report Details Section -->
+<div class="bg-white rounded-2xl p-5 shadow-sm border border-outline/30 space-y-4">
+<h3 class="text-sm font-bold text-on-surface uppercase tracking-widest flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-lg">description</span>
+                File Information
+            </h3>
+<div class="grid grid-cols-1 gap-3">
+<div class="flex items-center justify-between p-3 bg-background rounded-xl">
+<div class="flex flex-col">
+<span class="text-[10px] text-on-surface-variant font-bold uppercase tracking-tighter">File Name</span>
+<span class="text-sm font-semibold text-on-surface truncate">Repair_Report_RO-8892.pdf</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant/40">more_vert</span>
+</div>
+<div class="flex gap-3">
+<div class="flex-1 flex flex-col p-3 bg-background rounded-xl">
+<span class="text-[10px] text-on-surface-variant font-bold uppercase tracking-tighter">Size</span>
+<span class="text-sm font-semibold text-on-surface">1.2 MB</span>
+</div>
+<div class="flex-1 flex flex-col p-3 bg-background rounded-xl">
+<span class="text-[10px] text-on-surface-variant font-bold uppercase tracking-tighter">Created</span>
+<span class="text-sm font-semibold text-on-surface">Oct 24, 2023</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="grid grid-cols-1 gap-4">
+<button class="w-full h-14 bg-[#25D366] text-white rounded-xl font-bold flex items-center justify-center gap-3 shadow-lg shadow-[#25D366]/20 active:scale-[0.98] transition-all">
+<img alt="WA" class="w-6 h-6 invert brightness-0" data-alt="clean white whatsapp social media icon vector on green background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTzIzbDqZhJbPvqde2ljj2bpaseyV7BR9x8AHrSP7Fdf4tqkEAdSTp4fSQM8nt6NK7OduA13je1iiuL5qDko6nL0BsAPbAM9R4pf89uUUpYsBYXaB4av6523sCvrUIKz6ZnEqgSos_GKxATgKUTwzYj55vM0oXjn_MASiyORKCr8jJcIAgi51ie1dDvq-hoEE_Lm4ojI4SUoMKMyZlLu96pDvnlI4gbpI06_4JLjMgncuLvqsEsW8uSk0YxU-dw4IvcleFGoyEKdXR"/>
+                Share via WhatsApp
+            </button>
+<button class="w-full h-14 bg-primary text-white rounded-xl font-bold flex items-center justify-center gap-3 shadow-lg shadow-primary/20 active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">mail</span>
+                Send via Email
+            </button>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 rounded-t-xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-[#DAE6E7] dark:border-slate-800 shadow-[0_-4px_12px_rgba(0,126,133,0.15)] flex justify-around items-center px-6 pb-6 pt-3">
+<!-- WhatsApp -->
+<button class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 px-4 py-1 hover:text-[#007E85] transition-colors group active:scale-90 duration-150 ease-in-out">
+<span class="material-symbols-outlined mb-1">share</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">WhatsApp</span>
+</button>
+<!-- Email (Active for contextual sharing intent) -->
+<button class="flex flex-col items-center justify-center bg-[#007E85]/10 text-[#007E85] dark:bg-[#007E85]/20 dark:text-[#26A69A] rounded-xl px-4 py-1 active:scale-90 duration-150 ease-in-out">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">mail</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">Email</span>
+</button>
+<!-- Download -->
+<button class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 px-4 py-1 hover:text-[#007E85] transition-colors group active:scale-90 duration-150 ease-in-out">
+<span class="material-symbols-outlined mb-1">download</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">Download</span>
+</button>
+</nav>
+<!-- Floating Action Button (FAB) - Suppressed per design rules for Detail/Transactional screens, but keeping primary intent clear with buttons -->
+</body></html>

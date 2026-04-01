@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary": "#ffffff",
+              "inverse-on-surface": "#f9fafa",
+              "tertiary-fixed-dim": "#ffb68b",
+              "on-error": "#ffffff",
+              "on-error-container": "#93000a",
+              "surface-container-low": "#f6fafa",
+              "on-secondary-container": "#48686b",
+              "surface-bright": "#ffffff",
+              "on-tertiary-fixed-variant": "#71370c",
+              "on-primary-fixed": "#002022",
+              "surface": "#f9fafa",
+              "on-surface": "#101818",
+              "primary": "#007e85",
+              "on-tertiary-fixed": "#321200",
+              "error": "#ef4444",
+              "error-container": "#fee2e2",
+              "on-tertiary": "#ffffff",
+              "on-surface-variant": "#5e8a8d",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "surface-variant": "#f0f4f4",
+              "on-background": "#101818",
+              "inverse-surface": "#222a34",
+              "outline-variant": "#bdc9c9",
+              "on-primary-container": "#002022",
+              "on-secondary": "#ffffff",
+              "secondary": "#436466",
+              "on-secondary-fixed": "#002022",
+              "surface-dim": "#d7dbdb",
+              "surface-container-highest": "#dae6e7",
+              "surface-container-high": "#ebefee",
+              "secondary-fixed-dim": "#aacdd0",
+              "surface-container-lowest": "#ffffff",
+              "outline": "#dae6e7",
+              "surface-container": "#ffffff",
+              "primary-container": "#e0f2f3",
+              "primary-fixed": "#94f1f9",
+              "on-tertiary-container": "#321200",
+              "surface-tint": "#007e85",
+              "secondary-fixed": "#c6e9ec",
+              "on-primary-fixed-variant": "#004f54",
+              "secondary-container": "#c3e6e9",
+              "inverse-primary": "#78d5dc",
+              "tertiary-fixed": "#ffdbc8",
+              "background": "#f9fafa",
+              "tertiary": "#f7a072",
+              "tertiary-container": "#ffdbc8",
+              "primary-fixed-dim": "#78d5dc"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md fixed top-0 w-full z-50 border-b border-outline shadow-sm">
+<div class="flex items-center justify-between px-4 h-16 w-full">
+<div class="flex items-center gap-4">
+<button class="text-primary hover:bg-surface-variant transition-colors p-2 rounded-full active:scale-95 duration-200">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="text-on-surface font-extrabold text-xl tracking-tight">Send Repair Report</h1>
+</div>
+<button class="text-on-surface-variant hover:bg-surface-variant p-2 rounded-full">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</header>
+<main class="flex-grow pt-20 pb-24 px-4 overflow-y-auto">
+<!-- Form Section -->
+<div class="space-y-6 max-w-lg mx-auto">
+<!-- Recipient -->
+<div class="space-y-2">
+<label class="text-on-surface-variant text-[12px] font-bold uppercase tracking-wider ml-1">收件人 / Recipient</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-on-surface-variant text-xl">alternate_email</span>
+</div>
+<input class="w-full bg-surface-container border-outline rounded-xl py-3 pl-11 pr-4 focus:ring-2 focus:ring-primary focus:border-transparent transition-all font-medium text-on-surface" type="email" value="jean.pierre@email.vu"/>
+</div>
+</div>
+<!-- Subject -->
+<div class="space-y-2">
+<label class="text-on-surface-variant text-[12px] font-bold uppercase tracking-wider ml-1">主题 / Subject</label>
+<div class="relative">
+<input class="w-full bg-surface-container border-outline rounded-xl py-3 px-4 focus:ring-2 focus:ring-primary focus:border-transparent transition-all font-medium text-on-surface" type="text" value="Your Repair Report for RO-8892"/>
+</div>
+</div>
+<!-- Message Body -->
+<div class="space-y-2">
+<label class="text-on-surface-variant text-[12px] font-bold uppercase tracking-wider ml-1">正文 / Message</label>
+<div class="bg-surface-container border border-outline rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-primary transition-all">
+<textarea class="w-full bg-transparent border-none p-4 focus:ring-0 text-on-surface text-sm leading-relaxed resize-none" rows="12">你好 / Hello,
+
+您的设备 (维修单号: RO-8892) 已维修完成，可以前来领取。
+Your device (Repair Order: RO-8892) is now ready for pickup.
+
+附件中包含详细的维修报告。
+Attached is the detailed repair report for your records.
+
+如有任何疑问，请随时与我们联系。
+If you have any questions, please feel free to contact us.
+
+顺颂商祺 / Best regards,
+Vila Port Repair Team</textarea>
+</div>
+</div>
+<!-- Attachment Section -->
+<div class="space-y-2">
+<label class="text-on-surface-variant text-[12px] font-bold uppercase tracking-wider ml-1">附件 / Attachments</label>
+<div class="bg-surface-container-low border border-dashed border-outline-variant rounded-xl p-4 flex items-center justify-between group hover:border-primary transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">description</span>
+</div>
+<div class="flex flex-col">
+<span class="text-on-surface font-bold text-sm">Repair_Report_RO-8892.pdf</span>
+<span class="text-on-surface-variant text-xs">1.2 MB • PDF Document</span>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-error transition-colors p-1">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Action Area -->
+<div class="fixed bottom-0 left-0 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-outline px-4 py-4 pb-safe z-50">
+<div class="max-w-lg mx-auto flex gap-3">
+<button class="flex-grow bg-primary text-on-primary h-[52px] rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-primary/20 active:scale-95 duration-150 transition-all">
+<span class="material-symbols-outlined text-xl">send</span>
+                发送邮件 / Send Email
+            </button>
+<button class="w-[52px] h-[52px] flex items-center justify-center rounded-xl bg-surface-container-highest text-on-surface-variant active:scale-95 duration-150 transition-all">
+<span class="material-symbols-outlined">attach_file</span>
+</button>
+</div>
+</div>
+<!-- Background Decor (Optional subtlety) -->
+<div class="fixed inset-0 pointer-events-none -z-10 opacity-30">
+<div class="absolute top-[-10%] right-[-10%] w-[40%] h-[30%] bg-primary-container rounded-full blur-[120px]"></div>
+<div class="absolute bottom-[20%] left-[-5%] w-[30%] h-[40%] bg-secondary-container rounded-full blur-[100px]"></div>
+</div>
+</body></html>

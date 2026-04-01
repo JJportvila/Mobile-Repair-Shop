@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Receipt Center | Vila Port Repair</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface": "#f9fafa",
+              "on-tertiary-container": "#321200",
+              "on-tertiary": "#ffffff",
+              "secondary-fixed": "#c6e9ec",
+              "on-secondary": "#ffffff",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "surface-container": "#ffffff",
+              "secondary-fixed-dim": "#aacdd0",
+              "error": "#ef4444",
+              "surface-bright": "#ffffff",
+              "on-background": "#101818",
+              "surface-container-low": "#f6fafa",
+              "inverse-on-surface": "#f9fafa",
+              "primary-container": "#e0f2f3",
+              "outline": "#dae6e7",
+              "surface-container-highest": "#dae6e7",
+              "on-primary-fixed": "#002022",
+              "on-surface": "#101818",
+              "inverse-surface": "#222a34",
+              "surface-dim": "#d7dbdb",
+              "primary-fixed": "#94f1f9",
+              "error-container": "#fee2e2",
+              "secondary-container": "#c3e6e9",
+              "on-error": "#ffffff",
+              "tertiary-fixed-dim": "#ffb68b",
+              "surface-container-lowest": "#ffffff",
+              "on-surface-variant": "#5e8a8d",
+              "on-primary-fixed-variant": "#004f54",
+              "inverse-primary": "#78d5dc",
+              "tertiary-container": "#ffdbc8",
+              "on-error-container": "#93000a",
+              "surface-tint": "#007e85",
+              "primary": "#007e85",
+              "tertiary-fixed": "#ffdbc8",
+              "tertiary": "#f7a072",
+              "on-secondary-container": "#48686b",
+              "secondary": "#436466",
+              "on-tertiary-fixed": "#321200",
+              "background": "#f9fafa",
+              "outline-variant": "#bdc9c9",
+              "on-primary": "#ffffff",
+              "on-tertiary-fixed-variant": "#71370c",
+              "on-secondary-fixed": "#002022",
+              "on-primary-container": "#002022",
+              "primary-fixed-dim": "#78d5dc",
+              "surface-container-high": "#ebefee",
+              "surface-variant": "#f0f4f4"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-24 md:pb-0">
+<!-- TopAppBar -->
+<header class="bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-outline shadow-sm h-16 flex items-center justify-between px-4 w-full">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="professional technician headshot with friendly expression, soft lighting, neutral office background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9vaBTB60xhf_H9ECupu72dwh2sDo8v-cpFz0URroSfThvuxGMF5FIe-VmMq0jilni77Ahg6qA6lXv1iG0_mdoi2yQOr_pjaDMa35zq93As9Gfn0B3fDaZVo_ZFOpSkuRiYWVmkPze4fR5kBKi8wFC0IXjMbOM0Mzle71NeMI3IBZrI1pNjHwIJVGDcXfjh2RFCNYhKYAFEM5dC6aRyji_L5DEVzs1BE0I1EZnbjZFl9bJOeKNI1MdDn0MzNlfsfqwIj2nMQEmT2X_"/>
+</div>
+<h1 class="text-primary font-manrope font-extrabold tracking-tight text-xl">Vila Port Repair</h1>
+</div>
+<!-- Desktop Nav -->
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-on-surface-variant hover:text-primary transition-colors font-semibold text-sm" href="#">Workbench</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-semibold text-sm" href="#">Parts</a>
+<a class="text-primary font-bold text-sm border-b-2 border-primary pb-1" href="#">Receipts</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-semibold text-sm" href="#">Reviews</a>
+</nav>
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-full hover:bg-slate-100 transition-colors active:scale-95 duration-150 relative">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-white"></span>
+</button>
+<button class="md:hidden p-2 rounded-full hover:bg-slate-100 transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">menu</span>
+</button>
+</div>
+</header>
+<main class="max-w-6xl mx-auto px-4 py-8">
+<!-- Header & Stats Section -->
+<div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div class="space-y-1">
+<h2 class="text-on-background font-extrabold text-3xl tracking-tight">Receipt Center</h2>
+<p class="text-on-surface-variant font-medium">Manage and track all repair transaction records</p>
+</div>
+<!-- Quick Stats Bento -->
+<div class="grid grid-cols-2 md:flex gap-3">
+<div class="bg-white p-4 rounded-xl shadow-sm border border-outline min-w-[140px]">
+<span class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Total Volume</span>
+<div class="text-primary font-extrabold text-xl">428.5k <span class="text-xs font-semibold">VUV</span></div>
+</div>
+<div class="bg-white p-4 rounded-xl shadow-sm border border-outline min-w-[140px]">
+<span class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Pending</span>
+<div class="text-tertiary font-extrabold text-xl">12 <span class="text-xs font-semibold">Items</span></div>
+</div>
+</div>
+</div>
+<!-- Filters Section -->
+<div class="bg-white p-4 rounded-2xl shadow-sm border border-outline mb-6">
+<div class="flex flex-col md:flex-row gap-4">
+<div class="relative flex-grow">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full pl-10 pr-4 py-3 bg-surface rounded-xl border-none focus:ring-2 focus:ring-primary/20 text-sm font-medium" placeholder="Search by Order ID, client, or part..." type="text"/>
+</div>
+<div class="flex gap-2">
+<button class="flex items-center gap-2 px-4 py-3 bg-surface rounded-xl text-on-surface-variant font-bold text-sm hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+                        This Month
+                    </button>
+<button class="flex items-center gap-2 px-4 py-3 bg-surface rounded-xl text-on-surface-variant font-bold text-sm hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+                        Type
+                    </button>
+<button class="flex items-center justify-center w-12 h-12 bg-primary text-white rounded-xl shadow-lg shadow-primary/30 active:scale-95 transition-transform">
+<span class="material-symbols-outlined">download</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Invoice List -->
+<div class="space-y-3">
+<!-- Row Item 1 -->
+<div class="group bg-white p-4 rounded-2xl shadow-sm border border-transparent hover:border-primary/20 transition-all flex flex-col md:flex-row md:items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">build</span>
+</div>
+<div class="flex-grow grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
+<div>
+<div class="text-on-background font-bold text-sm">#RE-20231024</div>
+<div class="text-on-surface-variant text-xs font-medium">Repair Order</div>
+</div>
+<div>
+<div class="text-on-background font-bold text-sm">Oct 24, 2023</div>
+<div class="text-on-surface-variant text-xs font-medium">14:30 PM</div>
+</div>
+<div>
+<div class="text-primary font-black text-sm">45,000 VUV</div>
+<div class="text-on-surface-variant text-[10px] font-bold uppercase tracking-tighter">Tax Incl.</div>
+</div>
+<div>
+<span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-emerald-100 text-emerald-700">
+                            Printed
+                        </span>
+</div>
+</div>
+<div class="flex items-center gap-1 md:opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/5 rounded-lg transition-colors" title="Print Again">
+<span class="material-symbols-outlined">print</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/5 rounded-lg transition-colors" title="Share PDF">
+<span class="material-symbols-outlined">share</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/5 rounded-lg transition-colors" title="View Details">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</div>
+</div>
+<!-- Row Item 2 -->
+<div class="group bg-white p-4 rounded-2xl shadow-sm border border-transparent hover:border-primary/20 transition-all flex flex-col md:flex-row md:items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-tertiary/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<div class="flex-grow grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
+<div>
+<div class="text-on-background font-bold text-sm">#CS-20231022</div>
+<div class="text-on-surface-variant text-xs font-medium">Cash Receipt</div>
+</div>
+<div>
+<div class="text-on-background font-bold text-sm">Oct 22, 2023</div>
+<div class="text-on-surface-variant text-xs font-medium">09:15 AM</div>
+</div>
+<div>
+<div class="text-primary font-black text-sm">12,500 VUV</div>
+<div class="text-on-surface-variant text-[10px] font-bold uppercase tracking-tighter">Net Total</div>
+</div>
+<div>
+<span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-orange-100 text-orange-700">
+                            Pending
+                        </span>
+</div>
+</div>
+<div class="flex items-center gap-1 md:opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/5 rounded-lg transition-colors">
+<span class="material-symbols-outlined">print</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/5 rounded-lg transition-colors">
+<span class="material-symbols-outlined">share</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/5 rounded-lg transition-colors">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</div>
+</div>
+<!-- Row Item 3 -->
+<div class="group bg-white p-4 rounded-2xl shadow-sm border border-transparent hover:border-primary/20 transition-all flex flex-col md:flex-row md:items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600">
+<span class="material-symbols-outlined">swap_horiz</span>
+</div>
+<div class="flex-grow grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
+<div>
+<div class="text-on-background font-bold text-sm">#TR-20231020</div>
+<div class="text-on-surface-variant text-xs font-medium">Transfer</div>
+</div>
+<div>
+<div class="text-on-background font-bold text-sm">Oct 20, 2023</div>
+<div class="text-on-surface-variant text-xs font-medium">16:45 PM</div>
+</div>
+<div>
+<div class="text-primary font-black text-sm">88,200 VUV</div>
+<div class="text-on-surface-variant text-[10px] font-bold uppercase tracking-tighter">Bank Wire</div>
+</div>
+<div>
+<span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-blue-100 text-blue-700">
+                            E-mailed
+                        </span>
+</div>
+</div>
+<div class="flex items-center gap-1 md:opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/5 rounded-lg transition-colors">
+<span class="material-symbols-outlined">print</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/5 rounded-lg transition-colors">
+<span class="material-symbols-outlined">share</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/5 rounded-lg transition-colors">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</div>
+</div>
+<!-- Row Item 4 -->
+<div class="group bg-white p-4 rounded-2xl shadow-sm border border-transparent hover:border-primary/20 transition-all flex flex-col md:flex-row md:items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">build</span>
+</div>
+<div class="flex-grow grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
+<div>
+<div class="text-on-background font-bold text-sm">#RE-20231019</div>
+<div class="text-on-surface-variant text-xs font-medium">Repair Order</div>
+</div>
+<div>
+<div class="text-on-background font-bold text-sm">Oct 19, 2023</div>
+<div class="text-on-surface-variant text-xs font-medium">11:00 AM</div>
+</div>
+<div>
+<div class="text-primary font-black text-sm">3,400 VUV</div>
+<div class="text-on-surface-variant text-[10px] font-bold uppercase tracking-tighter">Tax Incl.</div>
+</div>
+<div>
+<span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-emerald-100 text-emerald-700">
+                            Printed
+                        </span>
+</div>
+</div>
+<div class="flex items-center gap-1 md:opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/5 rounded-lg transition-colors">
+<span class="material-symbols-outlined">print</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/5 rounded-lg transition-colors">
+<span class="material-symbols-outlined">share</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/5 rounded-lg transition-colors">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Pagination (Asymmetric Style) -->
+<div class="mt-8 flex items-center justify-between border-t border-outline pt-6">
+<div class="text-xs font-bold text-on-surface-variant uppercase tracking-widest">
+                Showing <span class="text-on-background">1-4</span> of 152 items
+            </div>
+<div class="flex gap-1">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-white border border-outline text-on-surface-variant hover:border-primary hover:text-primary transition-all">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary text-white font-bold text-sm">1</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-white border border-outline text-on-surface-variant hover:border-primary hover:text-primary transition-all font-bold text-sm">2</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-white border border-outline text-on-surface-variant hover:border-primary hover:text-primary transition-all">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-2 py-3 pb-safe bg-white/95 backdrop-blur-lg border-t border-outline shadow-xl z-50">
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-transform active:scale-90">
+<span class="material-symbols-outlined">build</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Workbench</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-transform active:scale-90">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Parts</span>
+</button>
+<button class="flex flex-col items-center justify-center text-primary bg-primary/10 rounded-xl px-3 py-1 transition-transform active:scale-90">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Receipts</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-transform active:scale-90">
+<span class="material-symbols-outlined">rate_review</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Reviews</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-transform active:scale-90">
+<span class="material-symbols-outlined">menu</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">More</span>
+</button>
+</nav>
+<!-- FAB -->
+<button class="fixed right-6 bottom-24 md:bottom-12 w-14 h-14 bg-primary text-white rounded-full shadow-xl shadow-primary/40 flex items-center justify-center active:scale-95 transition-all z-40 group">
+<span class="material-symbols-outlined text-2xl group-hover:rotate-90 transition-transform">add</span>
+<span class="absolute right-full mr-4 bg-on-background text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">New Receipt</span>
+</button>
+</body></html>

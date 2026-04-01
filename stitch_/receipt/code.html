@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "outline-variant": "#bdc9c9",
+              "on-primary-fixed": "#002022",
+              "inverse-surface": "#222a34",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "on-tertiary-fixed": "#321200",
+              "tertiary-fixed-dim": "#ffb68b",
+              "secondary-fixed": "#c6e9ec",
+              "primary-container": "#e0f2f3",
+              "outline": "#dae6e7",
+              "on-secondary": "#ffffff",
+              "on-tertiary-container": "#321200",
+              "on-error": "#ffffff",
+              "inverse-primary": "#78d5dc",
+              "on-surface": "#101818",
+              "surface-tint": "#007e85",
+              "surface-container-lowest": "#ffffff",
+              "on-secondary-container": "#48686b",
+              "surface-variant": "#f0f4f4",
+              "background": "#f9fafa",
+              "error": "#ef4444",
+              "surface-container-high": "#ebefee",
+              "surface": "#f9fafa",
+              "on-tertiary": "#ffffff",
+              "on-tertiary-fixed-variant": "#71370c",
+              "primary-fixed": "#94f1f9",
+              "tertiary-container": "#ffdbc8",
+              "secondary-container": "#c3e6e9",
+              "error-container": "#fee2e2",
+              "primary": "#007e85",
+              "on-surface-variant": "#5e8a8d",
+              "surface-dim": "#d7dbdb",
+              "secondary-fixed-dim": "#aacdd0",
+              "on-error-container": "#93000a",
+              "surface-container-highest": "#dae6e7",
+              "on-primary": "#ffffff",
+              "inverse-on-surface": "#f9fafa",
+              "surface-container-low": "#f6fafa",
+              "surface-container": "#ffffff",
+              "surface-bright": "#ffffff",
+              "primary-fixed-dim": "#78d5dc",
+              "tertiary-fixed": "#ffdbc8",
+              "tertiary": "#f7a072",
+              "on-primary-fixed-variant": "#004f54",
+              "on-secondary-fixed": "#002022",
+              "on-primary-container": "#002022",
+              "secondary": "#436466",
+              "on-background": "#101818"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .receipt-paper {
+            background-image: radial-gradient(circle at 2px 2px, rgba(0,0,0,0.02) 1px, transparent 0);
+            background-size: 16px 16px;
+        }
+        .receipt-edge {
+            mask-image: linear-gradient(to right, transparent 5px, black 5px, black calc(100% - 5px), transparent calc(100% - 5px)),
+                        radial-gradient(circle at 10px 0, transparent 5px, black 5px);
+            mask-size: 100% 100%, 20px 10px;
+            mask-repeat: no-repeat, repeat-x;
+        }
+        @media print {
+            .no-print { display: none; }
+            body { background: white; }
+            .receipt-container { padding: 0; shadow: none; }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-surface antialiased">
+<!-- Top Navigation Shell -->
+<header class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-outline shadow-sm flex items-center justify-between px-4 h-14 w-full">
+<div class="flex items-center gap-3">
+<button class="flex items-center justify-center p-2 hover:bg-surface-variant transition-colors rounded-full active:opacity-70">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<h1 class="font-headline font-extrabold text-xl tracking-tight text-primary">维修管理</h1>
+</div>
+<div class="flex gap-2">
+<button class="no-print bg-primary text-on-primary px-4 py-1.5 rounded-xl font-bold text-sm flex items-center gap-2 shadow-sm hover:opacity-90 transition-all active:scale-95">
+<span class="material-symbols-outlined text-[18px]">print</span>
+                立即打印
+            </button>
+</div>
+</header>
+<main class="pt-24 pb-32 px-4 flex flex-col items-center">
+<!-- Floating Action Button for Print (Contextual) -->
+<button class="no-print fixed bottom-24 right-6 w-14 h-14 bg-primary text-on-primary rounded-full shadow-xl shadow-primary/40 flex items-center justify-center active:scale-95 transition-all z-40">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">print</span>
+</button>
+<!-- Receipt Container -->
+<div class="receipt-container w-full max-w-[400px] bg-white shadow-xl rounded-xl overflow-hidden mb-10 flex flex-col relative">
+<!-- Simulated thermal paper texture -->
+<div class="absolute inset-0 receipt-paper pointer-events-none opacity-50"></div>
+<!-- Receipt Content -->
+<div class="relative z-10 p-8 flex flex-col items-center text-center">
+<!-- Shop Header -->
+<div class="mb-6">
+<div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4 mx-auto">
+<span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">handyman</span>
+</div>
+<h2 class="font-headline font-extrabold text-2xl text-on-surface">VILA PORT 旗舰维修店</h2>
+<p class="text-on-surface-variant text-xs mt-1 uppercase tracking-widest font-bold">The Precision Workshop</p>
+</div>
+<div class="w-full h-px bg-outline mb-6 border-dashed border-t"></div>
+<!-- Order Info -->
+<div class="w-full space-y-2 text-left mb-6">
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant text-xs font-bold uppercase tracking-wider">订单号</span>
+<span class="text-on-surface font-bold text-sm">OR-20231024-8892</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant text-xs font-bold uppercase tracking-wider">日期</span>
+<span class="text-on-surface font-bold text-sm">2023-10-24 14:30</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant text-xs font-bold uppercase tracking-wider">客户</span>
+<span class="text-on-surface font-bold text-sm">张三 (138****0001)</span>
+</div>
+</div>
+<div class="w-full h-px bg-outline mb-6 border-dashed border-t"></div>
+<!-- Items Detail -->
+<div class="w-full space-y-4 mb-8">
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<span class="text-on-surface font-bold text-sm text-left">高性能主板更换</span>
+<span class="text-on-surface font-bold text-sm">1,200.00</span>
+</div>
+<span class="text-on-surface-variant text-[10px] text-left">备件费: 1,000.00 | 工费: 200.00</span>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<span class="text-on-surface font-bold text-sm text-left">系统精细调优服务</span>
+<span class="text-on-surface font-bold text-sm">350.00</span>
+</div>
+<span class="text-on-surface-variant text-[10px] text-left">备件费: 0.00 | 工费: 350.00</span>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<span class="text-on-surface font-bold text-sm text-left">精密传感器清洁</span>
+<span class="text-on-surface font-bold text-sm">150.00</span>
+</div>
+<span class="text-on-surface-variant text-[10px] text-left">备件费: 20.00 | 工费: 130.00</span>
+</div>
+</div>
+<div class="w-full h-px bg-outline mb-6 border-dashed border-t"></div>
+<!-- Totals -->
+<div class="w-full space-y-2 mb-8">
+<div class="flex justify-between items-center text-on-surface-variant text-xs font-bold uppercase">
+<span>备件费合计</span>
+<span>1,020.00</span>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant text-xs font-bold uppercase">
+<span>工费合计</span>
+<span>680.00</span>
+</div>
+<div class="flex justify-between items-center pt-2">
+<span class="text-primary font-extrabold text-lg uppercase tracking-tight">合计金额 (VUV)</span>
+<span class="text-primary font-extrabold text-2xl tracking-tight">1,700.00</span>
+</div>
+</div>
+<!-- Payment Method -->
+<div class="w-full flex items-center justify-between bg-surface-variant p-3 rounded-xl mb-8">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-secondary-container" style="font-variation-settings: 'FILL' 1;">payments</span>
+<span class="text-xs font-bold uppercase text-on-secondary-container">支付方式</span>
+</div>
+<span class="text-sm font-extrabold text-on-surface">银行转账</span>
+</div>
+<!-- QR Code Section -->
+<div class="mb-8">
+<div class="p-2 border-2 border-outline-variant rounded-xl inline-block bg-white">
+<img alt="Order QR Code" class="w-24 h-24 grayscale contrast-125" data-alt="high contrast black and white qr code on a white background with a clean border" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_9nVT2ba0hJOHsVmNUz0f8HcfhHMxnlYjwg7IbHAE91LeVCb2EL0UmzW9OVWZH0p4OlGL95cnAltXeLWJDFAD4IA2KeaFQgy4z5kauNqj4OJyDImrEo4GDmbULZEsx0LyUc7thDsekgGoWrbfKMUB--M_7WrDZOLIPc6EOcAMbDePvbD7anKgkTF6KVyX0vCNHEPDCgIoeUjPPmPby2elw94_P5gs_KzzJWowmZhSCqecx9y7lGUK3oh3_zfr3xXkOGVcekFSpRzJ"/>
+</div>
+<p class="text-[10px] text-on-surface-variant mt-3 font-bold uppercase tracking-widest">扫描二维码查询维修进度</p>
+</div>
+<!-- Footer -->
+<div class="text-[10px] text-on-surface-variant space-y-1">
+<p>感谢您的信任，期待再次为您服务。</p>
+<p>电话: 400-888-9999</p>
+<p>地址: 维拉港赛恩创意园 A1 栋 102 室</p>
+</div>
+</div>
+<!-- Simulated jagged edge -->
+<div class="h-4 w-full bg-white relative overflow-hidden mt-4">
+<div class="absolute bottom-0 left-0 w-full h-2 flex gap-0.5">
+<div class="w-4 h-4 bg-surface rounded-full -mt-2"></div>
+<div class="w-4 h-4 bg-surface rounded-full -mt-2"></div>
+<div class="w-4 h-4 bg-surface rounded-full -mt-2"></div>
+<div class="w-4 h-4 bg-surface rounded-full -mt-2"></div>
+<div class="w-4 h-4 bg-surface rounded-full -mt-2"></div>
+<div class="w-4 h-4 bg-surface rounded-full -mt-2"></div>
+<div class="w-4 h-4 bg-surface rounded-full -mt-2"></div>
+<div class="w-4 h-4 bg-surface rounded-full -mt-2"></div>
+<div class="w-4 h-4 bg-surface rounded-full -mt-2"></div>
+<div class="w-4 h-4 bg-surface rounded-full -mt-2"></div>
+<div class="w-4 h-4 bg-surface rounded-full -mt-2"></div>
+<div class="w-4 h-4 bg-surface rounded-full -mt-2"></div>
+<div class="w-4 h-4 bg-surface rounded-full -mt-2"></div>
+<div class="w-4 h-4 bg-surface rounded-full -mt-2"></div>
+<div class="w-4 h-4 bg-surface rounded-full -mt-2"></div>
+<div class="w-4 h-4 bg-surface rounded-full -mt-2"></div>
+<div class="w-4 h-4 bg-surface rounded-full -mt-2"></div>
+<div class="w-4 h-4 bg-surface rounded-full -mt-2"></div>
+<div class="w-4 h-4 bg-surface rounded-full -mt-2"></div>
+<div class="w-4 h-4 bg-surface rounded-full -mt-2"></div>
+<div class="w-4 h-4 bg-surface rounded-full -mt-2"></div>
+<div class="w-4 h-4 bg-surface rounded-full -mt-2"></div>
+<div class="w-4 h-4 bg-surface rounded-full -mt-2"></div>
+<div class="w-4 h-4 bg-surface rounded-full -mt-2"></div>
+<div class="w-4 h-4 bg-surface rounded-full -mt-2"></div>
+</div>
+</div>
+</div>
+<!-- Secondary Actions Card (No Print) -->
+<div class="no-print w-full max-w-[400px] bg-white p-4 rounded-xl shadow-sm border border-outline flex flex-col gap-3">
+<h3 class="font-headline font-bold text-sm text-on-surface mb-1">打印选项</h3>
+<div class="grid grid-cols-2 gap-3">
+<button class="flex items-center justify-center gap-2 p-3 bg-surface border border-outline rounded-lg text-xs font-bold text-on-surface-variant hover:bg-outline-variant transition-colors">
+<span class="material-symbols-outlined text-[18px]">share</span>
+                    分享图片
+                </button>
+<button class="flex items-center justify-center gap-2 p-3 bg-surface border border-outline rounded-lg text-xs font-bold text-on-surface-variant hover:bg-outline-variant transition-colors">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                    保存PDF
+                </button>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Shell -->
+<nav class="no-print fixed bottom-0 left-0 w-full flex justify-around items-center px-2 py-3 pb-safe bg-white/95 backdrop-blur-lg border-t border-outline shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50">
+<div class="flex flex-col items-center justify-center text-primary bg-primary/10 rounded-xl px-3 py-1">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">handyman</span>
+<span class="font-headline font-bold text-[10px] uppercase tracking-wider mt-1">工作台</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-primary transition-all active:scale-95">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-headline font-bold text-[10px] uppercase tracking-wider mt-1">库存</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-primary transition-all active:scale-95">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-headline font-bold text-[10px] uppercase tracking-wider mt-1">财务</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-primary transition-all active:scale-95">
+<span class="material-symbols-outlined">group</span>
+<span class="font-headline font-bold text-[10px] uppercase tracking-wider mt-1">客户</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-primary transition-all active:scale-95">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-headline font-bold text-[10px] uppercase tracking-wider mt-1">设置</span>
+</div>
+</nav>
+</body></html>

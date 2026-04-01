@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#007e85",
+              "surface-variant": "#f0f4f4",
+              "inverse-on-surface": "#f9fafa",
+              "on-tertiary-fixed-variant": "#71370c",
+              "on-tertiary": "#ffffff",
+              "on-surface-variant": "#5e8a8d",
+              "on-primary": "#ffffff",
+              "outline": "#dae6e7",
+              "tertiary-fixed-dim": "#ffb68b",
+              "background": "#f9fafa",
+              "surface-container-high": "#ebefee",
+              "on-secondary-container": "#48686b",
+              "on-secondary-fixed": "#002022",
+              "surface": "#f9fafa",
+              "on-secondary": "#ffffff",
+              "on-primary-container": "#002022",
+              "on-primary-fixed": "#002022",
+              "error-container": "#fee2e2",
+              "on-surface": "#101818",
+              "surface-container": "#ffffff",
+              "on-error": "#ffffff",
+              "primary-fixed": "#94f1f9",
+              "tertiary": "#f7a072",
+              "on-tertiary-fixed": "#321200",
+              "on-error-container": "#93000a",
+              "surface-tint": "#007e85",
+              "on-primary-fixed-variant": "#004f54",
+              "error": "#ef4444",
+              "inverse-surface": "#222a34",
+              "surface-container-highest": "#dae6e7",
+              "secondary-fixed": "#c6e9ec",
+              "secondary": "#436466",
+              "surface-dim": "#d7dbdb",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "on-background": "#101818",
+              "tertiary-container": "#ffdbc8",
+              "primary-fixed-dim": "#78d5dc",
+              "surface-container-lowest": "#ffffff",
+              "secondary-container": "#c3e6e9",
+              "surface-bright": "#ffffff",
+              "on-tertiary-container": "#321200",
+              "surface-container-low": "#f6fafa",
+              "primary-container": "#e0f2f3",
+              "inverse-primary": "#78d5dc",
+              "outline-variant": "#bdc9c9",
+              "tertiary-fixed": "#ffdbc8",
+              "secondary-fixed-dim": "#aacdd0"
+            },
+            fontFamily: {
+              "headline": ["Manrope", "sans-serif"],
+              "body": ["Manrope", "sans-serif"],
+              "label": ["Manrope", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-slate-100 shadow-sm flex items-center justify-between px-4 h-16">
+<div class="flex items-center gap-3">
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-slate-50 transition-colors active:scale-95 duration-200 text-cyan-700">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-manrope font-extrabold text-xl tracking-tight text-on-surface">My Repair History</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="w-10 h-10 flex items-center justify-center text-slate-500 hover:bg-slate-50 rounded-full transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</header>
+<main class="pt-20 px-4 max-w-2xl mx-auto">
+<!-- Search and Stats Summary Section -->
+<section class="mt-4 mb-6">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container border-none rounded-xl py-4 pl-12 pr-4 shadow-sm focus:ring-2 focus:ring-primary/20 placeholder:text-on-surface-variant/60 text-sm" placeholder="搜索订单号、客户姓名或设备..." type="text"/>
+</div>
+<!-- Quick Stats Bento-style -->
+<div class="grid grid-cols-2 gap-3 mt-4">
+<div class="bg-primary p-4 rounded-xl shadow-sm relative overflow-hidden">
+<div class="relative z-10">
+<p class="text-white/70 text-[10px] font-bold uppercase tracking-wider">本月维修总额</p>
+<p class="text-white font-extrabold text-xl mt-1">142,500 VUV</p>
+</div>
+<span class="material-symbols-outlined absolute -right-2 -bottom-2 text-6xl text-white/10 rotate-12">payments</span>
+</div>
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border border-outline/30">
+<p class="text-on-surface-variant text-[10px] font-bold uppercase tracking-wider">已完成任务</p>
+<p class="text-primary font-extrabold text-xl mt-1">28 <span class="text-xs font-medium text-on-surface-variant">件</span></p>
+</div>
+</div>
+</section>
+<!-- Filter Tabs -->
+<nav class="flex space-x-2 mb-6 overflow-x-auto pb-2 no-scrollbar">
+<button class="whitespace-nowrap px-6 py-2 rounded-full bg-primary text-white font-bold text-sm shadow-md transition-all active:scale-95">全部</button>
+<button class="whitespace-nowrap px-6 py-2 rounded-full bg-surface-container text-on-surface-variant font-bold text-sm hover:bg-surface-container-high transition-all active:scale-95">已完成</button>
+<button class="whitespace-nowrap px-6 py-2 rounded-full bg-surface-container text-on-surface-variant font-bold text-sm hover:bg-surface-container-high transition-all active:scale-95">进行中</button>
+</nav>
+<!-- Repair History List -->
+<div class="space-y-4">
+<!-- Job Card 1 (In Progress) -->
+<div class="bg-surface-container p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow group cursor-pointer border-l-4 border-tertiary">
+<div class="flex justify-between items-start mb-3">
+<div>
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest bg-surface-variant px-2 py-0.5 rounded">RO-2023-8892</span>
+<h3 class="font-bold text-lg text-on-surface mt-1">iPhone 14 Pro</h3>
+</div>
+<span class="bg-tertiary-container text-on-tertiary-container text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase">进行中</span>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant mb-4">
+<div class="flex items-center gap-1.5 bg-surface-variant/50 px-3 py-1.5 rounded-lg">
+<span class="material-symbols-outlined text-sm">build</span>
+<span class="text-xs font-medium">屏幕更换</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+<span class="text-xs">今天, 10:30 AM</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-3 border-t border-outline/20">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
+<img class="w-full h-full rounded-full object-cover" data-alt="Portrait of a smiling male customer for service record" src="https://lh3.googleusercontent.com/aida-public/AB6AXuABEgKFYXAtgm5iECd7yimqOP8bCBYbN7qoCLO4OtUmt0fmlY72COCEy2dCp0gjzYMP9b0JSMw6oWB68O2MBdm8ANC5f3PTofXb5cLbniPz45xT_-UGKCHA9HUb6Scydami7Iz4ivcCKSLL5ltqH5-6UW-nQlrrWgkjUy7EG-QGydqZr_fwRpWDLGa13_EV5IbPJa6AE2qma5VkzdsVLS67AnVWba4Pi4bg5j9CWStq3rfPagxfrW8XkG7EHDIxiI-G3kCOsWdl96Vm"/>
+</div>
+<span class="text-xs font-bold text-on-surface">Jean-Pierre</span>
+</div>
+<p class="font-extrabold text-primary text-base">45,000 VUV</p>
+</div>
+</div>
+<!-- Job Card 2 (Completed) -->
+<div class="bg-surface-container p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow group cursor-pointer border-l-4 border-primary">
+<div class="flex justify-between items-start mb-3">
+<div>
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest bg-surface-variant px-2 py-0.5 rounded">RO-2023-8885</span>
+<h3 class="font-bold text-lg text-on-surface mt-1">Samsung Galaxy S22</h3>
+</div>
+<span class="bg-primary-container text-on-primary-container text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase">已完成</span>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant mb-4">
+<div class="flex items-center gap-1.5 bg-surface-variant/50 px-3 py-1.5 rounded-lg">
+<span class="material-symbols-outlined text-sm">battery_charging_full</span>
+<span class="text-xs font-medium">电池更换</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+<span class="text-xs">2023年10月24日</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-3 border-t border-outline/20">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
+<img class="w-full h-full rounded-full object-cover" data-alt="Close up portrait of a customer with a neutral expression" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBieT_1CmqRcDwU34EKPXe0jaMIp_Wirg_ctp07WpcSBiQYRNR_6yU4KEyxL54lF4DQfw9UbGaTnQt2ezQlyKQwXx6i_Re6dbvpjdD3E1WdUQYIVvXRnw2nyUQvC_rbZO92F92NPOdee3IUInJV6H7rR9mSojjAzNlK7LvtJs_kscDHZ8hsN6sUrdeLghyIAOS7mIDg4uvlyBwTK78jADNGV56x8-GkgyaB9zXBVZGTBwcXk9NKuH40Jn8PmpvQ_h7uNJhXP9Z5pYZa"/>
+</div>
+<span class="text-xs font-bold text-on-surface">Marie Kalmet</span>
+</div>
+<p class="font-extrabold text-primary text-base">12,500 VUV</p>
+</div>
+</div>
+<!-- Job Card 3 (Completed) -->
+<div class="bg-surface-container p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow group cursor-pointer border-l-4 border-primary">
+<div class="flex justify-between items-start mb-3">
+<div>
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest bg-surface-variant px-2 py-0.5 rounded">RO-2023-8871</span>
+<h3 class="font-bold text-lg text-on-surface mt-1">MacBook Air M2</h3>
+</div>
+<span class="bg-primary-container text-on-primary-container text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase">已完成</span>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant mb-4">
+<div class="flex items-center gap-1.5 bg-surface-variant/50 px-3 py-1.5 rounded-lg">
+<span class="material-symbols-outlined text-sm">keyboard</span>
+<span class="text-xs font-medium">键盘清理 &amp; 维修</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+<span class="text-xs">2023年10月22日</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-3 border-t border-outline/20">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
+<img class="w-full h-full rounded-full object-cover" data-alt="Happy professional customer avatar for app UI" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZZV7-z9AweVW2cPN2-e68IhslhxY9ixIoHxAdg6Z-y-sLshT9tNEwEbjNTMnujuHr4srMQ3Qu_npbTotPzN9OaYiIl1u_VKazCgfxNlf7BDTqF1zE9SJu5yudEfNyLCOlG4lFxvK-lOAvWt39h9jfmecBpHmHMLZVUSbaZ6oI7BuePPRd7PcP64bISskZn9jOirHL8fF50H7yttzRIC2xzl4wm-CoJQ6sRKre_ikkLEcaXHNLxb0-Ivx3EWfM1OhIQWMWXVr0Nf1Q"/>
+</div>
+<span class="text-xs font-bold text-on-surface">Tari Abel</span>
+</div>
+<p class="font-extrabold text-primary text-base">8,000 VUV</p>
+</div>
+</div>
+<!-- Performance Insight Card -->
+<div class="mt-8 p-6 rounded-2xl bg-gradient-to-br from-primary to-[#005f63] text-white shadow-xl relative overflow-hidden">
+<div class="relative z-10">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span class="text-[10px] font-bold uppercase tracking-widest">绩效洞察</span>
+</div>
+<h4 class="text-lg font-bold leading-tight mb-1">您本周的效率提高了 15%</h4>
+<p class="text-white/80 text-xs">平均维修时长从 4.2 小时降至 3.6 小时。</p>
+</div>
+<div class="absolute right-[-20px] top-[-20px] opacity-10">
+<span class="material-symbols-outlined text-[120px]">analytics</span>
+</div>
+</div>
+</div>
+<div class="h-10"></div> <!-- Bottom Spacer -->
+</main>
+<!-- Floating Action Button for adding new repair manually if needed -->
+<button class="fixed right-6 bottom-24 w-14 h-14 bg-primary text-white rounded-full shadow-xl flex items-center justify-center active:scale-90 transition-transform z-40">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-3 pb-safe bg-white/95 backdrop-blur-lg border-t border-slate-100 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50">
+<div class="flex flex-col items-center justify-center text-slate-400 px-3 py-1 hover:text-cyan-600 transition-colors active:scale-90 duration-200">
+<span class="material-symbols-outlined">assignment</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider">Tasks</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-cyan-50 text-cyan-800 rounded-xl px-3 py-1 active:scale-90 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">history</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider">History</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-400 px-3 py-1 hover:text-cyan-600 transition-colors active:scale-90 duration-200">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider">Inventory</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-400 px-3 py-1 hover:text-cyan-600 transition-colors active:scale-90 duration-200">
+<span class="material-symbols-outlined">person</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider">Profile</span>
+</div>
+</nav>
+</body></html>

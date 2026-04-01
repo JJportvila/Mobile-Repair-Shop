@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface": "#f9fafa",
+              "on-tertiary-container": "#321200",
+              "on-tertiary": "#ffffff",
+              "secondary-fixed": "#c6e9ec",
+              "on-secondary": "#ffffff",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "surface-container": "#ffffff",
+              "secondary-fixed-dim": "#aacdd0",
+              "error": "#ef4444",
+              "surface-bright": "#ffffff",
+              "on-background": "#101818",
+              "surface-container-low": "#f6fafa",
+              "inverse-on-surface": "#f9fafa",
+              "primary-container": "#e0f2f3",
+              "outline": "#dae6e7",
+              "surface-container-highest": "#dae6e7",
+              "on-primary-fixed": "#002022",
+              "on-surface": "#101818",
+              "inverse-surface": "#222a34",
+              "surface-dim": "#d7dbdb",
+              "primary-fixed": "#94f1f9",
+              "error-container": "#fee2e2",
+              "secondary-container": "#c3e6e9",
+              "on-error": "#ffffff",
+              "tertiary-fixed-dim": "#ffb68b",
+              "surface-container-lowest": "#ffffff",
+              "on-surface-variant": "#5e8a8d",
+              "on-primary-fixed-variant": "#004f54",
+              "inverse-primary": "#78d5dc",
+              "tertiary-container": "#ffdbc8",
+              "on-error-container": "#93000a",
+              "surface-tint": "#007e85",
+              "primary": "#007e85",
+              "tertiary": "#f7a072",
+              "on-secondary-container": "#48686b",
+              "secondary": "#436466",
+              "on-tertiary-fixed": "#321200",
+              "background": "#f9fafa",
+              "outline-variant": "#bdc9c9",
+              "on-primary": "#ffffff",
+              "on-tertiary-fixed-variant": "#71370c",
+              "on-secondary-fixed": "#002022",
+              "on-primary-container": "#002022",
+              "primary-fixed-dim": "#78d5dc",
+              "surface-container-high": "#ebefee",
+              "surface-variant": "#f0f4f4"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-32">
+<!-- Top App Bar -->
+<header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md sticky top-0 z-50 border-b border-[#DAE6E7] dark:border-slate-800 shadow-sm flex items-center justify-between w-full px-4 h-16">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center overflow-hidden">
+<img alt="Technician" class="w-full h-full object-cover" data-alt="Close-up portrait of a professional technician in a clean workshop setting with soft daylighting and tech equipment in background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2hYqvIh5McJ1wJT4wG_GSAFlnHb3ERjk4kyHv2Sjz7bkgEjTqSdq4xFGh9cUgvzlENRwjCEaqyb6TMBjJFH7gTqgcqzpRX_eUs0DsHHU8YshJ6Uy2CQuTgL27BI4b2etJWIh8zgvzXs1xs2KEX-P3BmdRe4WskINdKYzRIQ32EOoQGr99rHy-4x0diM4-EkMGpBTNoGhNbSksibsvmosgxieavXg0LFuEOsdLsrNS8_e1J2p6DUxMNQ6vJKuBscloc5Z2kCruKSxU"/>
+</div>
+<div>
+<h1 class="font-manrope font-extrabold tracking-tight text-xl text-[#007E85]">Vila Port Repair</h1>
+<p class="text-[10px] text-on-surface-variant font-bold uppercase tracking-widest">Active Execution</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-xl hover:bg-slate-100 transition-colors active:scale-95 duration-150 text-[#5E8A8D]">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 rounded-xl hover:bg-slate-100 transition-colors active:scale-95 duration-150 text-[#5E8A8D]">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</header>
+<main class="max-w-5xl mx-auto p-4 space-y-6">
+<!-- Order Identity Header -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="md:col-span-2 bg-white rounded-xl p-6 shadow-sm border border-outline flex flex-col md:flex-row gap-6 items-center">
+<div class="w-32 h-32 bg-surface-variant rounded-2xl flex items-center justify-center overflow-hidden shrink-0">
+<img alt="iPhone 14 Pro" class="w-full h-full object-cover" data-alt="Professional studio shot of an iPhone 14 Pro in Midnight Blue, sleek lighting highlighting the metallic finish and camera lenses" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAc5H0CiohL9yH9PpOVVw5gAIbK_jW0PknHi6qLAADWf3UrCJs2q3Kt587jnYeIdT2JthouO_tBtpAjqV6SkZPvnJxcccR4K19ui70LW0bhIlvvDNdpJcF-MQpb5m48-9Rj8fr4s3wPji8hN_N_NFRHHMwoAMiOo0Zxxfkl6Ac30elihTiNDN3olKed-9zqbKRBlqtT0SM2srlDxSl5DtcrvaqfbH0gsQhZiuq3xF-7ScV8hGS1Mx_10o8ZkXNxDPqKB9C3368Q6BJy"/>
+</div>
+<div class="flex-grow text-center md:text-left">
+<div class="flex flex-wrap justify-center md:justify-start gap-2 mb-2">
+<span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase">Repairing</span>
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-[10px] font-bold tracking-widest">#RO-2023-8892</span>
+</div>
+<h2 class="text-2xl font-extrabold tracking-tight text-on-surface mb-1">iPhone 14 Pro</h2>
+<p class="text-on-surface-variant font-medium">Midnight Blue / 256GB</p>
+<div class="mt-4 flex items-center justify-center md:justify-start gap-4 text-sm">
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">person</span>
+<span>A. Kalotau</span>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span>Due: 14:30 PM</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bento Status Card -->
+<div class="bg-[#007E85] text-white rounded-xl p-6 shadow-xl flex flex-col justify-between relative overflow-hidden">
+<div class="relative z-10">
+<p class="text-[10px] font-bold uppercase tracking-widest opacity-80 mb-1">Elapsed Time (\u5df2\u7528\u65f6\u95f4)</p>
+<h3 class="text-4xl font-black tracking-tighter">01:12:45</h3>
+</div>
+<div class="relative z-10 flex items-end justify-between">
+<div>
+<p class="text-[10px] font-bold uppercase tracking-widest opacity-80">Phase (\u9636\u6bb5)</p>
+<p class="text-lg font-bold">Replacement (\u66f4\u6362)</p>
+</div>
+<span class="material-symbols-outlined text-5xl opacity-20">hourglass_top</span>
+</div>
+<!-- Abstract Background Shape -->
+<div class="absolute -bottom-4 -right-4 w-32 h-32 bg-white/10 rounded-full blur-3xl"></div>
+</div>
+</section>
+<!-- Main Workspace Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Diagnosis Checklist Section -->
+<section class="space-y-4">
+<div class="flex items-center justify-between px-2">
+<h3 class="text-lg font-extrabold tracking-tight text-on-surface">Diagnosis Checklist (\u8bca\u65ad\u6e05\u5355)</h3>
+<span class="text-xs font-bold text-primary">60% Complete</span>
+</div>
+<div class="bg-white rounded-xl shadow-sm border border-outline overflow-hidden">
+<div class="divide-y divide-outline">
+<label class="flex items-center p-4 hover:bg-surface-container transition-colors cursor-pointer group">
+<input checked="" class="w-5 h-5 rounded border-outline text-primary focus:ring-primary" type="checkbox"/>
+<span class="ml-4 font-bold text-on-surface group-hover:text-primary transition-colors">Screen (\u5c4f\u5e55)</span>
+<span class="ml-auto material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</label>
+<label class="flex items-center p-4 hover:bg-surface-container transition-colors cursor-pointer group">
+<input checked="" class="w-5 h-5 rounded border-outline text-primary focus:ring-primary" type="checkbox"/>
+<span class="ml-4 font-bold text-on-surface group-hover:text-primary transition-colors">Battery (\u7535\u6c60)</span>
+<span class="ml-auto material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</label>
+<label class="flex items-center p-4 hover:bg-surface-container transition-colors cursor-pointer group">
+<input checked="" class="w-5 h-5 rounded border-outline text-primary focus:ring-primary" type="checkbox"/>
+<span class="ml-4 font-bold text-on-surface group-hover:text-primary transition-colors">Camera (\u6444\u50cf\u5934)</span>
+<span class="ml-auto material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</label>
+<label class="flex items-center p-4 hover:bg-surface-container transition-colors cursor-pointer group">
+<input class="w-5 h-5 rounded border-outline text-primary focus:ring-primary" type="checkbox"/>
+<span class="ml-4 font-bold text-on-surface group-hover:text-primary transition-colors">Face ID (\u9762\u5bb9\u8bc6\u522b)</span>
+<span class="ml-auto material-symbols-outlined text-on-surface-variant">pending</span>
+</label>
+<label class="flex items-center p-4 hover:bg-surface-container transition-colors cursor-pointer group">
+<input class="w-5 h-5 rounded border-outline text-primary focus:ring-primary" type="checkbox"/>
+<span class="ml-4 font-bold text-on-surface group-hover:text-primary transition-colors">Water Resistance (\u9632\u6c34)</span>
+<span class="ml-auto material-symbols-outlined text-on-surface-variant">pending</span>
+</label>
+</div>
+</div>
+</section>
+<!-- Repair Progress Stepper -->
+<section class="space-y-4">
+<h3 class="text-lg font-extrabold tracking-tight text-on-surface">Repair Progress (\u7ef4\u4fee\u8fdb\u5ea6)</h3>
+<div class="bg-white rounded-xl shadow-sm border border-outline p-6 space-y-8">
+<!-- Step 1 -->
+<div class="flex gap-4 relative">
+<div class="absolute top-10 left-[11px] bottom-[-22px] w-[2px] bg-primary"></div>
+<div class="z-10 w-6 h-6 rounded-full bg-primary flex items-center justify-center text-white ring-4 ring-primary/10">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<div>
+<h4 class="font-bold text-on-surface">1. Teardown (\u62c6\u89e3)</h4>
+<p class="text-xs text-on-surface-variant">Completed at 10:15 AM</p>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="flex gap-4 relative">
+<div class="absolute top-10 left-[11px] bottom-[-22px] w-[2px] bg-outline"></div>
+<div class="z-10 w-6 h-6 rounded-full bg-primary-container border-2 border-primary flex items-center justify-center text-primary">
+<div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+</div>
+<div>
+<h4 class="font-bold text-primary">2. Screen Replacement (\u5c4f\u5e55\u66f4\u6362)</h4>
+<p class="text-xs text-on-surface-variant">In Progress - 20 mins remaining</p>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="flex gap-4">
+<div class="z-10 w-6 h-6 rounded-full bg-surface-variant border-2 border-outline flex items-center justify-center text-on-surface-variant">
+<span class="text-[10px] font-black">3</span>
+</div>
+<div>
+<h4 class="font-bold text-on-surface-variant">3. Re-sealing (\u91cd\u65b0\u5bc6\u5c01)</h4>
+<p class="text-xs text-on-surface-variant">Pending technical validation</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Parts Used Section -->
+<section class="space-y-4">
+<div class="flex items-center justify-between px-2">
+<h3 class="text-lg font-extrabold tracking-tight text-on-surface">Parts Used (\u4f7f\u7528\u96f6\u4ef6)</h3>
+<button class="text-xs font-bold text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">add</span> Add Part
+                </button>
+</div>
+<div class="bg-white rounded-xl shadow-sm border border-outline overflow-hidden">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low border-b border-outline">
+<tr>
+<th class="p-4 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Description</th>
+<th class="p-4 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Quantity</th>
+<th class="p-4 text-right text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Price (VUV)</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline">
+<tr class="hover:bg-surface-container transition-colors">
+<td class="p-4">
+<p class="font-bold text-on-surface">Screen Assembly (\u5c4f\u5e55\u603b\u6210)</p>
+<p class="text-[10px] text-on-surface-variant uppercase">OEM Grade A+</p>
+</td>
+<td class="p-4 font-medium text-on-surface">1</td>
+<td class="p-4 text-right font-black text-[#007E85]">45,000</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors">
+<td class="p-4">
+<p class="font-bold text-on-surface">Adhesive Kit (\u80f6\u5bc6\u5c01\u5957\u4ef6)</p>
+<p class="text-[10px] text-on-surface-variant uppercase">Pre-cut Waterproof</p>
+</td>
+<td class="p-4 font-medium text-on-surface">1</td>
+<td class="p-4 text-right font-black text-[#007E85]">1,200</td>
+</tr>
+</tbody>
+<tfoot class="bg-primary/5">
+<tr>
+<td class="p-4 text-right font-bold text-on-surface-variant uppercase tracking-widest text-xs" colspan="2">Total Estimated Cost</td>
+<td class="p-4 text-right font-black text-xl text-primary">46,200 VUV</td>
+</tr>
+</tfoot>
+</table>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar (Fixed Action Bar) -->
+<nav class="fixed bottom-0 left-0 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-[#DAE6E7] dark:border-slate-800 shadow-xl z-50 px-4 py-4 flex items-center gap-3">
+<button class="flex-1 h-14 rounded-xl border-2 border-tertiary text-on-surface font-bold text-sm flex flex-col items-center justify-center active:scale-95 transition-transform hover:bg-tertiary/5">
+<span class="material-symbols-outlined text-tertiary">pause</span>
+<span class="text-[10px] uppercase tracking-wider">Pause (\u6682\u505c)</span>
+</button>
+<button class="flex-1 h-14 rounded-xl bg-primary text-white font-bold text-sm flex flex-col items-center justify-center shadow-lg shadow-primary/30 active:scale-95 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="text-[10px] uppercase tracking-wider">Complete (\u5b8c\u6210)</span>
+</button>
+<button class="flex-1 h-14 rounded-xl border-2 border-outline text-on-surface font-bold text-sm flex flex-col items-center justify-center active:scale-95 transition-transform hover:bg-slate-50">
+<span class="material-symbols-outlined text-[#5E8A8D]">support_agent</span>
+<span class="text-[10px] uppercase tracking-wider">Contact (\u8054\u7cfb)</span>
+</button>
+</nav>
+<!-- Navigation Sidebar (For Desktop Views) -->
+<aside class="hidden lg:flex fixed left-0 top-16 bottom-0 w-20 bg-white border-r border-outline flex-col items-center py-6 gap-8 z-40">
+<div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">build</span>
+</div>
+<div class="w-12 h-12 rounded-xl text-on-surface-variant hover:bg-surface-variant flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined">inventory_2</span>
+</div>
+<div class="w-12 h-12 rounded-xl text-on-surface-variant hover:bg-surface-variant flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined">receipt_long</span>
+</div>
+<div class="mt-auto w-12 h-12 rounded-xl text-on-surface-variant hover:bg-surface-variant flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</div>
+</aside>
+</body></html>

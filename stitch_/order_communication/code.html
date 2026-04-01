@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Order Communication - Vila Port Repair</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-variant": "#f0f4f4",
+              "on-tertiary-container": "#321200",
+              "on-secondary-fixed": "#002022",
+              "surface-bright": "#ffffff",
+              "inverse-surface": "#222a34",
+              "surface": "#f9fafa",
+              "on-primary-container": "#002022",
+              "on-error": "#ffffff",
+              "primary-container": "#e0f2f3",
+              "on-tertiary-fixed": "#321200",
+              "secondary-container": "#c3e6e9",
+              "secondary": "#436466",
+              "inverse-primary": "#78d5dc",
+              "surface-container-highest": "#dae6e7",
+              "primary-fixed": "#94f1f9",
+              "tertiary": "#f7a072",
+              "on-primary-fixed-variant": "#004f54",
+              "on-tertiary-fixed-variant": "#71370c",
+              "tertiary-fixed-dim": "#ffb68b",
+              "secondary-fixed": "#c6e9ec",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "on-error-container": "#93000a",
+              "secondary-fixed-dim": "#aacdd0",
+              "outline-variant": "#bdc9c9",
+              "on-primary": "#ffffff",
+              "surface-container": "#ffffff",
+              "on-tertiary": "#ffffff",
+              "tertiary-fixed": "#ffdbc8",
+              "surface-container-lowest": "#ffffff",
+              "tertiary-container": "#ffdbc8",
+              "error-container": "#fee2e2",
+              "on-secondary-container": "#48686b",
+              "outline": "#dae6e7",
+              "on-surface-variant": "#5e8a8d",
+              "surface-container-high": "#ebefee",
+              "surface-container-low": "#f6fafa",
+              "inverse-on-surface": "#f9fafa",
+              "surface-dim": "#d7dbdb",
+              "on-background": "#101818",
+              "primary": "#007e85",
+              "on-primary-fixed": "#002022",
+              "primary-fixed-dim": "#78d5dc",
+              "on-surface": "#101818",
+              "on-secondary": "#ffffff",
+              "surface-tint": "#007e85",
+              "error": "#ef4444",
+              "background": "#f9fafa"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+<header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md text-[#007E85] font-manrope font-extrabold text-[20px] tracking-tight docked full-width top-0 sticky z-50 border-b border-[#DAE6E7] dark:border-slate-800 shadow-sm flex justify-between items-center w-full px-6 h-16">
+<div class="flex items-center gap-3">
+<button class="hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors p-2 rounded-full">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<div class="flex flex-col">
+<span class="text-on-background text-sm font-bold">RO-2023-8892</span>
+<span class="text-[10px] text-[#5E8A8D] uppercase tracking-widest font-bold">VUV 12,500 Total</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined cursor-pointer hover:bg-slate-100 p-2 rounded-full transition-colors">notifications</span>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-[#DAE6E7]">
+<img class="w-full h-full object-cover" data-alt="professional male technician headshot with friendly expression in clean workshop environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3nGD4M07hUhu84D8cg9jqtF6Ye064FdwjILH4QmpRMe4_416pbeVnrvTg8sZNe02Q94gfRMiSxaHjMAyhJ6HnzxopTeZohdNttx13hrff4vHvEFAGlq2qHU2nSQ9V_LhlnJ1E_Nm-4-8NL_t1VfQEd8UAH-2kdpPN_ZI7o6fsrJZC6wdcMlbvMUt5gPgVP4_Pwkf-EjIUzQeou1bb0utt-93f55bpEUgb6RN7BAIicb8qF297VvBQuiqLrsGMRrSawz4hvhAqux-h"/>
+</div>
+</div>
+</header>
+<main class="flex-1 overflow-y-auto px-4 py-6 space-y-6 pb-40">
+<div class="flex flex-col items-center">
+<span class="bg-surface-container-highest text-on-surface-variant px-3 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase">Today, Oct 24</span>
+</div>
+<div class="flex gap-3 max-w-[85%]">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary text-sm">person</span>
+</div>
+<div class="space-y-1">
+<div class="bg-white p-4 rounded-xl rounded-tl-none shadow-sm border border-outline-variant/30">
+<p class="text-sm leading-relaxed text-on-surface">Hello, my iPhone 13 screen is flickering since this morning. Is it possible to fix it today?</p>
+</div>
+<span class="text-[10px] text-[#5E8A8D] font-medium ml-1">09:15 AM</span>
+</div>
+</div>
+<div class="flex gap-3 max-w-[85%] ml-auto flex-row-reverse">
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-white text-sm" style="font-variation-settings: 'FILL' 1;">handyman</span>
+</div>
+<div class="space-y-1 text-right">
+<div class="bg-primary text-white p-4 rounded-xl rounded-tr-none shadow-sm">
+<p class="text-sm leading-relaxed">Hi! We can definitely look at that. Please bring it in. It might be a loose display connector or the LCD panel needs replacement.</p>
+</div>
+<span class="text-[10px] text-[#5E8A8D] font-medium mr-1">09:22 AM</span>
+</div>
+</div>
+<div class="mx-auto max-w-[95%]">
+<div class="bg-[#e0f2f3]/60 border-l-4 border-primary p-4 rounded-r-xl space-y-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">lock</span>
+<span class="text-[10px] font-bold text-primary uppercase tracking-widest">Internal Note (Technician Only)</span>
+</div>
+<p class="text-sm text-on-primary-fixed-variant italic">Device shows signs of water ingress near the charging port. Proceed with diagnostic before quoting screen replacement. Check VUV parts inventory for iPhone 13 Panels.</p>
+</div>
+</div>
+<div class="flex gap-3 max-w-[85%]">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary text-sm">person</span>
+</div>
+<div class="space-y-2">
+<div class="bg-white p-4 rounded-xl rounded-tl-none shadow-sm border border-outline-variant/30">
+<p class="text-sm leading-relaxed text-on-surface">Here are the photos of the screen flicker issue.</p>
+<div class="mt-3 grid grid-cols-2 gap-2">
+<div class="relative aspect-square rounded-lg overflow-hidden group cursor-pointer">
+<img class="w-full h-full object-cover" data-alt="close up of a modern smartphone with a cracked screen showing colorful vertical distortion lines" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdYOE8bAZ5X4WwF4pQ7wbh4Af7XBOicokH50jBPp3YdI10K6B1TgLvAeMNeMOwgXOkkJi8sotwP-u1ppMTrfdUCoq0qKMpk4j3X8Uvq8AtG0Epb7XVWpjrqu6lZE-DtP91llBEKQcxGnHkalkS8SClj0I07eNAPx3H6MglvLhyCjQuPc7-X7KBx8vnNWOLjWVppALnyXqTvtHvrRXHUHxgW_vSUcp5pQe3fZBxZGUw0nQ3MRzom-ZMc8YnApzQMZn1nuX8RHWTeJW0"/>
+<div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-all flex items-center justify-center">
+<span class="material-symbols-outlined text-white opacity-0 group-hover:opacity-100">zoom_in</span>
+</div>
+</div>
+<div class="relative aspect-square rounded-lg overflow-hidden group cursor-pointer">
+<img class="w-full h-full object-cover" data-alt="damaged smartphone display detail showing colorful artifacts and digital glitches" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQ7S9qafprSgo7OcbS7Ry9cKb77Dx1aICwq0GdLGb_Fhzu6_TiIIWUMVw_9KLsQP0Ch99V74fLUMmXKRecN9gfSXAR_WvDQAInS83ra06dwuFdO65FVCnLLS9PkoIwOmS1z9FRdUwbwDZUqW3RRvbCnz0DfMFOy4cdHAN23OtVkR-xHxDbApgIewuNmibXjbXzf7TErpRmmTkCY7c5TvWN1rvZ8fd7g_jFb-QCDk-Gi8RL1q4HVZpZx7NzGfMpCDYnIujqNlqFP1EN"/>
+<div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-all flex items-center justify-center">
+<span class="material-symbols-outlined text-white opacity-0 group-hover:opacity-100">zoom_in</span>
+</div>
+</div>
+</div>
+</div>
+<span class="text-[10px] text-[#5E8A8D] font-medium ml-1">10:05 AM</span>
+</div>
+</div>
+<div class="flex gap-3 max-w-[85%] ml-auto flex-row-reverse">
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-white text-sm" style="font-variation-settings: 'FILL' 1;">handyman</span>
+</div>
+<div class="space-y-1 text-right">
+<div class="bg-primary text-white p-4 rounded-xl rounded-tr-none shadow-sm">
+<div class="flex items-center gap-3 mb-1">
+<span class="material-symbols-outlined text-white">mic</span>
+<div class="flex-1 h-8 flex items-center gap-0.5">
+<div class="h-4 w-1 bg-white/40 rounded-full"></div>
+<div class="h-6 w-1 bg-white rounded-full"></div>
+<div class="h-3 w-1 bg-white/40 rounded-full"></div>
+<div class="h-7 w-1 bg-white rounded-full"></div>
+<div class="h-5 w-1 bg-white/40 rounded-full"></div>
+<div class="h-2 w-1 bg-white rounded-full"></div>
+<div class="h-6 w-1 bg-white/40 rounded-full"></div>
+</div>
+<span class="text-xs font-bold">0:12</span>
+</div>
+</div>
+<span class="text-[10px] text-[#5E8A8D] font-medium mr-1">10:45 AM</span>
+</div>
+</div>
+</main>
+<div class="fixed bottom-0 left-0 w-full z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-[#DAE6E7] p-4 pb-8 space-y-4 shadow-xl-primary/40">
+<div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+<button class="shrink-0 bg-surface-container-high hover:bg-surface-container-highest text-[#007E85] text-[10px] font-bold uppercase tracking-wider px-4 py-2 rounded-full border border-outline transition-colors">
+                Waiting for parts
+            </button>
+<button class="shrink-0 bg-surface-container-high hover:bg-surface-container-highest text-[#007E85] text-[10px] font-bold uppercase tracking-wider px-4 py-2 rounded-full border border-outline transition-colors">
+                Ready for pickup
+            </button>
+<button class="shrink-0 bg-surface-container-high hover:bg-surface-container-highest text-[#007E85] text-[10px] font-bold uppercase tracking-wider px-4 py-2 rounded-full border border-outline transition-colors">
+                In Diagnostic
+            </button>
+<button class="shrink-0 bg-surface-container-high hover:bg-surface-container-highest text-[#007E85] text-[10px] font-bold uppercase tracking-wider px-4 py-2 rounded-full border border-outline transition-colors">
+                VUV 5,000 Deposit Req
+            </button>
+</div>
+<div class="flex items-end gap-3">
+<div class="flex flex-col gap-2">
+<button class="w-10 h-10 rounded-xl bg-surface-container-highest flex items-center justify-center text-[#5E8A8D] hover:text-primary transition-colors">
+<span class="material-symbols-outlined">add_photo_alternate</span>
+</button>
+<button class="w-10 h-10 rounded-xl bg-surface-container-highest flex items-center justify-center text-[#5E8A8D] hover:text-primary transition-colors">
+<span class="material-symbols-outlined">mic</span>
+</button>
+</div>
+<div class="flex-1 bg-surface-container-low border border-outline-variant rounded-2xl flex items-center px-4 py-2 min-h-[48px]">
+<textarea class="w-full bg-transparent border-none focus:ring-0 text-sm text-on-surface placeholder:text-on-surface-variant resize-none h-6 py-0" placeholder="Type a message or note..."></textarea>
+<div class="flex items-center gap-2 border-l border-outline-variant ml-2 pl-2">
+<button class="text-primary/40 hover:text-primary transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">lock</span>
+</button>
+</div>
+</div>
+<button class="w-12 h-12 rounded-2xl bg-primary shadow-lg shadow-primary/30 flex items-center justify-center text-white active:scale-95 transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">send</span>
+</button>
+</div>
+</div>
+<nav class="hidden">
+<div class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-4 pt-2 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-[#DAE6E7]">
+<div class="flex flex-col items-center justify-center text-[#007E85] bg-[#007E85]/10 rounded-xl px-3 py-1 scale-90 duration-200">
+<span class="material-symbols-outlined">build</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">Orders</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] px-3 py-1 hover:text-[#007E85]">
+<span class="material-symbols-outlined">badge</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">Staff</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] px-3 py-1 hover:text-[#007E85]">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">Refunds</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] px-3 py-1 hover:text-[#007E85]">
+<span class="material-symbols-outlined">notifications_active</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">Alerts</span>
+</div>
+</div>
+</nav>
+</body></html>

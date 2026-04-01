@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-container-high": "#ebefee",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#ffdbc8",
+                        "secondary-fixed-dim": "#aacdd0",
+                        "primary-fixed-dim": "#78d5dc",
+                        "on-secondary-container": "#48686b",
+                        "surface-container-highest": "#dae6e7",
+                        "on-tertiary-fixed-variant": "#71370c",
+                        "secondary": "#436466",
+                        "background": "#f9fafa",
+                        "surface-variant": "#f0f4f4",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface-variant": "#5e8a8d",
+                        "on-primary": "#ffffff",
+                        "on-primary-container": "#002022",
+                        "on-primary-fixed": "#002022",
+                        "surface-bright": "#ffffff",
+                        "outline": "#dae6e7",
+                        "primary-fixed": "#94f1f9",
+                        "on-tertiary-container": "#321200",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#f7a072",
+                        "surface": "#f9fafa",
+                        "tertiary-container": "#ffdbc8",
+                        "surface-tint": "#007e85",
+                        "on-secondary-fixed-variant": "#2b4c4f",
+                        "outline-variant": "#bdc9c9",
+                        "primary": "#007e85",
+                        "on-background": "#101818",
+                        "primary-container": "#e0f2f3",
+                        "error": "#ef4444",
+                        "tertiary-fixed-dim": "#ffb68b",
+                        "on-secondary": "#ffffff",
+                        "surface-container": "#ffffff",
+                        "inverse-on-surface": "#f9fafa",
+                        "inverse-primary": "#78d5dc",
+                        "surface-dim": "#d7dbdb",
+                        "error-container": "#fee2e2",
+                        "secondary-container": "#c3e6e9",
+                        "secondary-fixed": "#c6e9ec",
+                        "on-tertiary-fixed": "#321200",
+                        "inverse-surface": "#222a34",
+                        "on-surface": "#101818",
+                        "on-primary-fixed-variant": "#004f54",
+                        "surface-container-low": "#f6fafa",
+                        "on-secondary-fixed": "#002022",
+                        "on-tertiary": "#ffffff"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; background-color: #f9fafa; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="text-on-surface mb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-[#DAE6E7] dark:border-slate-800 shadow-sm flex items-center justify-between px-4 h-16 w-full">
+<div class="flex items-center gap-3">
+<button class="active:scale-95 transition-transform text-[#007E85] flex items-center justify-center">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-manrope font-extrabold text-xl tracking-tight text-[#101818]">Revenue Analysis</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 hover:bg-[#F9FAFA] transition-colors rounded-full">
+<span class="material-symbols-outlined text-[#5E8A8D]">calendar_today</span>
+</button>
+<button class="p-2 hover:bg-[#F9FAFA] transition-colors rounded-full">
+<span class="material-symbols-outlined text-[#5E8A8D]">download</span>
+</button>
+</div>
+</header>
+<main class="mt-20 px-4 space-y-6 max-w-4xl mx-auto">
+<!-- Hero Metric Bento Section -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- Main Total Card -->
+<div class="md:col-span-2 bg-white rounded-xl p-6 shadow-sm border border-outline flex flex-col justify-between overflow-hidden relative">
+<div class="z-10">
+<p class="text-[12px] font-bold text-[#5E8A8D] uppercase tracking-widest mb-1">本月总收入 / TOTAL REVENUE</p>
+<div class="flex items-baseline gap-2">
+<h2 class="text-4xl font-extrabold text-[#101818] tracking-tighter">142,500 <span class="text-xl font-bold">VUV</span></h2>
+</div>
+<div class="mt-4 flex items-center gap-2">
+<span class="bg-[#078832]/10 text-[#078832] text-[10px] font-bold px-2 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+                            +12.4%
+                        </span>
+<span class="text-[#5E8A8D] text-[12px]">对比上月同期</span>
+</div>
+</div>
+<div class="absolute right-[-20px] bottom-[-20px] opacity-10">
+<span class="material-symbols-outlined text-[140px] text-primary" style="font-variation-settings: 'FILL' 1;">payments</span>
+</div>
+</div>
+<!-- Target Progress Card -->
+<div class="bg-white rounded-xl p-6 shadow-sm border border-outline">
+<p class="text-[12px] font-bold text-[#5E8A8D] uppercase tracking-widest mb-4">月度目标进度</p>
+<div class="flex flex-col items-center justify-center py-2">
+<div class="relative w-24 h-24 flex items-center justify-center">
+<svg class="w-full h-full -rotate-90">
+<circle cx="48" cy="48" fill="transparent" r="40" stroke="#f0f4f4" stroke-width="8"></circle>
+<circle cx="48" cy="48" fill="transparent" r="40" stroke="#007e85" stroke-dasharray="251" stroke-dashoffset="62" stroke-linecap="round" stroke-width="8"></circle>
+</svg>
+<span class="absolute text-lg font-extrabold text-[#101818]">75%</span>
+</div>
+<p class="mt-3 text-[12px] font-medium text-on-surface-variant">目标: 190,000 VUV</p>
+</div>
+</div>
+</section>
+<!-- Chart Section: Daily Trend -->
+<section class="bg-white rounded-xl p-6 shadow-sm border border-outline">
+<div class="flex items-center justify-between mb-8">
+<h3 class="text-[18px] font-extrabold text-[#101818]">每日收入趋势 / Daily Trend</h3>
+<div class="flex bg-surface-variant rounded-lg p-1">
+<button class="px-3 py-1 text-[12px] font-bold bg-white shadow-sm rounded-md text-primary">7天</button>
+<button class="px-3 py-1 text-[12px] font-bold text-on-surface-variant">30天</button>
+</div>
+</div>
+<div class="h-48 w-full flex items-end justify-between gap-2 px-2">
+<!-- Bar 1 -->
+<div class="flex-1 flex flex-col items-center gap-2 group">
+<div class="w-full bg-primary/20 rounded-t-lg transition-all hover:bg-primary" style="height: 60%;"></div>
+<span class="text-[10px] text-on-surface-variant font-bold">周一</span>
+</div>
+<!-- Bar 2 -->
+<div class="flex-1 flex flex-col items-center gap-2 group">
+<div class="w-full bg-primary/20 rounded-t-lg transition-all hover:bg-primary" style="height: 45%;"></div>
+<span class="text-[10px] text-on-surface-variant font-bold">周二</span>
+</div>
+<!-- Bar 3 -->
+<div class="flex-1 flex flex-col items-center gap-2 group">
+<div class="w-full bg-primary/20 rounded-t-lg transition-all hover:bg-primary" style="height: 85%;"></div>
+<span class="text-[10px] text-on-surface-variant font-bold">周三</span>
+</div>
+<!-- Bar 4 -->
+<div class="flex-1 flex flex-col items-center gap-2 group">
+<div class="w-full bg-primary rounded-t-lg shadow-[0_0_12px_rgba(0,126,133,0.3)]" style="height: 100%;"></div>
+<span class="text-[10px] text-primary font-bold">今日</span>
+</div>
+<!-- Bar 5 -->
+<div class="flex-1 flex flex-col items-center gap-2 group">
+<div class="w-full bg-primary/20 rounded-t-lg transition-all hover:bg-primary" style="height: 40%;"></div>
+<span class="text-[10px] text-on-surface-variant font-bold">周五</span>
+</div>
+<!-- Bar 6 -->
+<div class="flex-1 flex flex-col items-center gap-2 group">
+<div class="w-full bg-primary/20 rounded-t-lg transition-all hover:bg-primary" style="height: 55%;"></div>
+<span class="text-[10px] text-on-surface-variant font-bold">周六</span>
+</div>
+<!-- Bar 7 -->
+<div class="flex-1 flex flex-col items-center gap-2 group">
+<div class="w-full bg-primary/20 rounded-t-lg transition-all hover:bg-primary" style="height: 30%;"></div>
+<span class="text-[10px] text-on-surface-variant font-bold">周日</span>
+</div>
+</div>
+</section>
+<!-- Two Column: Payment & Services -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Payment Split -->
+<div class="bg-white rounded-xl p-6 shadow-sm border border-outline">
+<h3 class="text-[16px] font-extrabold text-[#101818] mb-6">支付方式占比 / Payment Split</h3>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">payments</span>
+</div>
+<span class="text-[14px] font-bold text-on-surface">现金 (Cash)</span>
+</div>
+<div class="text-right">
+<p class="text-[14px] font-extrabold">52,300 VUV</p>
+<p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-widest">37%</p>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">account_balance</span>
+</div>
+<span class="text-[14px] font-bold text-on-surface">银行转账 (Transfer)</span>
+</div>
+<div class="text-right">
+<p class="text-[14px] font-extrabold">81,200 VUV</p>
+<p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-widest">57%</p>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">contract</span>
+</div>
+<span class="text-[14px] font-bold text-on-surface">支票 (Cheque)</span>
+</div>
+<div class="text-right">
+<p class="text-[14px] font-extrabold">9,000 VUV</p>
+<p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-widest">6%</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Top Services -->
+<div class="bg-white rounded-xl p-6 shadow-sm border border-outline">
+<h3 class="text-[16px] font-extrabold text-[#101818] mb-6">高收入服务项目 / Top Services</h3>
+<div class="space-y-5">
+<div class="group">
+<div class="flex justify-between mb-2">
+<span class="text-[13px] font-bold">Screen Replacement</span>
+<span class="text-[13px] font-extrabold text-primary">64,000 VUV</span>
+</div>
+<div class="w-full h-2 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 45%;"></div>
+</div>
+</div>
+<div class="group">
+<div class="flex justify-between mb-2">
+<span class="text-[13px] font-bold">Battery Swap</span>
+<span class="text-[13px] font-extrabold text-primary">32,500 VUV</span>
+</div>
+<div class="w-full h-2 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 22%;"></div>
+</div>
+</div>
+<div class="group">
+<div class="flex justify-between mb-2">
+<span class="text-[13px] font-bold">Water Damage Repair</span>
+<span class="text-[13px] font-extrabold text-primary">28,000 VUV</span>
+</div>
+<div class="w-full h-2 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 19%;"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Recent High-Value Transactions -->
+<section class="space-y-4">
+<h3 class="text-[18px] font-extrabold text-[#101818] px-2">近期高额交易 / High-Value Transactions</h3>
+<div class="bg-white rounded-xl shadow-sm border border-outline overflow-hidden">
+<!-- Transaction 1 -->
+<div class="p-4 flex items-center justify-between border-b border-outline hover:bg-surface-variant/30 transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl overflow-hidden bg-surface-variant flex items-center justify-center shrink-0">
+<img class="w-full h-full object-cover" data-alt="Close up of a premium smartphone with a cracked screen being repaired on a professional workshop table" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiSRVTK1fkSFxDlSirsEDIOxQYbdMh0QeGZurPSh5BeuOOUJxFfPbHtIR1wOkSqkCsnXgPFh5MpIoCuAKFPn8t00lDVJZ0rnULLBwe1YcTqoI-f4OPvVprPkCh4XxRnwnG-fLRXpU_eNFcQarElytw1vyR-4o5F_PIofuDpe_colv4K6GAe07SA48ytDklumGxYZ8lNgWWA_nw4WeaOr_P8-jMIzSzQ2yI3uGUX8QvfhvZiXriD8pJhPf2_87INQDmc1ifzwXMCxUD"/>
+</div>
+<div>
+<p class="text-[14px] font-bold text-on-surface">iPhone 14 Pro Max Screen</p>
+<p class="text-[12px] text-on-surface-variant">2023-11-24 · INV-8829</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-[15px] font-extrabold text-primary">45,000 VUV</p>
+<span class="text-[10px] bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded-full font-bold">TRANSFER</span>
+</div>
+</div>
+<!-- Transaction 2 -->
+<div class="p-4 flex items-center justify-between border-b border-outline hover:bg-surface-variant/30 transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl overflow-hidden bg-surface-variant flex items-center justify-center shrink-0">
+<img class="w-full h-full object-cover" data-alt="A silver luxury laptop being disassembled for motherboard cleaning by professional technician" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBR1t_SDRjBMd2gXyE22J9jsWB3z8OupB17sc52Pp56aXiEz0Z54UrGYWuIE_hkmOmqDLa7x6ndi4Q5f6dlcMDag9C2Aiaar2c3MpWFFpxEQYTc83ceLOzXK1uYmUCM7rf9ErZGRN2UTTd5fxVzio4HlJqJwHId7HaYTvg1fldMUPT21QphHfNhWMUWYNM7RKgKMEi9SwSuPb3n6ZD3ozSYbGYz3rM6WyQCoPPjlARJ1EE3agY2JElV6zJ27KqOY6zTlPxmFFxYYFJ0"/>
+</div>
+<div>
+<p class="text-[14px] font-bold text-on-surface">MacBook Motherboard Clean</p>
+<p class="text-[12px] text-on-surface-variant">2023-11-23 · INV-8825</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-[15px] font-extrabold text-primary">18,500 VUV</p>
+<span class="text-[10px] bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded-full font-bold">CASH</span>
+</div>
+</div>
+<!-- Transaction 3 -->
+<div class="p-4 flex items-center justify-between hover:bg-surface-variant/30 transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl overflow-hidden bg-surface-variant flex items-center justify-center shrink-0">
+<img class="w-full h-full object-cover" data-alt="Internal hardware of a modern smartphone showing the battery and camera components" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8nB4C2bMHHxC7VVC5Fu2D4yKkT5jjkjNXV_zTC1fLw9SlCgazBGehqQ8NpzGvckvNKq_EQeOTKYO5LkAnfR3GJKpNGsMpSjb_VfzhClaz6PhpCH27iniurDn9rPPq7YOOng5BZLk6iM0LNRv3gbxF8OCfvoU94jXDsDNq4GzlaO1Lv6CIoFcxrvUFLNNYAbiaPW2o__SZidm60u1TD1_ZtfB8G16TQs1n1isLtnIsueYJ2VMpDKr-NdLWgDyJOdG27KPr5witQXVC"/>
+</div>
+<div>
+<p class="text-[14px] font-bold text-on-surface">Samsung S22 Ultra Battery</p>
+<p class="text-[12px] text-on-surface-variant">2023-11-22 · INV-8821</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-[15px] font-extrabold text-primary">12,000 VUV</p>
+<span class="text-[10px] bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded-full font-bold">CHEQUE</span>
+</div>
+</div>
+</div>
+<button class="w-full py-3 text-[14px] font-bold text-primary bg-primary/5 hover:bg-primary/10 transition-colors rounded-xl">
+                查看所有交易记录 / View All Transactions
+            </button>
+</section>
+</main>
+<!-- Floating Action Button: Print Report -->
+<button class="fixed right-6 bottom-24 w-14 h-14 bg-[#007E85] text-white rounded-full shadow-[0_8px_30px_rgb(0,126,133,0.4)] flex items-center justify-center z-50 active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[28px]">print</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center h-20 px-4 pb-safe bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-[#DAE6E7] dark:border-slate-800 shadow-[0_-4px_12px_rgba(0,126,133,0.1)] z-50 rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 px-3 py-1 hover:text-[#007E85] transition-all active:translate-y-0.5" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#007E85] bg-[#007E85]/10 rounded-xl px-3 py-1 active:translate-y-0.5" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">Revenue</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 px-3 py-1 hover:text-[#007E85] transition-all active:translate-y-0.5" href="#">
+<span class="material-symbols-outlined">build</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">Services</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 px-3 py-1 hover:text-[#007E85] transition-all active:translate-y-0.5" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">Settings</span>
+</a>
+</nav>
+</body></html>

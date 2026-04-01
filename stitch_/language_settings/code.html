@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>语言设置 - 维修管理</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-highest": "#dae6e7",
+              "inverse-surface": "#222a34",
+              "secondary-fixed": "#c6e9ec",
+              "tertiary-container": "#ffdbc8",
+              "secondary-fixed-dim": "#aacdd0",
+              "surface-tint": "#007e85",
+              "error": "#ef4444",
+              "outline-variant": "#bdc9c9",
+              "primary-fixed-dim": "#78d5dc",
+              "on-primary-container": "#002022",
+              "secondary-container": "#c3e6e9",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "on-error": "#ffffff",
+              "primary-container": "#e0f2f3",
+              "on-secondary": "#ffffff",
+              "on-surface-variant": "#5e8a8d",
+              "inverse-on-surface": "#f9fafa",
+              "surface-container-low": "#f6fafa",
+              "on-primary": "#ffffff",
+              "tertiary-fixed": "#ffdbc8",
+              "on-primary-fixed": "#002022",
+              "surface-container-high": "#ebefee",
+              "on-surface": "#101818",
+              "on-secondary-fixed": "#002022",
+              "tertiary": "#f7a072",
+              "on-tertiary-fixed-variant": "#71370c",
+              "on-tertiary-fixed": "#321200",
+              "secondary": "#436466",
+              "outline": "#dae6e7",
+              "surface-container": "#ffffff",
+              "primary-fixed": "#94f1f9",
+              "on-primary-fixed-variant": "#004f54",
+              "surface": "#f9fafa",
+              "surface-bright": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "surface-variant": "#f0f4f4",
+              "on-tertiary-container": "#321200",
+              "tertiary-fixed-dim": "#ffb68b",
+              "inverse-primary": "#78d5dc",
+              "surface-dim": "#d7dbdb",
+              "on-background": "#101818",
+              "primary": "#007e85",
+              "error-container": "#fee2e2",
+              "on-error-container": "#93000a",
+              "background": "#f9fafa",
+              "on-secondary-container": "#48686b",
+              "on-tertiary": "#ffffff"
+            },
+            fontFamily: {
+              "headline": ["Manrope", "sans-serif"],
+              "body": ["Manrope", "sans-serif"],
+              "label": ["Manrope", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-[#DAE6E7] dark:border-slate-800 shadow-sm flex items-center justify-between px-4 h-14">
+<div class="flex items-center gap-3">
+<button class="active:opacity-70 transition-opacity p-2 -ml-2">
+<span class="material-symbols-outlined text-[#007E85] dark:text-[#00A3AD]">arrow_back</span>
+</button>
+<h1 class="font-manrope font-extrabold text-xl tracking-tight text-[#007E85] dark:text-[#00A3AD]">维修管理</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#5E8A8D]">translate</span>
+</div>
+</header>
+<main class="pt-20 pb-24 px-4 max-w-2xl mx-auto">
+<!-- Hero Illustration / Visual Context -->
+<div class="mb-8 overflow-hidden rounded-2xl relative h-48 group">
+<img alt="Globe and translation icons" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Modern high-tech globe visualization with glowing network lines in cyan and teal tones, professional editorial photography style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfDWQ22EBIAGPTKhDW6W0lKhHaV0VXyV4oG5qKyMe2P-ySv1PU-6LPLc2SBTLSuDujswcNI_Ha4AR0jgXM3mMb3mvHKZr6CHCQ5cXC2PH9OrY7ucu9sst8iEp6cXBN2FeJMfc1TYFQl3mMBp4Gg_K92lYmGRBYUid49MF9pd1nTHQF5meA7ULaYYBwOVfRqamVVtr3LBLc4QY8VbYcY6_-aKyOJdMudZLHiziBgRj0UXGWJc7MiuSMPEp9nuT_vKY6WHhGSCDrlZ-n"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/60 to-transparent flex flex-col justify-end p-6">
+<h2 class="text-white text-2xl font-extrabold tracking-tight">语言设置</h2>
+<p class="text-white/80 text-sm font-medium">选择您偏好的系统显示语言</p>
+</div>
+</div>
+<!-- Language Selection List -->
+<div class="space-y-3">
+<!-- Chinese (Active) -->
+<div class="bg-surface-container shadow-sm rounded-xl p-4 flex items-center justify-between border border-primary/20 hover:bg-[#F9FAFA] transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="font-bold text-lg">中</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">简体中文</p>
+<p class="text-xs text-on-surface-variant font-medium">Chinese (Simplified)</p>
+</div>
+</div>
+<div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-sm" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+</div>
+<!-- English -->
+<div class="bg-surface-container shadow-sm rounded-xl p-4 flex items-center justify-between hover:bg-[#F9FAFA] transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-variant flex items-center justify-center text-on-surface-variant">
+<span class="font-bold text-lg">EN</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">English</p>
+<p class="text-xs text-on-surface-variant font-medium">英语</p>
+</div>
+</div>
+<div class="w-6 h-6 rounded-full border-2 border-outline-variant group-hover:border-primary/50 transition-colors"></div>
+</div>
+<!-- Bislama -->
+<div class="bg-surface-container shadow-sm rounded-xl p-4 flex items-center justify-between hover:bg-[#F9FAFA] transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-variant flex items-center justify-center text-on-surface-variant overflow-hidden">
+<span class="font-bold text-lg text-center leading-tight">BI</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">Bislama</p>
+<p class="text-xs text-on-surface-variant font-medium">比斯拉马语 (瓦努阿图)</p>
+</div>
+</div>
+<div class="w-6 h-6 rounded-full border-2 border-outline-variant group-hover:border-primary/50 transition-colors"></div>
+</div>
+</div>
+<!-- Info Card -->
+<div class="mt-8 bg-primary-container/50 border border-primary/10 rounded-xl p-5 flex gap-4">
+<span class="material-symbols-outlined text-primary">info</span>
+<div class="space-y-1">
+<h4 class="font-bold text-primary text-sm">关于语言设置</h4>
+<p class="text-on-surface-variant text-xs leading-relaxed">更改语言后，系统中的所有菜单、通知和说明文字都将切换为所选语言。部分专业术语的翻译可能会根据地区习惯有所调整。</p>
+</div>
+</div>
+<div class="mt-8 flex justify-center">
+<button class="bg-primary text-white font-bold py-4 px-10 rounded-xl shadow-lg shadow-primary/30 active:scale-95 transition-all w-full max-w-xs">
+                保存更改
+            </button>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-2 py-3 pb-safe bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-[#DAE6E7] dark:border-slate-800 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50">
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 px-3 py-1 hover:text-[#007E85] transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">handyman</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">工作台</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 px-3 py-1 hover:text-[#007E85] transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">库存</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 px-3 py-1 hover:text-[#007E85] transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">财务</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 px-3 py-1 hover:text-[#007E85] transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">客户</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#007E85] dark:text-[#00A3AD] bg-[#007E85]/10 dark:bg-[#007E85]/20 rounded-xl px-3 py-1 transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">设置</span>
+</a>
+</nav>
+</body></html>

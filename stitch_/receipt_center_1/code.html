@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>票据中心 - Vila Port Cyan</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary-fixed": "#002022",
+              "inverse-surface": "#222a34",
+              "outline-variant": "#bdc9c9",
+              "tertiary-fixed-dim": "#ffb68b",
+              "secondary-fixed": "#c6e9ec",
+              "primary-container": "#e0f2f3",
+              "outline": "#dae6e7",
+              "on-secondary": "#ffffff",
+              "on-tertiary-fixed": "#321200",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "on-surface": "#101818",
+              "surface-tint": "#007e85",
+              "surface-container-lowest": "#ffffff",
+              "inverse-primary": "#78d5dc",
+              "on-error": "#ffffff",
+              "on-tertiary-container": "#321200",
+              "error": "#ef4444",
+              "background": "#f9fafa",
+              "surface-variant": "#f0f4f4",
+              "on-secondary-container": "#48686b",
+              "tertiary-container": "#ffdbc8",
+              "primary-fixed": "#94f1f9",
+              "on-tertiary-fixed-variant": "#71370c",
+              "surface-container-high": "#ebefee",
+              "surface": "#f9fafa",
+              "on-tertiary": "#ffffff",
+              "surface-container-highest": "#dae6e7",
+              "on-primary": "#ffffff",
+              "inverse-on-surface": "#f9fafa",
+              "primary": "#007e85",
+              "on-surface-variant": "#5e8a8d",
+              "surface-dim": "#d7dbdb",
+              "secondary-fixed-dim": "#aacdd0",
+              "on-error-container": "#93000a",
+              "error-container": "#fee2e2",
+              "secondary-container": "#c3e6e9",
+              "primary-fixed-dim": "#78d5dc",
+              "tertiary-fixed": "#ffdbc8",
+              "surface-bright": "#ffffff",
+              "surface-container": "#ffffff",
+              "surface-container-low": "#f6fafa",
+              "on-background": "#101818",
+              "on-secondary-fixed": "#002022",
+              "on-primary-container": "#002022",
+              "secondary": "#436466",
+              "tertiary": "#f7a072",
+              "on-primary-fixed-variant": "#004f54"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-[#DAE6E7] dark:border-slate-800 shadow-sm fixed top-0 w-full z-50 flex items-center justify-between px-4 h-16 w-full">
+<button class="hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200 active:scale-95 p-2 rounded-full">
+<span class="material-symbols-outlined text-[#007E85] dark:text-[#00AFB9]">arrow_back</span>
+</button>
+<h1 class="font-manrope font-extrabold text-[20px] tracking-tight text-[#101818] dark:text-white">票据中心</h1>
+<button class="hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200 active:scale-95 p-2 rounded-full">
+<span class="material-symbols-outlined text-[#007E85] dark:text-[#00AFB9]">search</span>
+</button>
+</header>
+<main class="mt-16 px-4 pt-4">
+<!-- Search & Filter Section -->
+<div class="flex gap-3 mb-6">
+<div class="relative flex-1">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input class="w-full pl-10 pr-4 py-3 bg-surface-container rounded-xl border-none shadow-sm focus:ring-2 focus:ring-primary text-sm placeholder:text-on-surface-variant" placeholder="搜索单号或客户名" type="text"/>
+</div>
+<button class="bg-surface-container p-3 rounded-xl shadow-sm border-none flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">calendar_today</span>
+</button>
+</div>
+<!-- NavigationDrawer / Tabs Replacement for Mobile -->
+<nav class="flex overflow-x-auto no-scrollbar gap-2 mb-6 pb-2">
+<button class="whitespace-nowrap px-6 py-2.5 rounded-full bg-primary text-on-primary font-bold text-sm shadow-md shadow-primary/20">全部</button>
+<button class="whitespace-nowrap px-6 py-2.5 rounded-full bg-surface-container text-on-surface-variant font-semibold text-sm hover:bg-surface-container-high transition-colors">维修工单</button>
+<button class="whitespace-nowrap px-6 py-2.5 rounded-full bg-surface-container text-on-surface-variant font-semibold text-sm hover:bg-surface-container-high transition-colors">收银收据</button>
+<button class="whitespace-nowrap px-6 py-2.5 rounded-full bg-surface-container text-on-surface-variant font-semibold text-sm hover:bg-surface-container-high transition-colors">调拨单</button>
+</nav>
+<!-- Receipt List -->
+<div class="space-y-4">
+<!-- Item 1: Repair Order -->
+<div class="bg-white rounded-xl p-4 shadow-sm border border-outline/30 flex flex-col gap-4">
+<div class="flex justify-between items-start">
+<div class="flex gap-3">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">build</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-bold text-on-surface text-base">#RE-20231024</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold tracking-wider bg-primary/10 text-primary uppercase">维修工单</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-1 font-medium">2023-10-24 14:30</p>
+</div>
+</div>
+<div class="text-right">
+<span class="px-2 py-1 rounded-full bg-accent-green/10 text-[#078832] text-[10px] font-bold uppercase tracking-tighter" style="background-color: rgba(7, 136, 50, 0.1);">已打印</span>
+</div>
+</div>
+<div class="flex justify-between items-end border-t border-outline/30 pt-4">
+<div>
+<p class="text-[10px] text-on-surface-variant font-bold uppercase tracking-wider mb-1">金额总计</p>
+<p class="text-lg font-extrabold text-[#007E85]">12,500 VUV</p>
+</div>
+<div class="flex gap-2">
+<button class="p-2 rounded-lg bg-surface-container text-on-surface-variant active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[20px]">share</span>
+</button>
+<button class="px-4 py-2 rounded-lg bg-primary text-on-primary font-bold text-sm flex items-center gap-2 active:scale-95 transition-transform shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-[18px]">print</span>
+                            重新打印
+                        </button>
+</div>
+</div>
+</div>
+<!-- Item 2: Cash Receipt -->
+<div class="bg-white rounded-xl p-4 shadow-sm border border-outline/30 flex flex-col gap-4">
+<div class="flex justify-between items-start">
+<div class="flex gap-3">
+<div class="w-12 h-12 rounded-xl bg-[#F7A072]/10 flex items-center justify-center text-[#F7A072]">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-bold text-on-surface text-base">#CS-20231024</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold tracking-wider bg-[#F7A072]/10 text-[#F7A072] uppercase">收银收据</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-1 font-medium">2023-10-24 13:15</p>
+</div>
+</div>
+<div class="text-right">
+<span class="px-2 py-1 rounded-full bg-error-container text-error text-[10px] font-bold uppercase tracking-tighter">待打印</span>
+</div>
+</div>
+<div class="flex justify-between items-end border-t border-outline/30 pt-4">
+<div>
+<p class="text-[10px] text-on-surface-variant font-bold uppercase tracking-wider mb-1">金额总计</p>
+<p class="text-lg font-extrabold text-[#007E85]">4,200 VUV</p>
+</div>
+<div class="flex gap-2">
+<button class="p-2 rounded-lg bg-surface-container text-on-surface-variant active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[20px]">share</span>
+</button>
+<button class="px-4 py-2 rounded-lg bg-primary text-on-primary font-bold text-sm flex items-center gap-2 active:scale-95 transition-transform shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-[18px]">print</span>
+                            打印票据
+                        </button>
+</div>
+</div>
+</div>
+<!-- Item 3: Transfer Order -->
+<div class="bg-white rounded-xl p-4 shadow-sm border border-outline/30 flex flex-col gap-4">
+<div class="flex justify-between items-start">
+<div class="flex gap-3">
+<div class="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined">sync_alt</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-bold text-on-surface text-base">#TF-20231023</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold tracking-wider bg-secondary/10 text-secondary uppercase">调拨单</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-1 font-medium">2023-10-23 16:45</p>
+</div>
+</div>
+<div class="text-right">
+<span class="px-2 py-1 rounded-full bg-slate-100 text-on-surface-variant text-[10px] font-bold uppercase tracking-tighter">已取消</span>
+</div>
+</div>
+<div class="flex justify-between items-end border-t border-outline/30 pt-4">
+<div>
+<p class="text-[10px] text-on-surface-variant font-bold uppercase tracking-wider mb-1">物品数量</p>
+<p class="text-lg font-extrabold text-[#007E85]">18 Items</p>
+</div>
+<div class="flex gap-2 opacity-50 grayscale">
+<button class="p-2 rounded-lg bg-surface-container text-on-surface-variant cursor-not-allowed">
+<span class="material-symbols-outlined text-[20px]">share</span>
+</button>
+<button class="px-4 py-2 rounded-lg bg-surface-dim text-on-surface-variant font-bold text-sm flex items-center gap-2 cursor-not-allowed">
+<span class="material-symbols-outlined text-[18px]">print</span>
+                            无法打印
+                        </button>
+</div>
+</div>
+</div>
+<!-- Item 4: Repair Order -->
+<div class="bg-white rounded-xl p-4 shadow-sm border border-outline/30 flex flex-col gap-4">
+<div class="flex justify-between items-start">
+<div class="flex gap-3">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">build</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-bold text-on-surface text-base">#RE-20231022</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold tracking-wider bg-primary/10 text-primary uppercase">维修工单</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-1 font-medium">2023-10-22 09:10</p>
+</div>
+</div>
+<div class="text-right">
+<span class="px-2 py-1 rounded-full bg-accent-green/10 text-[#078832] text-[10px] font-bold uppercase tracking-tighter" style="background-color: rgba(7, 136, 50, 0.1);">已打印</span>
+</div>
+</div>
+<div class="flex justify-between items-end border-t border-outline/30 pt-4">
+<div>
+<p class="text-[10px] text-on-surface-variant font-bold uppercase tracking-wider mb-1">金额总计</p>
+<p class="text-lg font-extrabold text-[#007E85]">25,000 VUV</p>
+</div>
+<div class="flex gap-2">
+<button class="p-2 rounded-lg bg-surface-container text-on-surface-variant active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[20px]">share</span>
+</button>
+<button class="px-4 py-2 rounded-lg bg-primary text-on-primary font-bold text-sm flex items-center gap-2 active:scale-95 transition-transform shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-[18px]">print</span>
+                            重新打印
+                        </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Empty state placeholder (hidden by default, shown for illustration) -->
+<!-- 
+        <div class="flex flex-col items-center justify-center py-20 text-center">
+            <div class="w-24 h-24 bg-surface-container rounded-full flex items-center justify-center mb-4">
+                <span class="material-symbols-outlined text-4xl text-on-surface-variant">receipt_long</span>
+            </div>
+            <h3 class="font-bold text-on-surface">暂无相关票据</h3>
+            <p class="text-sm text-on-surface-variant mt-2">试试更换筛选条件或搜索关键词</p>
+        </div>
+        -->
+</main>
+<!-- FAB for Global Action (Print All Pending - Contextual) -->
+<button class="fixed right-6 bottom-28 w-14 h-14 bg-primary text-on-primary rounded-full shadow-2xl shadow-primary/40 flex items-center justify-center active:scale-90 transition-transform z-40">
+<span class="material-symbols-outlined text-3xl">print_connect</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center h-20 px-2 pb-safe bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-[#DAE6E7] dark:border-slate-800 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] z-50">
+<button class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 active:scale-90 transition-transform">
+<span class="material-symbols-outlined">home</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">首页</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 active:scale-90 transition-transform">
+<span class="material-symbols-outlined">build</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">工单</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#007E85] dark:text-[#00AFB9] bg-[#007E85]/10 rounded-xl px-3 py-1 active:scale-90 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">票据</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 active:scale-90 transition-transform">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">设置</span>
+</button>
+</nav>
+<!-- Visual Polish: Status gradient overlay bottom -->
+<div class="fixed bottom-20 left-0 w-full h-8 bg-gradient-to-t from-background to-transparent pointer-events-none"></div>
+</body></html>

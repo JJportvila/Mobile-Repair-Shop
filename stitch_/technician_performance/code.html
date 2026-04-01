@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-highest": "#dae6e7",
+              "inverse-surface": "#222a34",
+              "secondary-fixed": "#c6e9ec",
+              "tertiary-container": "#ffdbc8",
+              "secondary-fixed-dim": "#aacdd0",
+              "surface-tint": "#007e85",
+              "error": "#ef4444",
+              "outline-variant": "#bdc9c9",
+              "primary-fixed-dim": "#78d5dc",
+              "on-primary-container": "#002022",
+              "secondary-container": "#c3e6e9",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "on-error": "#ffffff",
+              "primary-container": "#e0f2f3",
+              "on-secondary": "#ffffff",
+              "on-surface-variant": "#5e8a8d",
+              "inverse-on-surface": "#f9fafa",
+              "surface-container-low": "#f6fafa",
+              "on-primary": "#ffffff",
+              "tertiary-fixed": "#ffdbc8",
+              "on-primary-fixed": "#002022",
+              "surface-container-high": "#ebefee",
+              "on-surface": "#101818",
+              "on-secondary-fixed": "#002022",
+              "tertiary": "#f7a072",
+              "on-tertiary-fixed-variant": "#71370c",
+              "on-tertiary-fixed": "#321200",
+              "secondary": "#436466",
+              "outline": "#dae6e7",
+              "surface-container": "#ffffff",
+              "primary-fixed": "#94f1f9",
+              "on-primary-fixed-variant": "#004f54",
+              "surface": "#f9fafa",
+              "surface-bright": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "surface-variant": "#f0f4f4",
+              "on-tertiary-container": "#321200",
+              "tertiary-fixed-dim": "#ffb68b",
+              "inverse-primary": "#78d5dc",
+              "surface-dim": "#d7dbdb",
+              "on-background": "#101818",
+              "primary": "#007e85",
+              "error-container": "#fee2e2",
+              "on-error-container": "#93000a",
+              "background": "#f9fafa",
+              "on-secondary-container": "#48686b",
+              "on-tertiary": "#ffffff"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-24">
+<!-- Top App Bar -->
+<header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md fixed top-0 w-full z-50 border-b border-[#DAE6E7] dark:border-slate-800 shadow-sm flex items-center justify-between px-4 h-14 w-full">
+<div class="flex items-center gap-3">
+<button class="active:opacity-70 transition-opacity">
+<span class="material-symbols-outlined text-[#007E85] dark:text-[#00A3AD]">arrow_back</span>
+</button>
+<h1 class="font-manrope font-extrabold text-xl tracking-tight text-[#007E85] dark:text-[#00A3AD]">维修管理</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#5E8A8D]">calendar_today</span>
+<span class="material-symbols-outlined text-[#5E8A8D]">filter_list</span>
+</div>
+</header>
+<main class="pt-20 px-4 max-w-5xl mx-auto space-y-6">
+<!-- Period Filter Tabs -->
+<section class="flex bg-surface-variant p-1 rounded-xl w-full max-w-md mx-auto">
+<button class="flex-1 py-2 text-sm font-bold rounded-lg bg-surface-container shadow-sm text-primary">本周</button>
+<button class="flex-1 py-2 text-sm font-medium text-on-surface-variant hover:text-primary transition-colors">本月</button>
+<button class="flex-1 py-2 text-sm font-medium text-on-surface-variant hover:text-primary transition-colors">季度</button>
+<button class="flex-1 py-2 text-sm font-medium text-on-surface-variant hover:text-primary transition-colors">年度</button>
+</section>
+<!-- KPI Summary Bento Grid -->
+<section class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border border-outline/50">
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">总订单数</p>
+<div class="flex items-baseline gap-1">
+<span class="text-2xl font-extrabold text-on-surface">1,284</span>
+<span class="text-[10px] text-accent-green font-bold text-[#078832]">+12%</span>
+</div>
+</div>
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border border-outline/50">
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">平均修复耗时</p>
+<div class="flex items-baseline gap-1">
+<span class="text-2xl font-extrabold text-on-surface">42m</span>
+<span class="text-[10px] text-[#078832] font-bold">-5m</span>
+</div>
+</div>
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border border-outline/50">
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">总营收 (VUV)</p>
+<div class="flex items-baseline gap-1">
+<span class="text-2xl font-extrabold text-on-surface">842K</span>
+<span class="text-[10px] text-[#078832] font-bold">+8%</span>
+</div>
+</div>
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border border-outline/50">
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">客户满意度</p>
+<div class="flex items-baseline gap-1">
+<span class="text-2xl font-extrabold text-on-surface">4.9</span>
+<span class="material-symbols-outlined text-[14px] text-tertiary" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+</section>
+<!-- Technician Leaderboard -->
+<section class="space-y-4">
+<div class="flex items-center justify-between">
+<h2 class="font-headline font-extrabold text-xl tracking-tight text-on-surface">技师绩效排行</h2>
+<span class="text-xs font-bold text-primary flex items-center gap-1">查看全部 <span class="material-symbols-outlined text-xs">trending_flat</span></span>
+</div>
+<div class="space-y-3">
+<!-- Top Rank Card 1 -->
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border-l-4 border-primary flex items-center gap-4 transition-all hover:translate-x-1">
+<div class="relative">
+<img class="w-14 h-14 rounded-full object-cover" data-alt="Professional technician headshot with friendly expression in high-key studio lighting with neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAK88VnXSdWe2kQ45VHoVAAd9qMmd_7Ne8jLX3785PN_KnaoBgTkKNWsWDmbVFe4CTB66tO0YWiNqO2LyuYAI26DsIMDC0sKIY6e7jv9EvdsvUV59eJbet5LQK46fyD2WtSUF3A_ieLSjlHIxn9GPsk4Z0dxVwsEVDR6C0P6jV8qFMmEfLX4Mth_QnKndPMqrI1z1Ppg5qQjFSXP03Ln-u7W2Ssad3eG0yw9YldgjQskTtxPAsjYPxVY3BC6-UgZ9vFR2te4AuL-ssN"/>
+<div class="absolute -top-1 -left-1 bg-primary text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">1</div>
+</div>
+<div class="flex-1">
+<h3 class="font-bold text-on-surface">张伟杰</h3>
+<p class="text-xs text-on-surface-variant font-medium">高级认证专家</p>
+</div>
+<div class="grid grid-cols-3 gap-6 text-right hidden md:grid">
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase">完工单</p>
+<p class="font-bold text-sm">142</p>
+</div>
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase">平均耗时</p>
+<p class="font-bold text-sm">34m</p>
+</div>
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase">营收 (VUV)</p>
+<p class="font-bold text-sm text-primary">124,500</p>
+</div>
+</div>
+<div class="md:hidden text-right">
+<p class="font-extrabold text-primary">124.5k</p>
+<p class="text-[10px] font-bold text-on-surface-variant">VUV</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant/30">chevron_right</span>
+</div>
+<!-- Rank Card 2 -->
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border-l-4 border-transparent flex items-center gap-4 transition-all hover:translate-x-1">
+<div class="relative">
+<img class="w-14 h-14 rounded-full object-cover" data-alt="Smiling male worker in professional work uniform, outdoor setting with soft daylight and professional aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjo9OZepOyaQmxpGN1Yv6SAB47dj43dAd-ufKJZRBiwdlajBhMWNlf_PLjIfYHK7vAFlD9JQgOShwaHHt-KrT8ApUi9-5ueEHMs0H40O9Hpxgqy3FooAzoOrzkxOBvFCWkuMAm8r-JzGHJyjU_s8yVNfCdDFFechEu8GQWHG_HzS2FD83Fa8oix6xskuU9tcsAtgCbcfWnPLJloyMVm-2okDZ_tt7gWjSMj2Byo_Vf5zZiqc-F2vaASLTpWiZci7PCrkERb-TRCO7a"/>
+<div class="absolute -top-1 -left-1 bg-surface-dim text-on-surface text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">2</div>
+</div>
+<div class="flex-1">
+<h3 class="font-bold text-on-surface">李明华</h3>
+<p class="text-xs text-on-surface-variant font-medium">中级维修员</p>
+</div>
+<div class="grid grid-cols-3 gap-6 text-right hidden md:grid">
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase">完工单</p>
+<p class="font-bold text-sm">128</p>
+</div>
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase">平均耗时</p>
+<p class="font-bold text-sm">38m</p>
+</div>
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase">营收 (VUV)</p>
+<p class="font-bold text-sm text-primary">108,200</p>
+</div>
+</div>
+<div class="md:hidden text-right">
+<p class="font-extrabold text-primary">108.2k</p>
+<p class="text-[10px] font-bold text-on-surface-variant">VUV</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant/30">chevron_right</span>
+</div>
+<!-- Rank Card 3 -->
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border-l-4 border-transparent flex items-center gap-4 transition-all hover:translate-x-1">
+<div class="relative">
+<img class="w-14 h-14 rounded-full object-cover" data-alt="Female technical support specialist with confident smile, soft office environment background with natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCApIbroF0wj2RLQhUHNMEh5i_Odxf47y2I-KAtVcdly1GPv2OSoEo2hndSTGKTQL0kbN7sABDc1cNkqq67RnfG355-WSIkTS_ihCTJP6-9J2WcteRtChjwgugpj21jaMo2dhZ7XeY7ui5OXXQaT6btXXck8iSewRdjCCsplY5Ghp0xnK1_ZzB-ZppMCWrJXMlpMes3KWrbEZmXTYPkfMiH4uuvgtelKb6u87IqTdyfIIod67EJQZBzBpG8LN4pqsE7agLA2cscx7_H"/>
+<div class="absolute -top-1 -left-1 bg-surface-dim text-on-surface text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">3</div>
+</div>
+<div class="flex-1">
+<h3 class="font-bold text-on-surface">陈雨欣</h3>
+<p class="text-xs text-on-surface-variant font-medium">精密维护专家</p>
+</div>
+<div class="grid grid-cols-3 gap-6 text-right hidden md:grid">
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase">完工单</p>
+<p class="font-bold text-sm">115</p>
+</div>
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase">平均耗时</p>
+<p class="font-bold text-sm">41m</p>
+</div>
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase">营收 (VUV)</p>
+<p class="font-bold text-sm text-primary">98,900</p>
+</div>
+</div>
+<div class="md:hidden text-right">
+<p class="font-extrabold text-primary">98.9k</p>
+<p class="text-[10px] font-bold text-on-surface-variant">VUV</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant/30">chevron_right</span>
+</div>
+<!-- Rank Card 4 -->
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border-l-4 border-transparent flex items-center gap-4 transition-all hover:translate-x-1">
+<div class="relative">
+<div class="w-14 h-14 rounded-full bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-secondary-container text-2xl">person</span>
+</div>
+<div class="absolute -top-1 -left-1 bg-surface-dim text-on-surface text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm">4</div>
+</div>
+<div class="flex-1">
+<h3 class="font-bold text-on-surface">赵志高</h3>
+<p class="text-xs text-on-surface-variant font-medium">普通维修员</p>
+</div>
+<div class="grid grid-cols-3 gap-6 text-right hidden md:grid">
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase">完工单</p>
+<p class="font-bold text-sm">94</p>
+</div>
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase">平均耗时</p>
+<p class="font-bold text-sm">45m</p>
+</div>
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase">营收 (VUV)</p>
+<p class="font-bold text-sm text-primary">76,400</p>
+</div>
+</div>
+<div class="md:hidden text-right">
+<p class="font-extrabold text-primary">76.4k</p>
+<p class="text-[10px] font-bold text-on-surface-variant">VUV</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant/30">chevron_right</span>
+</div>
+</div>
+</section>
+<!-- Efficiency Chart Section (Visual Representation) -->
+<section class="bg-surface-container p-6 rounded-2xl shadow-sm border border-outline/50">
+<h3 class="font-bold text-on-surface mb-6">团队平均修复时效趋势</h3>
+<div class="h-48 w-full flex items-end justify-between gap-2">
+<div class="flex-1 bg-primary/10 rounded-t-lg relative group h-[40%]">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-on-surface text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">52m</div>
+<div class="w-full h-0 bg-primary absolute bottom-0 transition-all duration-700 h-full rounded-t-lg"></div>
+</div>
+<div class="flex-1 bg-primary/10 rounded-t-lg relative group h-[65%]">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-on-surface text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">48m</div>
+<div class="w-full h-0 bg-primary absolute bottom-0 transition-all duration-700 h-full rounded-t-lg opacity-80"></div>
+</div>
+<div class="flex-1 bg-primary/10 rounded-t-lg relative group h-[50%]">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-on-surface text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">50m</div>
+<div class="w-full h-0 bg-primary absolute bottom-0 transition-all duration-700 h-full rounded-t-lg opacity-80"></div>
+</div>
+<div class="flex-1 bg-primary/10 rounded-t-lg relative group h-[85%]">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-on-surface text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">42m</div>
+<div class="w-full h-0 bg-primary absolute bottom-0 transition-all duration-700 h-full rounded-t-lg"></div>
+</div>
+<div class="flex-1 bg-primary/10 rounded-t-lg relative group h-[100%]">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-on-surface text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">38m</div>
+<div class="w-full h-0 bg-[#078832] absolute bottom-0 transition-all duration-700 h-full rounded-t-lg"></div>
+</div>
+</div>
+<div class="flex justify-between mt-3 px-1 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">
+<span>周一</span>
+<span>周二</span>
+<span>周三</span>
+<span>周四</span>
+<span>今日</span>
+</div>
+</section>
+</main>
+<!-- Floating Action Button -->
+<button class="fixed bottom-24 right-6 w-14 h-14 bg-primary text-white rounded-full shadow-xl shadow-primary/40 flex items-center justify-center z-50 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-3xl">print</span>
+</button>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-2 py-3 pb-safe bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-[#DAE6E7] dark:border-slate-800 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50">
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 px-3 py-1 hover:text-[#007E85] transition-all active:scale-95" href="#">
+<span class="material-symbols-outlined">handyman</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">工作台</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#007E85] dark:text-[#00A3AD] bg-[#007E85]/10 dark:bg-[#007E85]/20 rounded-xl px-3 py-1 active:scale-95 transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">库存</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 px-3 py-1 hover:text-[#007E85] transition-all active:scale-95" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">财务</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 px-3 py-1 hover:text-[#007E85] transition-all active:scale-95" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">客户</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 px-3 py-1 hover:text-[#007E85] transition-all active:scale-95" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">设置</span>
+</a>
+</nav>
+</body></html>

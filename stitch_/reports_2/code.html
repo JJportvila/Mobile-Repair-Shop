@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary-container": "#321200",
+              "on-primary-container": "#002022",
+              "secondary": "#436466",
+              "tertiary-fixed": "#ffdbc8",
+              "surface-variant": "#f0f4f4",
+              "tertiary-container": "#ffdbc8",
+              "primary": "#007e85",
+              "error-container": "#fee2e2",
+              "on-surface-variant": "#5e8a8d",
+              "inverse-primary": "#78d5dc",
+              "error": "#ef4444",
+              "surface-container-high": "#ebefee",
+              "on-secondary-container": "#48686b",
+              "surface": "#f9fafa",
+              "on-tertiary": "#ffffff",
+              "on-background": "#101818",
+              "on-secondary": "#ffffff",
+              "on-error-container": "#93000a",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary-fixed": "#321200",
+              "primary-fixed-dim": "#78d5dc",
+              "inverse-surface": "#222a34",
+              "inverse-on-surface": "#f9fafa",
+              "surface-container": "#ffffff",
+              "on-tertiary-fixed-variant": "#71370c",
+              "surface-tint": "#007e85",
+              "surface-container-low": "#f6fafa",
+              "secondary-container": "#c3e6e9",
+              "background": "#f9fafa",
+              "on-surface": "#101818",
+              "on-secondary-fixed": "#002022",
+              "outline": "#dae6e7",
+              "on-error": "#ffffff",
+              "secondary-fixed": "#c6e9ec",
+              "tertiary-fixed-dim": "#ffb68b",
+              "surface-dim": "#d7dbdb",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "primary-container": "#e0f2f3",
+              "outline-variant": "#bdc9c9",
+              "tertiary": "#f7a072",
+              "on-primary-fixed-variant": "#004f54",
+              "on-primary": "#ffffff",
+              "surface-container-highest": "#dae6e7",
+              "surface-bright": "#ffffff",
+              "secondary-fixed-dim": "#aacdd0",
+              "on-primary-fixed": "#002022",
+              "primary-fixed": "#94f1f9"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            boxShadow: {
+              'xl-primary': '0 20px 25px -5px rgba(0, 126, 133, 0.1), 0 10px 10px -5px rgba(0, 126, 133, 0.04)',
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-[#DAE6E7] dark:border-slate-800 shadow-sm flex justify-between items-center px-4 h-16 w-full">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#007E85]">menu</span>
+<h1 class="font-manrope font-extrabold tracking-tight text-[20px] text-[#101818]">数据报表</h1>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#5E8A8D]">notifications</span>
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center overflow-hidden border border-outline">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="professional male avatar with glasses and a friendly smile in a modern business casual style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfDRjeo-3cYfV0eR6PMhSs00v7X9y2xil_hJwPSnyK-gr-4NZGaGVjuNbTIUWaN3pptI-2hblE8io80b0B7PA_AQR15Fg4SU_Oc5ptQZxgqEFpiWu1LNS7aMvnlrGY14vxQSYEIYSAWus8Sqa1z6sHeGSqxPMjANdOt0U65OiKEv_KDxE-BZUkQti5pGIhebtXJhADq9qg7wzC3uSovwn5ItcIbWan1NueeYRG41ZF4ofXw6zqysTSuOGq7WZcCArRCSuoVJ9C5VvD"/>
+</div>
+</div>
+</header>
+<main class="pt-20 px-4 max-w-5xl mx-auto space-y-6">
+<!-- Bento Grid Section 1: Key Metrics -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- Total Revenue -->
+<div class="md:col-span-2 bg-white p-6 rounded-xl border border-outline shadow-sm flex flex-col justify-between overflow-hidden relative">
+<div class="z-10">
+<p class="text-[12px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">Total Revenue (Annual)</p>
+<h2 class="text-3xl font-extrabold text-on-background tracking-tight">2,450,000 <span class="text-primary text-xl">VUV</span></h2>
+<div class="mt-4 flex items-center gap-2 text-[#078832]">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span class="text-xs font-bold">+12.4% from last year</span>
+</div>
+</div>
+<!-- Decorative Abstract Background for Revenue -->
+<div class="absolute right-0 bottom-0 w-48 h-48 opacity-10 pointer-events-none">
+<span class="material-symbols-outlined text-[120px] text-primary" style="font-variation-settings: 'FILL' 1;">payments</span>
+</div>
+</div>
+<!-- Repair Efficiency -->
+<div class="bg-primary-container p-6 rounded-xl border border-primary/20 shadow-sm flex flex-col justify-center items-center text-center">
+<span class="material-symbols-outlined text-primary text-4xl mb-2" style="font-variation-settings: 'FILL' 1;">timer</span>
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-primary-fixed-variant mb-1">Repair Efficiency</p>
+<h3 class="text-2xl font-extrabold text-on-primary-container">4.2 <span class="text-sm font-medium">hrs</span></h3>
+<p class="text-[10px] text-on-primary-fixed-variant mt-1">Avg. Completion Time</p>
+</div>
+</div>
+<!-- Revenue Growth Bar Chart (Simulated with HTML/Tailwind) -->
+<div class="bg-white p-6 rounded-xl border border-outline shadow-sm">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-lg font-extrabold tracking-tight">Revenue Growth</h3>
+<div class="flex gap-2">
+<span class="px-3 py-1 bg-surface-variant rounded-full text-[10px] font-bold text-on-surface-variant">MONTHLY</span>
+</div>
+</div>
+<div class="flex items-end justify-between h-48 gap-2 px-2">
+<div class="flex flex-col items-center flex-1 group">
+<div class="w-full bg-secondary-container rounded-t-lg transition-all duration-300 group-hover:bg-primary h-[40%]"></div>
+<span class="text-[10px] mt-2 font-bold text-on-surface-variant">JAN</span>
+</div>
+<div class="flex flex-col items-center flex-1 group">
+<div class="w-full bg-secondary-container rounded-t-lg transition-all duration-300 group-hover:bg-primary h-[55%]"></div>
+<span class="text-[10px] mt-2 font-bold text-on-surface-variant">FEB</span>
+</div>
+<div class="flex flex-col items-center flex-1 group">
+<div class="w-full bg-secondary-container rounded-t-lg transition-all duration-300 group-hover:bg-primary h-[45%]"></div>
+<span class="text-[10px] mt-2 font-bold text-on-surface-variant">MAR</span>
+</div>
+<div class="flex flex-col items-center flex-1 group">
+<div class="w-full bg-primary rounded-t-lg h-[75%]"></div>
+<span class="text-[10px] mt-2 font-bold text-primary">APR</span>
+</div>
+<div class="flex flex-col items-center flex-1 group">
+<div class="w-full bg-secondary-container rounded-t-lg transition-all duration-300 group-hover:bg-primary h-[60%]"></div>
+<span class="text-[10px] mt-2 font-bold text-on-surface-variant">MAY</span>
+</div>
+<div class="flex flex-col items-center flex-1 group">
+<div class="w-full bg-secondary-container rounded-t-lg transition-all duration-300 group-hover:bg-primary h-[90%]"></div>
+<span class="text-[10px] mt-2 font-bold text-on-surface-variant">JUN</span>
+</div>
+</div>
+</div>
+<!-- Asymmetric Layout: Category Split & Payment Methods -->
+<div class="grid grid-cols-1 md:grid-cols-5 gap-6">
+<!-- Category Split (Pie Chart Sim) -->
+<div class="md:col-span-3 bg-white p-6 rounded-xl border border-outline shadow-sm">
+<h3 class="text-lg font-extrabold tracking-tight mb-6">Category Distribution</h3>
+<div class="flex items-center gap-8">
+<div class="relative w-32 h-32 flex-shrink-0">
+<!-- Simulated Pie Chart using Conic Gradient -->
+<div class="w-full h-full rounded-full" style="background: conic-gradient(#007e85 0% 45%, #f7a072 45% 75%, #3b82f6 75% 100%);"></div>
+<div class="absolute inset-4 bg-white rounded-full flex items-center justify-center">
+<span class="text-[10px] font-bold text-on-surface-variant">UNITS</span>
+</div>
+</div>
+<div class="space-y-3 flex-grow">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+<span class="text-sm font-medium">Smartphone</span>
+</div>
+<span class="text-sm font-extrabold">45%</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-tertiary"></div>
+<span class="text-sm font-medium">Appliance</span>
+</div>
+<span class="text-sm font-extrabold">30%</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-blue-500"></div>
+<span class="text-sm font-medium">Laptop</span>
+</div>
+<span class="text-sm font-extrabold">25%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Payment Methods -->
+<div class="md:col-span-2 bg-white p-6 rounded-xl border border-outline shadow-sm">
+<h3 class="text-lg font-extrabold tracking-tight mb-4">Payment Methods</h3>
+<div class="space-y-4">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant">payments</span>
+</div>
+<div class="flex-grow">
+<p class="text-sm font-bold">Cash</p>
+<div class="w-full bg-surface-variant h-1.5 rounded-full mt-1">
+<div class="bg-primary h-full rounded-full w-[65%]"></div>
+</div>
+</div>
+<span class="text-xs font-bold text-on-surface-variant">65%</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant">account_balance</span>
+</div>
+<div class="flex-grow">
+<p class="text-sm font-bold">Transfer</p>
+<div class="w-full bg-surface-variant h-1.5 rounded-full mt-1">
+<div class="bg-primary h-full rounded-full w-[25%]"></div>
+</div>
+</div>
+<span class="text-xs font-bold text-on-surface-variant">25%</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant">description</span>
+</div>
+<div class="flex-grow">
+<p class="text-sm font-bold">Cheque</p>
+<div class="w-full bg-surface-variant h-1.5 rounded-full mt-1">
+<div class="bg-primary h-full rounded-full w-[10%]"></div>
+</div>
+</div>
+<span class="text-xs font-bold text-on-surface-variant">10%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Top Parts Used List -->
+<div class="bg-white rounded-xl border border-outline shadow-sm overflow-hidden">
+<div class="p-6 border-b border-outline flex justify-between items-center">
+<h3 class="text-lg font-extrabold tracking-tight">Top Parts Used</h3>
+<button class="text-primary text-sm font-bold">View Inventory</button>
+</div>
+<div class="divide-y divide-outline">
+<div class="p-4 flex items-center justify-between hover:bg-surface transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl overflow-hidden bg-surface-variant border border-outline">
+<img alt="iPhone Screen" class="w-full h-full object-cover" data-alt="close-up studio photo of a replacement high-resolution smartphone display panel on a white background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmOwNYCqSARiIK1fmEqHpZXxSLkQH4hmkGalV13dkm_kY7C5Ujj7HAkm4QPxnhsjWo4k5u3RPEa9l-xs2wEF4PVxteTeb0zTGAEhpsuFlxcFvmBVu4V5VwDbkmrJBcalWbdrCEJ2_WjTRS-Y5f6lzNONC8iUIPhsreW9xTPXDiWQk8-qUQmVn0hsA6xJIX0Hc1EM6YoZYXq4tZycbBFQ-WeJU1wLOAcjtlsizHEf_uPD32fb6utW0ljt0Yuvza9gNLkMWy1WwxGY4t"/>
+</div>
+<div>
+<h4 class="text-sm font-bold text-on-background">iPhone 13 Display Panel</h4>
+<p class="text-xs text-on-surface-variant">OLED Digitizer Assembly</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-sm font-extrabold text-on-background">142 Units</p>
+<span class="px-2 py-0.5 bg-green-100 text-[#078832] text-[10px] font-bold rounded uppercase">In Stock</span>
+</div>
+</div>
+<div class="p-4 flex items-center justify-between hover:bg-surface transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl overflow-hidden bg-surface-variant border border-outline">
+<img alt="Li-ion Battery" class="w-full h-full object-cover" data-alt="professional product photography of a lithium-ion replacement battery for mobile devices showing connector cables" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUw62HVv_pW8rXJpWYHH7H6_Y_fvaUU36s15x7fp-T-4L0QbxOTjIessDIx7zCHQVyNUFk-Rrgk8qai_RgSmg39oaYx_EZpLD99MZPKvDL57tMw1pwdOSG57deC4Rh7DfQJVBdhWkxO_cAUUUx3m0Jo-Jlmuw90uH4x56hYHm91Kz2AaGwJOtH-vqMzfMATHE81laXWQEfcD42Xw8z3nBZIHnSC93c3mE72OQa_wE-NYexS70Kl6d5e6hUPkJ_DVi-42xKYpRzvCl8"/>
+</div>
+<div>
+<h4 class="text-sm font-bold text-on-background">Universal 5000mAh Battery</h4>
+<p class="text-xs text-on-surface-variant">Li-ion Polymer Cell</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-sm font-extrabold text-on-background">98 Units</p>
+<span class="px-2 py-0.5 bg-orange-100 text-[#F7A072] text-[10px] font-bold rounded uppercase">Low Stock</span>
+</div>
+</div>
+<div class="p-4 flex items-center justify-between hover:bg-surface transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl overflow-hidden bg-surface-variant border border-outline">
+<img alt="USB-C Port" class="w-full h-full object-cover" data-alt="macro photograph of a tiny electronic components including a replacement USB-C charging port connector" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbWINHF5bALT02qFZ6WEfsWAEgxCoZcNOD9xwXse5LvL5tgl69BCP0M5LQd5DC32rlL_XkDnUCyp4VlDrpVItwmm7_qZAFe6_tt57T6E8tRCnb8sy_jhdo0Zp-EMzOl8k_VKGlU2VqJ6PRENGzu-AocPSYFzwug_YgV-1W-bVaDLMVhyomTLkv4uou7MD3BiE4gqIKb0TOXFLvxFEKqfYrNxn0KdUJImLxC4CvC9QLZ_qkUyhLgHjnBQzAFQPYdL-7EPf1gUDCs5aL"/>
+</div>
+<div>
+<h4 class="text-sm font-bold text-on-background">Type-C Charging Port</h4>
+<p class="text-xs text-on-surface-variant">Samsung S-Series Comp.</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-sm font-extrabold text-on-background">65 Units</p>
+<span class="px-2 py-0.5 bg-green-100 text-[#078832] text-[10px] font-bold rounded uppercase">In Stock</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg flex justify-around items-center h-20 px-2 pb-safe border-t border-[#DAE6E7] dark:border-slate-800 shadow-xl-primary z-50">
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 hover:text-[#007E85] transition-all active:translate-y-0.5 duration-150" href="#">
+<span class="material-symbols-outlined">build</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Repairs</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 hover:text-[#007E85] transition-all active:translate-y-0.5 duration-150" href="#">
+<span class="material-symbols-outlined">settings_input_component</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Parts</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 hover:text-[#007E85] transition-all active:translate-y-0.5 duration-150" href="#">
+<span class="material-symbols-outlined">photo_library</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Photos</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 hover:text-[#007E85] transition-all active:translate-y-0.5 duration-150" href="#">
+<span class="material-symbols-outlined">print</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Print</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#007E85] dark:text-[#00A3AD] bg-[#007E85]/10 rounded-xl px-3 py-1 active:translate-y-0.5 duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Reports</span>
+</a>
+</nav>
+<!-- FAB (Contextual for Reports: Generate CSV/Export) -->
+<div class="fixed bottom-24 right-6 z-40">
+<button class="w-14 h-14 bg-primary rounded-full shadow-xl shadow-primary/40 flex items-center justify-center text-white active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-3xl">download</span>
+</button>
+</div>
+</body></html>

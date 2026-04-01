@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vila Port Cyan - Inventory Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "tertiary-fixed": "#ffdbc8",
+              "on-secondary": "#ffffff",
+              "on-surface-variant": "#5e8a8d",
+              "inverse-on-surface": "#f9fafa",
+              "on-primary-fixed-variant": "#004f54",
+              "tertiary-container": "#ffdbc8",
+              "surface-container-lowest": "#ffffff",
+              "surface": "#f9fafa",
+              "on-primary": "#ffffff",
+              "primary-fixed": "#94f1f9",
+              "surface-container": "#ffffff",
+              "on-background": "#101818",
+              "inverse-primary": "#78d5dc",
+              "surface-tint": "#007e85",
+              "on-secondary-container": "#48686b",
+              "outline-variant": "#bdc9c9",
+              "on-tertiary": "#ffffff",
+              "surface-dim": "#d7dbdb",
+              "inverse-surface": "#222a34",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "on-secondary-fixed": "#002022",
+              "surface-container-high": "#ebefee",
+              "error-container": "#fee2e2",
+              "secondary": "#436466",
+              "on-tertiary-container": "#321200",
+              "secondary-container": "#c3e6e9",
+              "surface-bright": "#ffffff",
+              "on-tertiary-fixed": "#321200",
+              "on-primary-container": "#002022",
+              "error": "#ef4444",
+              "on-surface": "#101818",
+              "background": "#f9fafa",
+              "secondary-fixed-dim": "#aacdd0",
+              "surface-container-low": "#f6fafa",
+              "primary-fixed-dim": "#78d5dc",
+              "on-tertiary-fixed-variant": "#71370c",
+              "secondary-fixed": "#c6e9ec",
+              "primary": "#007e85",
+              "tertiary": "#f7a072",
+              "surface-variant": "#f0f4f4",
+              "on-primary-fixed": "#002022",
+              "on-error": "#ffffff",
+              "on-error-container": "#93000a",
+              "primary-container": "#e0f2f3",
+              "surface-container-highest": "#dae6e7",
+              "tertiary-fixed-dim": "#ffb68b",
+              "outline": "#dae6e7"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body {
+        font-family: 'Manrope', sans-serif;
+        background-color: #f9fafa;
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="text-on-background pb-24">
+<!-- TopAppBar -->
+<header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md text-[#007E85] fixed top-0 w-full z-50 border-b border-[#DAE6E7] shadow-sm flex items-center justify-between px-4 h-16">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer transition-all duration-200 active:scale-95" data-icon="menu">menu</span>
+<h1 class="font-['Manrope'] font-extrabold text-[20px] tracking-tight">Inventory</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#5E8A8D] transition-all duration-200 active:scale-95" data-icon="search">search</span>
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="person">person</span>
+</div>
+</div>
+</header>
+<main class="pt-20 px-4 max-w-5xl mx-auto space-y-6">
+<!-- Inventory Value Hero -->
+<section class="bg-surface-container p-6 rounded-xl shadow-sm border border-outline-variant relative overflow-hidden">
+<div class="relative z-10">
+<span class="text-on-surface-variant font-bold text-[10px] uppercase tracking-wider">Total Inventory Value</span>
+<div class="flex items-baseline gap-2 mt-1">
+<h2 class="text-[30px] font-extrabold tracking-tight text-on-surface">1,240,500</h2>
+<span class="text-primary font-bold text-lg">VUV</span>
+</div>
+<div class="flex items-center gap-1 mt-2 text-[#078832]">
+<span class="material-symbols-outlined text-sm" data-icon="trending_up">trending_up</span>
+<span class="text-xs font-bold">+4.2% from last month</span>
+</div>
+</div>
+<!-- Decorative Element -->
+<div class="absolute -right-12 -top-12 w-48 h-48 bg-primary/5 rounded-full blur-3xl"></div>
+</section>
+<!-- Quick Metrics Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border border-outline-variant flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+</div>
+<div>
+<p class="text-[10px] font-bold uppercase text-on-surface-variant tracking-wider">Total SKUs</p>
+<p class="text-xl font-extrabold text-on-surface">412</p>
+</div>
+</div>
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border border-outline-variant flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-error/10 flex items-center justify-center text-error">
+<span class="material-symbols-outlined" data-icon="error_outline">error_outline</span>
+</div>
+<div>
+<p class="text-[10px] font-bold uppercase text-on-surface-variant tracking-wider">Low Stock</p>
+<p class="text-xl font-extrabold text-on-surface">18</p>
+</div>
+</div>
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border border-outline-variant flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-tertiary/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined" data-icon="pending_actions">pending_actions</span>
+</div>
+<div>
+<p class="text-[10px] font-bold uppercase text-on-surface-variant tracking-wider">Pending Orders</p>
+<p class="text-xl font-extrabold text-on-surface">06</p>
+</div>
+</div>
+</div>
+<!-- Quick Actions -->
+<div class="grid grid-cols-2 gap-4">
+<button class="flex items-center justify-center gap-3 bg-primary text-white py-4 rounded-xl font-bold text-sm shadow-lg shadow-primary/20 transition-all active:scale-95">
+<span class="material-symbols-outlined" data-icon="add_box">add_box</span>
+                Inbound Registration
+            </button>
+<button class="flex items-center justify-center gap-3 bg-surface-container-highest text-on-surface py-4 rounded-xl font-bold text-sm border border-outline-variant transition-all active:scale-95">
+<span class="material-symbols-outlined" data-icon="fact_check">fact_check</span>
+                Inventory Audit
+            </button>
+</div>
+<!-- Low Stock Alerts Section -->
+<section class="space-y-4">
+<div class="flex items-center justify-between">
+<h3 class="text-[20px] font-extrabold tracking-tight text-on-surface">Low Stock Alerts</h3>
+<span class="text-primary text-xs font-bold uppercase tracking-wider cursor-pointer">View All</span>
+</div>
+<div class="space-y-3">
+<!-- Item Card 1 -->
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border border-outline-variant">
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-variant flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="close-up of several smartphone replacement screens stacked neatly in a professional workshop setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsjOSTWGj520DV5mDKHh7UQjxBGM_cHqWAp6mn2aK2sgtiOC-io94gbPoTW5h7psOaroHvAdAX0Ha_lqvgvN1kIuxL12KPoGGI9RlvwvJj2WgrPPxLkHCqHdvN7Oo1G17SGTQ_2ImO0QRR6vdBBiErHUKyU0ezZCFevU8ExMJAI7uMwu4aZ1V5CYDpFJtUDrmiXLB9Vp-FE9ZwDZ0FApZ3F5lh9LYej69fOo-5jZo1XcwkQ0Nh8f2GSEANMU8GsTTTrRZk54Bcskm-"/>
+</div>
+<div>
+<h4 class="font-bold text-on-surface leading-tight">iPhone 14 Screens</h4>
+<p class="text-[10px] text-on-surface-variant font-medium">SKU: SCR-IPH14-ORG</p>
+</div>
+</div>
+<div class="bg-error/10 text-error px-2 py-1 rounded-full text-[10px] font-extrabold">CRITICAL</div>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">
+<span>2 units left</span>
+<span>Target: 15</span>
+</div>
+<div class="w-full bg-surface-variant h-1.5 rounded-full overflow-hidden">
+<div class="bg-error h-full rounded-full" style="width: 13.3%"></div>
+</div>
+</div>
+</div>
+<!-- Item Card 2 -->
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border border-outline-variant">
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-variant flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="high-capacity lithium ion battery for mobile devices on a clean technical workbench" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC28Xso4ZxVw6L9f20Ewn-BuFMN9ShYdlv__aIGsiWy_Xhk7eKjqHIbYCJXY9sZeV8C4Fv4KK1TRzJWe9fK1szlLFPr6Aqhrrx0U8Qe8XTaKBZkFxy76eXkH_i11MTY_c6BLH_TIMwEZZp2tfdtyWqPODukF4-49mQ5RhtrhZyXLmRzGkceXsQkVADhRo3-v-435KS4Mk5DkZOXl5-aKLxUIsCdiNLXLMEBoMUxwMpP0XixFoLrk1oID9raZ9I0AvL2PgtRKcyM9M6Q"/>
+</div>
+<div>
+<h4 class="font-bold text-on-surface leading-tight">5000mAh Batteries</h4>
+<p class="text-[10px] text-on-surface-variant font-medium">SKU: BAT-GEN50-V3</p>
+</div>
+</div>
+<div class="bg-tertiary/10 text-tertiary px-2 py-1 rounded-full text-[10px] font-extrabold">LOW STOCK</div>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">
+<span>8 units left</span>
+<span>Target: 25</span>
+</div>
+<div class="w-full bg-surface-variant h-1.5 rounded-full overflow-hidden">
+<div class="bg-tertiary h-full rounded-full" style="width: 32%"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Category Breakdown -->
+<section class="space-y-4">
+<h3 class="text-[20px] font-extrabold tracking-tight text-on-surface">Category Breakdown</h3>
+<div class="bg-surface-container p-6 rounded-xl shadow-sm border border-outline-variant">
+<div class="flex h-3 w-full rounded-full overflow-hidden mb-6">
+<div class="bg-primary w-[45%]" title="Screens"></div>
+<div class="bg-tertiary w-[25%]" title="Batteries"></div>
+<div class="bg-secondary w-[20%]" title="Small Parts"></div>
+<div class="bg-outline-variant w-[10%]" title="Others"></div>
+</div>
+<div class="grid grid-cols-2 gap-y-4">
+<div class="flex items-center gap-3">
+<div class="w-2.5 h-2.5 rounded-full bg-primary"></div>
+<div>
+<p class="text-xs font-bold text-on-surface">Screens</p>
+<p class="text-[10px] text-on-surface-variant">45% • 185 items</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-2.5 h-2.5 rounded-full bg-tertiary"></div>
+<div>
+<p class="text-xs font-bold text-on-surface">Batteries</p>
+<p class="text-[10px] text-on-surface-variant">25% • 103 items</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-2.5 h-2.5 rounded-full bg-secondary"></div>
+<div>
+<p class="text-xs font-bold text-on-surface">Small Parts</p>
+<p class="text-[10px] text-on-surface-variant">20% • 82 items</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-2.5 h-2.5 rounded-full bg-outline-variant"></div>
+<div>
+<p class="text-xs font-bold text-on-surface">Others</p>
+<p class="text-[10px] text-on-surface-variant">10% • 42 items</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-[#DAE6E7] shadow-[0_-4px_12px_rgba(0,0,0,0.05)] flex justify-around items-center px-2 py-3 pb-safe z-50 rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] transition-transform duration-300 ease-out active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-['Manrope'] font-bold text-[10px] uppercase tracking-wider">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] transition-transform duration-300 ease-out active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="build">build</span>
+<span class="font-['Manrope'] font-bold text-[10px] uppercase tracking-wider">Repairs</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#007E85] bg-[#007E85]/10 rounded-xl px-3 py-1 transition-transform duration-300 ease-out active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span class="font-['Manrope'] font-bold text-[10px] uppercase tracking-wider">Inventory</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] transition-transform duration-300 ease-out active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-['Manrope'] font-bold text-[10px] uppercase tracking-wider">Settings</span>
+</a>
+</nav>
+<!-- Floating Action Button -->
+<button class="fixed right-6 bottom-24 w-14 h-14 bg-primary text-white rounded-full shadow-xl shadow-primary/40 flex items-center justify-center transition-all duration-200 active:scale-95 z-40">
+<span class="material-symbols-outlined" data-icon="qr_code_scanner">qr_code_scanner</span>
+</button>
+</body></html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Parts Catalog - Vila Port Cyan</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-variant": "#f0f4f4",
+              "on-background": "#101818",
+              "error-container": "#fee2e2",
+              "surface-container-high": "#ebefee",
+              "surface": "#f9fafa",
+              "secondary-fixed-dim": "#aacdd0",
+              "secondary": "#436466",
+              "on-tertiary": "#ffffff",
+              "on-primary-fixed": "#002022",
+              "tertiary": "#f7a072",
+              "on-primary": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary-container": "#321200",
+              "inverse-primary": "#78d5dc",
+              "outline-variant": "#bdc9c9",
+              "on-surface-variant": "#5e8a8d",
+              "inverse-on-surface": "#f9fafa",
+              "on-secondary-fixed": "#002022",
+              "on-primary-container": "#002022",
+              "primary": "#007e85",
+              "inverse-surface": "#222a34",
+              "on-secondary": "#ffffff",
+              "on-error-container": "#93000a",
+              "primary-fixed-dim": "#78d5dc",
+              "surface-tint": "#007e85",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "on-secondary-container": "#48686b",
+              "primary-container": "#e0f2f3",
+              "surface-dim": "#d7dbdb",
+              "surface-container": "#ffffff",
+              "secondary-fixed": "#c6e9ec",
+              "on-tertiary-fixed-variant": "#71370c",
+              "on-primary-fixed-variant": "#004f54",
+              "outline": "#dae6e7",
+              "secondary-container": "#c3e6e9",
+              "surface-container-low": "#f6fafa",
+              "surface-container-highest": "#dae6e7",
+              "error": "#ef4444",
+              "tertiary-fixed-dim": "#ffb68b",
+              "on-tertiary-fixed": "#321200",
+              "primary-fixed": "#94f1f9",
+              "surface-bright": "#ffffff",
+              "on-surface": "#101818",
+              "on-error": "#ffffff",
+              "tertiary-fixed": "#ffdbc8",
+              "tertiary-container": "#ffdbc8",
+              "background": "#f9fafa"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-cyan-100/50 dark:border-cyan-900/50 shadow-sm flex items-center justify-between px-4 h-16">
+<div class="flex items-center gap-3">
+<button class="active:scale-95 transition-transform duration-150 p-2 hover:bg-cyan-50 dark:hover:bg-cyan-900/30 rounded-full">
+<span class="material-symbols-outlined text-cyan-700 dark:text-cyan-400">menu</span>
+</button>
+<h1 class="font-manrope font-extrabold tracking-tight text-xl text-cyan-800 dark:text-cyan-100">Parts Catalog</h1>
+</div>
+<div class="flex items-center">
+<button class="active:scale-95 transition-transform duration-150 p-2 hover:bg-cyan-50 dark:hover:bg-cyan-900/30 rounded-full">
+<span class="material-symbols-outlined text-cyan-700 dark:text-cyan-400">search</span>
+</button>
+</div>
+</header>
+<main class="pt-20 px-4 max-w-5xl mx-auto">
+<!-- Search and Filter Section -->
+<section class="mt-4 mb-6">
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-on-surface-variant">search</span>
+</div>
+<input class="block w-full pl-12 pr-4 py-4 bg-surface-container border-none rounded-2xl shadow-sm ring-1 ring-outline focus:ring-2 focus:ring-primary transition-all placeholder:text-on-surface-variant/60 font-medium" placeholder="Search SKU or part name..." type="text"/>
+</div>
+<!-- Category Tabs -->
+<div class="flex gap-2 mt-6 overflow-x-auto pb-2 no-scrollbar">
+<button class="px-6 py-2.5 rounded-xl bg-primary text-on-primary font-bold text-sm whitespace-nowrap shadow-md shadow-primary/20">All</button>
+<button class="px-6 py-2.5 rounded-xl bg-surface-container text-on-surface-variant font-bold text-sm whitespace-nowrap border border-outline hover:bg-surface-variant transition-colors">Screens</button>
+<button class="px-6 py-2.5 rounded-xl bg-surface-container text-on-surface-variant font-bold text-sm whitespace-nowrap border border-outline hover:bg-surface-variant transition-colors">Batteries</button>
+<button class="px-6 py-2.5 rounded-xl bg-surface-container text-on-surface-variant font-bold text-sm whitespace-nowrap border border-outline hover:bg-surface-variant transition-colors">Small Parts</button>
+</div>
+</section>
+<!-- Parts Catalog Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+<!-- Part Card 1 -->
+<div class="bg-surface-container rounded-2xl p-4 shadow-sm border border-outline/30 flex flex-col group hover:shadow-md transition-all">
+<div class="relative w-full aspect-square rounded-xl overflow-hidden mb-4 bg-surface-variant">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Close-up high quality smartphone replacement screen with detailed glass texture and ribbon cable on a clean white surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCz1fVmoLeBIPdlBvpyZkJMujufkwO3ClewDgB7HNbuEzgQgMqWcIMl5YZpuzdNn8xVTvYjRtyF5XCzPa4nqdKpGZ8rY8EXvXHcRWTRQ4OVPLUC1C4Kc_vqauk7u7U4pWJ2U9Vb309H92RPRDd2bki0K1u_o6J3d5J79x5e1CNpmnxKXc_HAapdnW5ccmm7_1v8XsmVOAXDPxF3z72JmgzMzoWMkU3rKhq6ugau_RyJa_Hx6OPOp8B2ye6csWMu9vlv6xAxlDwqhtDK"/>
+<div class="absolute top-2 right-2">
+<span class="bg-primary-container text-primary text-[10px] font-extrabold px-2 py-1 rounded-lg uppercase tracking-wider">In Stock</span>
+</div>
+</div>
+<div class="flex-grow">
+<h3 class="font-bold text-on-surface text-lg leading-tight mb-1">iPhone 13 OLED Assembly</h3>
+<p class="text-on-surface-variant text-xs font-medium mb-3">SKU: SCR-IP13-092</p>
+<div class="flex items-center justify-between mt-auto">
+<div class="flex flex-col">
+<span class="text-[10px] text-on-surface-variant uppercase font-bold tracking-tighter">Current Stock</span>
+<span class="text-lg font-extrabold text-on-surface">14 Units</span>
+</div>
+<div class="text-right">
+<span class="text-xs text-on-surface-variant font-medium">Price</span>
+<div class="text-primary font-extrabold text-xl">12,500 <span class="text-xs">VUV</span></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Part Card 2 (Low Stock) -->
+<div class="bg-surface-container rounded-2xl p-4 shadow-sm border border-outline/30 flex flex-col group hover:shadow-md transition-all">
+<div class="relative w-full aspect-square rounded-xl overflow-hidden mb-4 bg-surface-variant">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Macro photography of a sleek lithium polymer battery for a laptop with technical specifications printed on a matte black casing" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGMbtci8apfXoiCUfbSXWHI61Os9DBG2-7gNIVYKWK5fpesHlKC8bpFqU2RTejTwDJoqdNYtmFvKcu9SGT7nFqQx6gGIyzYh_gsDo6eqz5pJNiuLJHwo6XTQQIZoVgolpRgfQYUSQ1w1ENHh8Cp3oBMt7g3ulXlmpjrlpl_mdGjZgrpkRJ4jAyIRrWoRj7OBZzeRKqXRToL1cR3jM8Iu-kPMXPPEG6ox_C3Qrr5NKjMywAgsvnftCbT9g8yW1OWxqgpaUp_2HHdNSo"/>
+<div class="absolute top-2 right-2">
+<span class="bg-error-container text-error text-[10px] font-extrabold px-2 py-1 rounded-lg uppercase tracking-wider">Low Stock</span>
+</div>
+</div>
+<div class="flex-grow">
+<h3 class="font-bold text-on-surface text-lg leading-tight mb-1">MacBook Pro M1 Battery</h3>
+<p class="text-on-surface-variant text-xs font-medium mb-3">SKU: BAT-MBP-M1-22</p>
+<div class="flex items-center justify-between mt-auto">
+<div class="flex flex-col">
+<span class="text-[10px] text-on-surface-variant uppercase font-bold tracking-tighter">Current Stock</span>
+<span class="text-lg font-extrabold text-error">2 Units</span>
+</div>
+<div class="text-right">
+<span class="text-xs text-on-surface-variant font-medium">Price</span>
+<div class="text-primary font-extrabold text-xl">18,200 <span class="text-xs">VUV</span></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Part Card 3 -->
+<div class="bg-surface-container rounded-2xl p-4 shadow-sm border border-outline/30 flex flex-col group hover:shadow-md transition-all">
+<div class="relative w-full aspect-square rounded-xl overflow-hidden mb-4 bg-surface-variant">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Assortment of tiny gold-plated internal smartphone components and screws on a clean industrial blue background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMX2mgqGduQ1HvzjqvWoz-jqyG2q5PxcnSj3ODi-eFF5zatsapLVdJLUoTaL3sk750pSdmEHhsS_SFx0CqLGIsjEmDhFk_LKPDABwaOxwSEhWD-BaTJV1RIh7ZdVoLqK--LyCYB788Mg-R-iOs8Qdpk_F1G1vNjhdzwj85NsjAZkLqN33TZqH5tP5zVOrV8DNfgRBmRe4-qIJDD4Barfab5YKcligTa_jvi02Sytcn8KWnMaT2R3mN4flhRCPvbzOo9uY3pPVO4HkR"/>
+<div class="absolute top-2 right-2">
+<span class="bg-primary-container text-primary text-[10px] font-extrabold px-2 py-1 rounded-lg uppercase tracking-wider">In Stock</span>
+</div>
+</div>
+<div class="flex-grow">
+<h3 class="font-bold text-on-surface text-lg leading-tight mb-1">USB-C Charging Port</h3>
+<p class="text-on-surface-variant text-xs font-medium mb-3">SKU: CHG-GEN-USB-C</p>
+<div class="flex items-center justify-between mt-auto">
+<div class="flex flex-col">
+<span class="text-[10px] text-on-surface-variant uppercase font-bold tracking-tighter">Current Stock</span>
+<span class="text-lg font-extrabold text-on-surface">45 Units</span>
+</div>
+<div class="text-right">
+<span class="text-xs text-on-surface-variant font-medium">Price</span>
+<div class="text-primary font-extrabold text-xl">1,200 <span class="text-xs">VUV</span></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Part Card 4 -->
+<div class="bg-surface-container rounded-2xl p-4 shadow-sm border border-outline/30 flex flex-col group hover:shadow-md transition-all">
+<div class="relative w-full aspect-square rounded-xl overflow-hidden mb-4 bg-surface-variant">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Internal smartphone camera module with multiple lenses and metallic frame on a high-tech laboratory background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0jPrPb_6-op4moP8Swxxd4ZHRbXuvsKh8_0UaZH39HuZelLtWuBcq9DuG0Q-4BHvT6pCWk2oT207vPIhwHk_dNUOU4qhSEGuQffK_3rTdQx33PNQhsyjZcgDB_1KNwzQnLvEqVUU-0o-MFr6RNlrJQOUo5LbiUZsRdZM-3B5xUd_aaYirlPseBDkbb0xUZn5vCm6TCTIgncMXlxTUWhlbsAR7-FvOb3ill604iPviP2XPoO2X2yoLWD4MEfV8tNIYtCeeCMoYX2VD"/>
+<div class="absolute top-2 right-2">
+<span class="bg-primary-container text-primary text-[10px] font-extrabold px-2 py-1 rounded-lg uppercase tracking-wider">In Stock</span>
+</div>
+</div>
+<div class="flex-grow">
+<h3 class="font-bold text-on-surface text-lg leading-tight mb-1">Samsung S22 Ultra Camera</h3>
+<p class="text-on-surface-variant text-xs font-medium mb-3">SKU: CAM-S22U-REAR</p>
+<div class="flex items-center justify-between mt-auto">
+<div class="flex flex-col">
+<span class="text-[10px] text-on-surface-variant uppercase font-bold tracking-tighter">Current Stock</span>
+<span class="text-lg font-extrabold text-on-surface">8 Units</span>
+</div>
+<div class="text-right">
+<span class="text-xs text-on-surface-variant font-medium">Price</span>
+<div class="text-primary font-extrabold text-xl">24,500 <span class="text-xs">VUV</span></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Part Card 5 (Low Stock) -->
+<div class="bg-surface-container rounded-2xl p-4 shadow-sm border border-outline/30 flex flex-col group hover:shadow-md transition-all">
+<div class="relative w-full aspect-square rounded-xl overflow-hidden mb-4 bg-surface-variant">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Digital tablet digitizer glass panel lying flat on an anti-static mat with soft workshop lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4Bxaco4cuQn42u-50ctVV9JCiZa5JeaDBwYAdidFcv1GSMA3P-jHc_oRrBsW7tefXLbVnUolu1nXFBMdSyaJ8CJTYKYZfv2F8xWvW4rvXaUkZR6z4iKQo5yX91gBuEV1TwnIJm0BvbiV81ZkZ7eQdu5GwWWNurKZhaRnu2N3L3e6qO0jUe_9e_zAELkC4tD2gzSSTllHnu6pSpf52CgOdRef8zlmuW5o-sUqpiwoCjk3kv2cF_ERPnVqmNNOTJ0GNhM3GL1yNZfQy"/>
+<div class="absolute top-2 right-2">
+<span class="bg-error-container text-error text-[10px] font-extrabold px-2 py-1 rounded-lg uppercase tracking-wider">Low Stock</span>
+</div>
+</div>
+<div class="flex-grow">
+<h3 class="font-bold text-on-surface text-lg leading-tight mb-1">iPad Air 4 Digitizer</h3>
+<p class="text-on-surface-variant text-xs font-medium mb-3">SKU: SCR-IPA4-DIGI</p>
+<div class="flex items-center justify-between mt-auto">
+<div class="flex flex-col">
+<span class="text-[10px] text-on-surface-variant uppercase font-bold tracking-tighter">Current Stock</span>
+<span class="text-lg font-extrabold text-error">1 Units</span>
+</div>
+<div class="text-right">
+<span class="text-xs text-on-surface-variant font-medium">Price</span>
+<div class="text-primary font-extrabold text-xl">9,800 <span class="text-xs">VUV</span></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Part Card 6 -->
+<div class="bg-surface-container rounded-2xl p-4 shadow-sm border border-outline/30 flex flex-col group hover:shadow-md transition-all">
+<div class="relative w-full aspect-square rounded-xl overflow-hidden mb-4 bg-surface-variant">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Professional grade thermal paste tube and application tool on a specialized electronic repair surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5QxUh7ddDf-Xe4NlfAAYSZwzo_A4f8s3ZWJwSM3VU0ZMVHaunEchZ18979hTVU6dcyH1yUIvi4e5b6EM4CTMdG_-xvlmjDAHUzGf7rpTXt48_691bTYZyzkaxFu2sMezUnEbD2zXNC_LYRMXfeVZTxkzSrMHoyuMZMEqAFfiGbXD8dAK3vbIopCO3SPMS7-y2QVYaiRk2Q4YOvCmeOSmoI_atIxP-ebFs-xtvJpS509KYn0L-7KP25dyAzdLvxmViDcVm7Jp0waSC"/>
+<div class="absolute top-2 right-2">
+<span class="bg-primary-container text-primary text-[10px] font-extrabold px-2 py-1 rounded-lg uppercase tracking-wider">In Stock</span>
+</div>
+</div>
+<div class="flex-grow">
+<h3 class="font-bold text-on-surface text-lg leading-tight mb-1">Artic Silver Thermal Paste</h3>
+<p class="text-on-surface-variant text-xs font-medium mb-3">SKU: ACC-THERM-SLV</p>
+<div class="flex items-center justify-between mt-auto">
+<div class="flex flex-col">
+<span class="text-[10px] text-on-surface-variant uppercase font-bold tracking-tighter">Current Stock</span>
+<span class="text-lg font-extrabold text-on-surface">32 Units</span>
+</div>
+<div class="text-right">
+<span class="text-xs text-on-surface-variant font-medium">Price</span>
+<div class="text-primary font-extrabold text-xl">1,500 <span class="text-xs">VUV</span></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button -->
+<button class="fixed bottom-24 right-6 w-14 h-14 bg-primary text-on-primary rounded-full shadow-xl shadow-primary/40 flex items-center justify-center z-40 active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center h-20 px-4 pb-safe bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-cyan-100/30 dark:border-cyan-800/30 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-50">
+<a class="flex flex-col items-center justify-center bg-cyan-100/50 dark:bg-cyan-900/40 text-cyan-800 dark:text-cyan-100 rounded-xl px-3 py-1 active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Inventory</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-3 py-1 hover:text-cyan-600 dark:hover:text-cyan-300 active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="build">build</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Repairs</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-3 py-1 hover:text-cyan-600 dark:hover:text-cyan-300 active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Orders</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-3 py-1 hover:text-cyan-600 dark:hover:text-cyan-300 active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Settings</span>
+</a>
+</nav>
+</body></html>

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Business Hours Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary-fixed-variant": "#004f54",
+              "surface-container": "#ffffff",
+              "primary-fixed-dim": "#78d5dc",
+              "inverse-primary": "#78d5dc",
+              "tertiary-container": "#ffdbc8",
+              "on-primary": "#ffffff",
+              "on-surface-variant": "#5e8a8d",
+              "on-tertiary-fixed-variant": "#71370c",
+              "outline-variant": "#bdc9c9",
+              "outline": "#dae6e7",
+              "surface-container-low": "#f6fafa",
+              "secondary": "#436466",
+              "error": "#ef4444",
+              "on-secondary-container": "#48686b",
+              "surface": "#f9fafa",
+              "on-secondary-fixed": "#002022",
+              "surface-container-highest": "#dae6e7",
+              "surface-variant": "#f0f4f4",
+              "surface-container-lowest": "#ffffff",
+              "error-container": "#fee2e2",
+              "on-tertiary": "#ffffff",
+              "inverse-on-surface": "#f9fafa",
+              "surface-tint": "#007e85",
+              "on-background": "#101818",
+              "on-tertiary-container": "#321200",
+              "on-secondary": "#ffffff",
+              "surface-dim": "#d7dbdb",
+              "background": "#f9fafa",
+              "on-error": "#ffffff",
+              "tertiary": "#f7a072",
+              "secondary-fixed-dim": "#aacdd0",
+              "primary-container": "#e0f2f3",
+              "on-primary-container": "#002022",
+              "surface-container-high": "#ebefee",
+              "secondary-container": "#c3e6e9",
+              "tertiary-fixed-dim": "#ffb68b",
+              "primary": "#007e85",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "on-primary-fixed": "#002022",
+              "inverse-surface": "#222a34",
+              "primary-fixed": "#94f1f9",
+              "surface-bright": "#ffffff",
+              "tertiary-fixed": "#ffdbc8",
+              "on-surface": "#101818",
+              "on-tertiary-fixed": "#321200",
+              "on-error-container": "#93000a",
+              "secondary-fixed": "#c6e9ec"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            boxShadow: {
+              'xl-primary': '0 20px 25px -5px rgba(0, 126, 133, 0.1), 0 8px 10px -6px rgba(0, 126, 133, 0.1)',
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface antialiased min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-[#DAE6E7] dark:border-slate-800 shadow-sm flex items-center justify-between px-4 h-16">
+<div class="flex items-center gap-3">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-[#007E85]" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="font-manrope font-bold text-lg tracking-tight text-[#101818]">Business Hours</h1>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-sm" data-icon="save">save</span>
+<span class="text-sm uppercase tracking-wider">Save</span>
+</button>
+</header>
+<main class="pt-24 px-4 max-w-3xl mx-auto space-y-6">
+<!-- Status Preview Bento Card -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="md:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-outline flex flex-col justify-between relative overflow-hidden">
+<div class="relative z-10">
+<p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Current Status</p>
+<div class="flex items-center gap-3">
+<span class="text-3xl font-extrabold text-on-surface tracking-tight">Shop is OPEN</span>
+<div class="flex h-3 w-3 relative">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-green opacity-75" style="background-color: #078832;"></span>
+<span class="relative inline-flex rounded-full h-3 w-3 bg-accent-green" style="background-color: #078832;"></span>
+</div>
+</div>
+<p class="text-on-surface-variant mt-2 text-sm">Closes today at <span class="font-bold text-primary">06:00 PM</span></p>
+</div>
+<div class="absolute -right-4 -bottom-4 opacity-5">
+<span class="material-symbols-outlined text-9xl" data-icon="schedule" style="font-size: 160px;">schedule</span>
+</div>
+</div>
+<div class="bg-primary-container rounded-2xl p-6 flex flex-col items-center justify-center text-center">
+<span class="material-symbols-outlined text-primary text-4xl mb-2" data-icon="update">update</span>
+<p class="text-on-primary-container font-bold text-sm">Last Update</p>
+<p class="text-on-primary-container text-xs opacity-70">Oct 24, 10:45 AM</p>
+</div>
+</section>
+<!-- Weekly Schedule Section -->
+<section class="space-y-4">
+<div class="flex items-center justify-between px-1">
+<h2 class="text-xl font-extrabold tracking-tight text-on-surface">Weekly Schedule</h2>
+<span class="text-xs font-bold text-on-surface-variant uppercase tracking-widest">GMT +08:00</span>
+</div>
+<div class="bg-white rounded-2xl shadow-sm border border-outline divide-y divide-outline">
+<!-- Monday -->
+<div class="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-center gap-4 w-32">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+<span class="font-bold text-on-surface">Monday</span>
+</div>
+<div class="flex items-center gap-2 flex-1 md:justify-center">
+<div class="flex-1 max-w-[140px] relative">
+<input class="w-full bg-surface-container-low border-none rounded-xl px-4 py-2 text-sm font-bold text-on-surface focus:ring-2 focus:ring-primary/20" type="time" value="09:00"/>
+<span class="absolute right-3 top-2 text-on-surface-variant/40 material-symbols-outlined text-sm" data-icon="access_time">access_time</span>
+</div>
+<span class="text-on-surface-variant text-sm font-bold px-2">to</span>
+<div class="flex-1 max-w-[140px] relative">
+<input class="w-full bg-surface-container-low border-none rounded-xl px-4 py-2 text-sm font-bold text-on-surface focus:ring-2 focus:ring-primary/20" type="time" value="18:00"/>
+<span class="absolute right-3 top-2 text-on-surface-variant/40 material-symbols-outlined text-sm" data-icon="access_time">access_time</span>
+</div>
+</div>
+<div class="hidden md:flex items-center gap-2">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+</div>
+<!-- Tuesday -->
+<div class="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-center gap-4 w-32">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+<span class="font-bold text-on-surface">Tuesday</span>
+</div>
+<div class="flex items-center gap-2 flex-1 md:justify-center">
+<div class="flex-1 max-w-[140px] relative">
+<input class="w-full bg-surface-container-low border-none rounded-xl px-4 py-2 text-sm font-bold text-on-surface focus:ring-2 focus:ring-primary/20" type="time" value="09:00"/>
+</div>
+<span class="text-on-surface-variant text-sm font-bold px-2">to</span>
+<div class="flex-1 max-w-[140px] relative">
+<input class="w-full bg-surface-container-low border-none rounded-xl px-4 py-2 text-sm font-bold text-on-surface focus:ring-2 focus:ring-primary/20" type="time" value="18:00"/>
+</div>
+</div>
+<div class="hidden md:flex items-center gap-2">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+</div>
+<!-- Wednesday -->
+<div class="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-center gap-4 w-32">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+<span class="font-bold text-on-surface">Wednesday</span>
+</div>
+<div class="flex items-center gap-2 flex-1 md:justify-center">
+<div class="flex-1 max-w-[140px] relative">
+<input class="w-full bg-surface-container-low border-none rounded-xl px-4 py-2 text-sm font-bold text-on-surface focus:ring-2 focus:ring-primary/20" type="time" value="09:00"/>
+</div>
+<span class="text-on-surface-variant text-sm font-bold px-2">to</span>
+<div class="flex-1 max-w-[140px] relative">
+<input class="w-full bg-surface-container-low border-none rounded-xl px-4 py-2 text-sm font-bold text-on-surface focus:ring-2 focus:ring-primary/20" type="time" value="18:00"/>
+</div>
+</div>
+<div class="hidden md:flex items-center gap-2">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+</div>
+<!-- Sunday (Closed example) -->
+<div class="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface-container-low/50">
+<div class="flex items-center gap-4 w-32">
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+<span class="font-bold text-on-surface-variant">Sunday</span>
+</div>
+<div class="flex items-center justify-center flex-1">
+<span class="text-xs font-bold text-on-surface-variant uppercase tracking-widest bg-slate-100 px-3 py-1 rounded-full">Closed</span>
+</div>
+<div class="hidden md:block w-10"></div>
+</div>
+</div>
+</section>
+<!-- Holiday Exceptions -->
+<section class="space-y-4">
+<div class="flex items-center justify-between px-1">
+<h2 class="text-xl font-extrabold tracking-tight text-on-surface">Holiday Exceptions</h2>
+<button class="text-primary font-bold text-sm flex items-center gap-1 hover:underline">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+                    Add Date
+                </button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Christmas Exception -->
+<div class="bg-white border border-outline rounded-2xl p-4 flex items-center gap-4 shadow-sm">
+<div class="w-12 h-12 rounded-xl bg-error-container flex flex-col items-center justify-center text-error leading-none">
+<span class="text-[10px] font-bold uppercase">Dec</span>
+<span class="text-xl font-extrabold">25</span>
+</div>
+<div class="flex-1">
+<p class="font-bold text-on-surface leading-tight">Christmas Day</p>
+<p class="text-xs text-on-surface-variant font-medium">Full Day Closed</p>
+</div>
+<button class="text-on-surface-variant/40 hover:text-error transition-colors">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+</button>
+</div>
+<!-- New Year Exception -->
+<div class="bg-white border border-outline rounded-2xl p-4 flex items-center gap-4 shadow-sm">
+<div class="w-12 h-12 rounded-xl bg-tertiary-container flex flex-col items-center justify-center text-on-tertiary-container leading-none">
+<span class="text-[10px] font-bold uppercase">Jan</span>
+<span class="text-xl font-extrabold">01</span>
+</div>
+<div class="flex-1">
+<p class="font-bold text-on-surface leading-tight">New Year's Eve</p>
+<p class="text-xs text-on-surface-variant font-medium">09:00 AM - 12:00 PM</p>
+</div>
+<button class="text-on-surface-variant/40 hover:text-error transition-colors">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Notification Banner -->
+<div class="bg-blue-50 border border-blue-100 rounded-2xl p-4 flex gap-3 items-start">
+<span class="material-symbols-outlined text-blue-500" data-icon="info">info</span>
+<p class="text-sm text-blue-700 font-medium leading-relaxed">Changes to your business hours will be reflected on your public profile and customer booking page immediately.</p>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center h-20 px-4 pb-safe bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-[#DAE6E7] dark:border-slate-800 shadow-xl-primary z-50">
+<button class="flex flex-col items-center justify-center text-[#5E8A8D] hover:text-[#007E85] transition-all active:translate-y-0.5 duration-150">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Dashboard</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#5E8A8D] hover:text-[#007E85] transition-all active:translate-y-0.5 duration-150">
+<span class="material-symbols-outlined" data-icon="build">build</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Repair Jobs</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#5E8A8D] hover:text-[#007E85] transition-all active:translate-y-0.5 duration-150">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Inventory</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#007E85] bg-[#007E85]/10 rounded-xl px-3 py-1 active:translate-y-0.5 duration-150">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Settings</span>
+</button>
+</nav>
+<!-- Floating Action Button for Support -->
+<button class="fixed bottom-24 right-6 w-14 h-14 bg-primary text-white rounded-full flex items-center justify-center shadow-xl shadow-primary/40 active:scale-90 transition-transform z-40">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+</body></html>

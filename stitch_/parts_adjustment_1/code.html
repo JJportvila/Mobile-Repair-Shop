@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Inventory Adjustment - Vila Port Cyan</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary": "#436466",
+              "on-secondary-fixed": "#002022",
+              "tertiary-fixed": "#ffdbc8",
+              "on-tertiary-fixed": "#321200",
+              "tertiary-fixed-dim": "#ffb68b",
+              "surface-container": "#ffffff",
+              "background": "#f9fafa",
+              "error": "#ef4444",
+              "on-primary-fixed-variant": "#004f54",
+              "primary": "#007e85",
+              "surface-variant": "#f0f4f4",
+              "surface-container-highest": "#dae6e7",
+              "inverse-primary": "#78d5dc",
+              "on-surface": "#101818",
+              "error-container": "#fee2e2",
+              "on-error-container": "#93000a",
+              "on-tertiary-container": "#321200",
+              "surface": "#f9fafa",
+              "surface-container-high": "#ebefee",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "secondary-container": "#c3e6e9",
+              "on-secondary": "#ffffff",
+              "on-primary-container": "#002022",
+              "on-primary": "#ffffff",
+              "tertiary-container": "#ffdbc8",
+              "surface-tint": "#007e85",
+              "on-secondary-container": "#48686b",
+              "tertiary": "#f7a072",
+              "outline-variant": "#bdc9c9",
+              "outline": "#dae6e7",
+              "surface-container-lowest": "#ffffff",
+              "secondary-fixed-dim": "#aacdd0",
+              "on-tertiary-fixed-variant": "#71370c",
+              "primary-fixed-dim": "#78d5dc",
+              "primary-container": "#e0f2f3",
+              "on-surface-variant": "#5e8a8d",
+              "on-primary-fixed": "#002022",
+              "surface-dim": "#d7dbdb",
+              "on-tertiary": "#ffffff",
+              "secondary-fixed": "#c6e9ec",
+              "on-background": "#101818",
+              "inverse-on-surface": "#f9fafa",
+              "surface-container-low": "#f6fafa",
+              "on-error": "#ffffff",
+              "inverse-surface": "#222a34",
+              "surface-bright": "#ffffff",
+              "primary-fixed": "#94f1f9"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm dark:shadow-none flex items-center justify-between px-6 py-4 w-full">
+<div class="flex items-center gap-4">
+<button class="text-[#007E85] active:scale-95 duration-200 hover:bg-slate-100 p-2 rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="font-manrope font-extrabold text-xl tracking-tight text-[#007E85]">Inventory Adjustment</h1>
+</div>
+<button class="text-[#5E8A8D] active:scale-95 duration-200 hover:bg-slate-100 p-2 rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+</button>
+</header>
+<main class="pt-24 px-6 space-y-6 max-w-md mx-auto">
+<!-- Search & Select Section -->
+<section class="space-y-4">
+<div class="flex items-center justify-between">
+<h2 class="text-on-surface font-extrabold text-[18px]">Select Part</h2>
+<span class="text-primary font-bold text-[12px] uppercase tracking-wider">Required</span>
+</div>
+<div class="relative group">
+<div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="search">search</span>
+</div>
+<input class="w-full bg-surface-container border-none shadow-sm rounded-xl py-4 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary transition-all font-medium placeholder:text-on-surface-variant/50" placeholder="Search SKU or Part Name..." type="text"/>
+</div>
+<!-- Selected Part Card (Preview State) -->
+<div class="bg-white rounded-xl p-4 shadow-sm border border-outline flex items-center gap-4">
+<div class="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="settings_input_component">settings_input_component</span>
+</div>
+<div class="flex-1">
+<p class="font-bold text-on-surface">Brake Pad Set - Front</p>
+<div class="flex items-center gap-2">
+<span class="text-on-surface-variant text-xs">SKU: BP-VILA-204</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="text-on-surface-variant text-xs">Stock: 24 units</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</section>
+<!-- Adjustment Details Bento Grid -->
+<section class="grid grid-cols-2 gap-4">
+<!-- Adjustment Type -->
+<div class="col-span-2 space-y-2">
+<label class="font-extrabold text-on-surface text-[14px]">Adjustment Type</label>
+<div class="grid grid-cols-3 gap-2">
+<button class="bg-primary-container text-primary font-bold text-xs py-3 rounded-xl border-2 border-primary">Scrap</button>
+<button class="bg-surface-container text-on-surface-variant font-bold text-xs py-3 rounded-xl border-2 border-transparent">Internal</button>
+<button class="bg-surface-container text-on-surface-variant font-bold text-xs py-3 rounded-xl border-2 border-transparent">Testing</button>
+</div>
+</div>
+<!-- Quantity Selector -->
+<div class="col-span-1 space-y-2">
+<label class="font-extrabold text-on-surface text-[14px]">Quantity</label>
+<div class="flex items-center justify-between bg-white border border-outline rounded-xl p-1 shadow-sm">
+<button class="w-10 h-10 flex items-center justify-center text-primary hover:bg-primary-container rounded-lg active:scale-90 duration-150">
+<span class="material-symbols-outlined" data-icon="remove">remove</span>
+</button>
+<span class="font-bold text-lg">01</span>
+<button class="w-10 h-10 flex items-center justify-center text-primary hover:bg-primary-container rounded-lg active:scale-90 duration-150">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+</button>
+</div>
+</div>
+<!-- Unit of Measure -->
+<div class="col-span-1 space-y-2">
+<label class="font-extrabold text-on-surface text-[14px]">Unit</label>
+<div class="bg-surface-container-high rounded-xl p-3 flex items-center justify-center">
+<span class="font-bold text-on-surface-variant">PCS</span>
+</div>
+</div>
+<!-- Reason/Notes -->
+<div class="col-span-2 space-y-2">
+<label class="font-extrabold text-on-surface text-[14px]">Reason / Notes</label>
+<textarea class="w-full bg-white border border-outline shadow-sm rounded-xl p-4 text-on-surface focus:ring-2 focus:ring-primary transition-all resize-none font-medium placeholder:text-on-surface-variant/50" placeholder="Explain the reason for adjustment..." rows="3"></textarea>
+</div>
+</section>
+<!-- Personnel Selection -->
+<section class="space-y-3">
+<h2 class="text-on-surface font-extrabold text-[14px]">Authorized Personnel</h2>
+<div class="bg-white border border-outline rounded-xl p-4 flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-3">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="professional technician in workshop setting, clean blue uniform, friendly expression, natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfO-uNMuMmUejKZOVUuEvZp7AANd9cW_Sv-PnAu-Y0VRlT4oCCI81-jzZrHaj3g3ExRrm59zSLG6fqXK_IjNC-VT6XBSrLjSmmkkhdTXq5-U049Mv_djqIO3NrIgxj_ONAq3ahbEn1gclBxCKYz12n7843k853ck-FlG87hAVn9ZqJxFU3JBTI-hf-eDwo--vtJRI4CFl5x8o2-dM9gvVWL2LaL2YAsmTIOmkNEtQ1cnVC5SXKMqctqDGZx65nfYg-1PDsJAUoaRm7"/>
+<div>
+<p class="font-bold text-on-surface">Jean-Pierre Kalot</p>
+<p class="text-xs text-on-surface-variant font-medium tracking-tight">Lead Inventory Manager</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="unfold_more">unfold_more</span>
+</div>
+</section>
+<!-- Cost Preview Banner -->
+<div class="bg-[#007E85]/5 border border-[#007E85]/20 rounded-2xl p-6 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-primary" data-icon="payments" style="font-variation-settings: 'FILL' 1;">payments</span>
+</div>
+<div>
+<p class="text-[10px] font-extrabold uppercase tracking-widest text-[#5E8A8D]">Adjustment Value</p>
+<p class="text-lg font-black text-[#101818]">1,450 VUV</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-[10px] font-bold text-on-surface-variant">UNIT COST</p>
+<p class="text-xs font-bold text-on-surface">1,450 VUV</p>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation & Action Container -->
+<div class="fixed bottom-0 left-0 w-full z-50">
+<!-- Floating Primary Action -->
+<div class="px-6 pb-6">
+<button class="w-full bg-primary text-white font-manrope font-extrabold text-base py-4 rounded-xl shadow-xl shadow-primary/30 flex items-center justify-center gap-3 active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+                Confirm Adjustment
+            </button>
+</div>
+<!-- BottomNavBar Shell -->
+<nav class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-[#DAE6E7] dark:border-slate-800 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] rounded-t-2xl px-4 pb-4 pt-2 flex justify-around items-center">
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 px-4 py-1 hover:text-[#007E85] transition-colors active:scale-90 duration-150">
+<span class="material-symbols-outlined mb-1" data-icon="dashboard">dashboard</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">Dashboard</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-[#007E85]/10 dark:bg-[#007E85]/20 text-[#007E85] dark:text-[#00C2CC] rounded-xl px-4 py-1 active:scale-90 duration-150">
+<span class="material-symbols-outlined mb-1" data-icon="inventory_2" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">Inventory</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 px-4 py-1 hover:text-[#007E85] transition-colors active:scale-90 duration-150">
+<span class="material-symbols-outlined mb-1" data-icon="delete_sweep">delete_sweep</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">Scrap</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 px-4 py-1 hover:text-[#007E85] transition-colors active:scale-90 duration-150">
+<span class="material-symbols-outlined mb-1" data-icon="analytics">analytics</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">Reports</span>
+</div>
+</nav>
+</div>
+</body></html>

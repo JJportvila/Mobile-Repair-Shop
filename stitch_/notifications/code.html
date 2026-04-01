@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-variant": "#f0f4f4",
+              "on-tertiary-container": "#321200",
+              "on-secondary-fixed": "#002022",
+              "surface-bright": "#ffffff",
+              "inverse-surface": "#222a34",
+              "surface": "#f9fafa",
+              "on-primary-container": "#002022",
+              "on-error": "#ffffff",
+              "primary-container": "#e0f2f3",
+              "on-tertiary-fixed": "#321200",
+              "secondary-container": "#c3e6e9",
+              "secondary": "#436466",
+              "inverse-primary": "#78d5dc",
+              "surface-container-highest": "#dae6e7",
+              "primary-fixed": "#94f1f9",
+              "tertiary": "#f7a072",
+              "on-primary-fixed-variant": "#004f54",
+              "on-tertiary-fixed-variant": "#71370c",
+              "tertiary-fixed-dim": "#ffb68b",
+              "secondary-fixed": "#c6e9ec",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "on-error-container": "#93000a",
+              "secondary-fixed-dim": "#aacdd0",
+              "outline-variant": "#bdc9c9",
+              "on-primary": "#ffffff",
+              "surface-container": "#ffffff",
+              "on-tertiary": "#ffffff",
+              "tertiary-fixed": "#ffdbc8",
+              "surface-container-lowest": "#ffffff",
+              "tertiary-container": "#ffdbc8",
+              "error-container": "#fee2e2",
+              "on-secondary-container": "#48686b",
+              "outline": "#dae6e7",
+              "on-surface-variant": "#5e8a8d",
+              "surface-container-high": "#ebefee",
+              "surface-container-low": "#f6fafa",
+              "inverse-on-surface": "#f9fafa",
+              "surface-dim": "#d7dbdb",
+              "on-background": "#101818",
+              "primary": "#007e85",
+              "on-primary-fixed": "#002022",
+              "primary-fixed-dim": "#78d5dc",
+              "on-surface": "#101818",
+              "on-secondary": "#ffffff",
+              "surface-tint": "#007e85",
+              "error": "#ef4444",
+              "background": "#f9fafa"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-[#DAE6E7] dark:border-slate-800 shadow-sm docked full-width top-0 sticky z-50 flex justify-between items-center w-full px-6 h-16">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center overflow-hidden">
+<img alt="User profile" data-alt="professional portrait of a technical repair specialist in a clean uniform against a neutral studio background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuClrKzl4GI97YV89-jUMQ5I23qchrMWCBpWW_pgZsP8RmFeWGgjLuVzuMWT3jxqaRqXcMWQ6LdkZkhid5gmZ9iWW83VEfBOWCt64r5_siGcTy1j5BhWxBrvpMJxoa6TAXANRcmxtGc1JX198x91mbZ507--Z5tyzg98VfYqKosG7tGlkID4zEBNFPoiDtSjnucEMDACTGyZLe25g615-d1a8lIDyrjztI9mAb5wvyqQTpw0hAbydSyJwIawUTFGYLBwAiu7PY8kgiCi"/>
+</div>
+<h1 class="font-manrope font-extrabold text-[20px] tracking-tight text-[#007E85]">Vila Port Repair</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-[#007E85] material-symbols-outlined hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors p-2 rounded-full">notifications</button>
+</div>
+</header>
+<main class="max-w-3xl mx-auto px-4 py-6">
+<!-- Header Section -->
+<div class="flex justify-between items-end mb-8">
+<div>
+<h2 class="text-[30px] font-bold tracking-tight text-on-surface mb-1">通知中心</h2>
+<p class="text-on-surface-variant text-sm">您有 3 条未读提醒</p>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-white border border-outline rounded-xl text-primary text-sm font-bold shadow-sm hover:bg-surface-variant transition-all active:scale-95">
+<span class="material-symbols-outlined text-[18px]">done_all</span>
+                全部忽略
+            </button>
+</div>
+<!-- Category Tabs -->
+<div class="flex gap-2 mb-8 overflow-x-auto pb-2 no-scrollbar">
+<button class="px-5 py-2.5 rounded-full bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20 whitespace-nowrap">全部</button>
+<button class="px-5 py-2.5 rounded-full bg-white border border-outline text-on-surface-variant text-sm font-medium hover:bg-surface-variant transition-colors whitespace-nowrap">订单提醒</button>
+<button class="px-5 py-2.5 rounded-full bg-white border border-outline text-on-surface-variant text-sm font-medium hover:bg-surface-variant transition-colors whitespace-nowrap">库存预警</button>
+<button class="px-5 py-2.5 rounded-full bg-white border border-outline text-on-surface-variant text-sm font-medium hover:bg-surface-variant transition-colors whitespace-nowrap">系统通知</button>
+</div>
+<!-- Notification List -->
+<div class="space-y-4">
+<!-- Card: Inventory Alert -->
+<div class="group bg-white p-5 rounded-xl shadow-sm border-l-4 border-tertiary flex gap-4 hover:shadow-md transition-shadow cursor-pointer">
+<div class="w-12 h-12 rounded-xl bg-tertiary/10 flex items-center justify-center flex-shrink-0 text-tertiary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-bold text-on-surface">库存预警</h3>
+<span class="text-[10px] font-bold text-on-surface-variant/60 uppercase tracking-widest">10分钟前</span>
+</div>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-3">iPhone 14 屏幕库存低于 <span class="font-bold text-on-surface">5 件</span>，请及时补货。</p>
+<div class="flex gap-2">
+<span class="px-2 py-0.5 rounded bg-tertiary/10 text-tertiary text-[10px] font-bold uppercase">紧急补货</span>
+</div>
+</div>
+<div class="flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</div>
+</div>
+<!-- Card: New Order -->
+<div class="group bg-white p-5 rounded-xl shadow-sm border-l-4 border-primary flex gap-4 hover:shadow-md transition-shadow cursor-pointer relative">
+<div class="absolute top-4 right-4 w-2 h-2 rounded-full bg-primary"></div>
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">assignment</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-bold text-on-surface">订单提醒</h3>
+<span class="text-[10px] font-bold text-on-surface-variant/60 uppercase tracking-widest">35分钟前</span>
+</div>
+<p class="text-on-surface-variant text-sm leading-relaxed">新订单 <span class="font-bold text-[#007E85]">#RO-88295</span> 已提交，待处理。</p>
+</div>
+<div class="flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</div>
+</div>
+<!-- Card: Payment Success -->
+<div class="group bg-white p-5 rounded-xl shadow-sm border-l-4 border-[#078832] flex gap-4 hover:shadow-md transition-shadow cursor-pointer">
+<div class="w-12 h-12 rounded-xl bg-[#078832]/10 flex items-center justify-center flex-shrink-0 text-[#078832]">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">payments</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-bold text-on-surface">结算成功</h3>
+<span class="text-[10px] font-bold text-on-surface-variant/60 uppercase tracking-widest">1小时前</span>
+</div>
+<p class="text-on-surface-variant text-sm leading-relaxed">订单 <span class="font-bold text-on-surface">#RO-88294</span> 已收到现金支付 <span class="font-bold text-[#078832]">12,500 VUV</span>。</p>
+</div>
+<div class="flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</div>
+</div>
+<!-- Card: System Maintenance -->
+<div class="group bg-white p-5 rounded-xl shadow-sm border-l-4 border-secondary flex gap-4 hover:shadow-md transition-shadow cursor-pointer">
+<div class="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center flex-shrink-0 text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings_suggest</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-bold text-on-surface">系统公告</h3>
+<span class="text-[10px] font-bold text-on-surface-variant/60 uppercase tracking-widest">3小时前</span>
+</div>
+<p class="text-on-surface-variant text-sm leading-relaxed">系统将于今晚 <span class="font-bold text-on-surface">22:00</span> 进行例行维护，预计时长 30 分钟。</p>
+</div>
+<div class="flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</div>
+</div>
+</div>
+<!-- Earlier Section -->
+<div class="mt-10 mb-6">
+<h4 class="text-[12px] font-extrabold uppercase tracking-[0.2em] text-on-surface-variant/50">更早的通知</h4>
+</div>
+<div class="opacity-60 grayscale-[0.5]">
+<div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-outline flex gap-4">
+<div class="w-12 h-12 rounded-xl bg-surface-variant flex items-center justify-center flex-shrink-0 text-on-surface-variant">
+<span class="material-symbols-outlined">info</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-bold text-on-surface">欢迎使用</h3>
+<span class="text-[10px] font-bold text-on-surface-variant/60 uppercase tracking-widest">昨天</span>
+</div>
+<p class="text-on-surface-variant text-sm leading-relaxed">欢迎加入 Vila Port Repair 团队，开始您的高效维修之旅。</p>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-4 pt-2 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg z-50 border-t border-[#DAE6E7] dark:border-slate-800">
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 px-3 py-1 hover:text-[#007E85] dark:hover:text-white transition-colors">
+<span class="material-symbols-outlined">build</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">Orders</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 px-3 py-1 hover:text-[#007E85] dark:hover:text-white transition-colors">
+<span class="material-symbols-outlined">badge</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">Staff</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 px-3 py-1 hover:text-[#007E85] dark:hover:text-white transition-colors">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">Refunds</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#007E85] dark:text-[#007E85] bg-[#007E85]/10 rounded-xl px-3 py-1 scale-90 duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">notifications_active</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">Alerts</span>
+</div>
+</nav>
+<!-- FAB (Contextual for Alerts - e.g. Add Log) -->
+<button class="fixed right-6 bottom-24 w-14 h-14 bg-primary text-white rounded-full flex items-center justify-center shadow-xl shadow-primary/40 z-40 active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[28px]">history</span>
+</button>
+</body></html>

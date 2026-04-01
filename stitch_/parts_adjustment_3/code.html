@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>零件报损与领用 | Vila Port Cyan</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-tertiary-container": "#321200",
+                        "on-primary-container": "#002022",
+                        "secondary": "#436466",
+                        "tertiary-fixed": "#ffdbc8",
+                        "surface-variant": "#f0f4f4",
+                        "tertiary-container": "#ffdbc8",
+                        "primary": "#007e85",
+                        "error-container": "#fee2e2",
+                        "on-surface-variant": "#5e8a8d",
+                        "inverse-primary": "#78d5dc",
+                        "error": "#ef4444",
+                        "surface-container-high": "#ebefee",
+                        "on-secondary-container": "#48686b",
+                        "surface": "#f9fafa",
+                        "on-tertiary": "#ffffff",
+                        "on-background": "#101818",
+                        "on-secondary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed": "#321200",
+                        "primary-fixed-dim": "#78d5dc",
+                        "inverse-surface": "#222a34",
+                        "inverse-on-surface": "#f9fafa",
+                        "surface-container": "#ffffff",
+                        "on-tertiary-fixed-variant": "#71370c",
+                        "surface-tint": "#007e85",
+                        "surface-container-low": "#f6fafa",
+                        "secondary-container": "#c3e6e9",
+                        "background": "#f9fafa",
+                        "on-surface": "#101818",
+                        "on-secondary-fixed": "#002022",
+                        "outline": "#dae6e7",
+                        "on-error": "#ffffff",
+                        "secondary-fixed": "#c6e9ec",
+                        "tertiary-fixed-dim": "#ffb68b",
+                        "surface-dim": "#d7dbdb",
+                        "on-secondary-fixed-variant": "#2b4c4f",
+                        "primary-container": "#e0f2f3",
+                        "outline-variant": "#bdc9c9",
+                        "tertiary": "#f7a072",
+                        "on-primary-fixed-variant": "#004f54",
+                        "on-primary": "#ffffff",
+                        "surface-container-highest": "#dae6e7",
+                        "surface-bright": "#ffffff",
+                        "secondary-fixed-dim": "#aacdd0",
+                        "on-primary-fixed": "#002022",
+                        "primary-fixed": "#94f1f9"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                    boxShadow: {
+                        "xl-primary": "0 20px 25px -5px rgba(0, 126, 133, 0.1), 0 8px 10px -6px rgba(0, 126, 133, 0.1)"
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-body text-on-surface antialiased">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-[#DAE6E7] dark:border-slate-800 shadow-sm flex justify-between items-center px-4 h-16 w-full">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#007E85]">menu</span>
+<h1 class="font-manrope font-extrabold tracking-tight text-[20px] text-[#101818]">零件报损与领用</h1>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex gap-6 items-center mr-4">
+<span class="font-manrope text-sm font-medium text-[#5E8A8D] hover:text-[#007E85] cursor-pointer">Inventory Management</span>
+<span class="font-manrope text-sm font-medium text-[#5E8A8D] hover:text-[#007E85] cursor-pointer">Staff Directory</span>
+</div>
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center overflow-hidden border-2 border-primary/20">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="Professional headshot of a service technician wearing a clean teal polo shirt in a bright modern workshop environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQA2ZevYWRFJ5qvj5QQOgM15zCTcLmbEDzK3Q0iiJ8hsUvwIL256AzzCe_YiCT0yynStHNQ0rzLR8ujXQ6WZpxBoRE8Sfv1J8qauWOD6P_1wky-L6nKl2t9tT4uXWmwS4blibn7X2OPNh4NyMjnrOQjGJ2UBI4nIaKvuQ6OgrCYYGSJypZfDL-1jWe9UlWEthzESqXNXRCO78fTlOwM-5aRvbq13flwwVgS-L3usu-hJVm5a_FfOZC9Elph7XpDCSl9J4lWu0w9R6n"/>
+</div>
+</div>
+</header>
+<main class="pt-20 pb-24 px-4 max-w-5xl mx-auto">
+<!-- Dashboard Summary Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+<div class="bg-surface-container p-6 rounded-xl shadow-sm border border-outline/30 flex flex-col justify-between">
+<div>
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">Stock Value</p>
+<h2 class="text-3xl font-extrabold tracking-tight text-on-surface">342,800 <span class="text-xs font-normal">VUV</span></h2>
+</div>
+<div class="mt-4 flex items-center text-primary gap-1">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span class="text-xs font-bold">+2.4% this month</span>
+</div>
+</div>
+<div class="bg-surface-container p-6 rounded-xl shadow-sm border border-outline/30 md:col-span-2 relative overflow-hidden">
+<div class="relative z-10 flex flex-col h-full justify-center">
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">Operational Health</p>
+<h2 class="text-xl font-bold text-on-surface">Precision Parts Tracking</h2>
+<p class="text-sm text-on-surface-variant mt-1 max-w-xs">Recording precise adjustments ensures Vanuatu HQ inventory integrity.</p>
+</div>
+<div class="absolute right-0 bottom-0 opacity-10">
+<span class="material-symbols-outlined text-[120px]" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+</div>
+</div>
+</div>
+<!-- Adjustment Form -->
+<div class="bg-surface-container rounded-xl shadow-sm border border-outline/30 overflow-hidden">
+<div class="p-6 border-b border-outline/20">
+<h3 class="font-headline font-extrabold text-[18px] text-on-surface">Create Adjustment Record</h3>
+<p class="text-sm text-on-surface-variant">Log internal movement or damaged inventory units</p>
+</div>
+<form class="p-6 space-y-8">
+<!-- Part Selection Section -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-[12px] font-bold uppercase tracking-widest text-on-surface-variant">Select Component</label>
+<div class="relative group">
+<select class="w-full bg-surface-container-low border-none rounded-xl h-14 pl-12 pr-4 text-on-surface font-medium focus:ring-2 focus:ring-primary appearance-none">
+<option>iPhone 15 Pro Display - OEM</option>
+<option>Samsung S24 Ultra Battery</option>
+<option>Google Pixel 8 Logic Board</option>
+<option>Generic USB-C Charging Port</option>
+</select>
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary">build</span>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant">expand_more</span>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-[12px] font-bold uppercase tracking-widest text-on-surface-variant">Adjustment Type</label>
+<div class="grid grid-cols-3 gap-2">
+<label class="cursor-pointer">
+<input checked="" class="peer hidden" name="adj_type" type="radio"/>
+<div class="flex flex-col items-center justify-center p-3 rounded-xl border border-outline/40 peer-checked:border-primary peer-checked:bg-primary-container peer-checked:text-primary transition-all">
+<span class="material-symbols-outlined mb-1">delete_forever</span>
+<span class="text-[10px] font-bold uppercase">Scrap</span>
+</div>
+</label>
+<label class="cursor-pointer">
+<input class="peer hidden" name="adj_type" type="radio"/>
+<div class="flex flex-col items-center justify-center p-3 rounded-xl border border-outline/40 peer-checked:border-primary peer-checked:bg-primary-container peer-checked:text-primary transition-all">
+<span class="material-symbols-outlined mb-1">science</span>
+<span class="text-[10px] font-bold uppercase">Testing</span>
+</div>
+</label>
+<label class="cursor-pointer">
+<input class="peer hidden" name="adj_type" type="radio"/>
+<div class="flex flex-col items-center justify-center p-3 rounded-xl border border-outline/40 peer-checked:border-primary peer-checked:bg-primary-container peer-checked:text-primary transition-all">
+<span class="material-symbols-outlined mb-1">move_item</span>
+<span class="text-[10px] font-bold uppercase">Internal</span>
+</div>
+</label>
+</div>
+</div>
+</div>
+<!-- Quantity and Value Section -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+<div class="space-y-2">
+<label class="text-[12px] font-bold uppercase tracking-widest text-on-surface-variant">Quantity to Adjust</label>
+<div class="flex items-center gap-4">
+<button class="w-12 h-14 bg-surface-container-high rounded-xl flex items-center justify-center text-primary active:scale-95 transition-transform" type="button">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<input class="flex-1 bg-surface-container-low border-none rounded-xl h-14 text-center text-xl font-bold text-on-surface focus:ring-0" type="number" value="1"/>
+<button class="w-12 h-14 bg-surface-container-high rounded-xl flex items-center justify-center text-primary active:scale-95 transition-transform" type="button">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-[12px] font-bold uppercase tracking-widest text-on-surface-variant">Estimated Value (VUV)</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low/50 border-none rounded-xl h-14 pl-12 pr-12 text-on-surface-variant font-bold text-lg" readonly="" type="text" value="45,000"/>
+<span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-primary">VUV</span>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant/30">lock</span>
+</div>
+</div>
+</div>
+<!-- Reason and Supervisor Section -->
+<div class="space-y-6">
+<div class="space-y-2">
+<label class="text-[12px] font-bold uppercase tracking-widest text-on-surface-variant">Reason / Internal Notes</label>
+<textarea class="w-full bg-surface-container-low border-none rounded-xl p-4 text-on-surface placeholder:text-on-surface-variant/50 focus:ring-2 focus:ring-primary" placeholder="Describe why this part is being adjusted..." rows="3"></textarea>
+</div>
+<div class="space-y-2">
+<label class="text-[12px] font-bold uppercase tracking-widest text-on-surface-variant">Authorized Supervisor</label>
+<div class="flex flex-wrap gap-3">
+<div class="flex items-center gap-3 p-2 pr-4 bg-surface-container-low rounded-full border border-outline/30 hover:border-primary transition-colors cursor-pointer">
+<div class="w-8 h-8 rounded-full overflow-hidden bg-slate-200">
+<img alt="Supervisor" data-alt="Portrait of a senior male technician with glasses, smiling warmly, wearing a professional uniform in a technical office" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfScKrZNJaUu4DOZD4I06dlTi17T-ezRpOdsT7wocr_cq2B_-EPmhsZkGN_w9yGBY0s3_rcMZh8ZXRWcvWCBqPunctvlYNEld0vDRqnMkB7I9ifafW9sNl48Njf05-ohHaQl-55DSUo-HdagFWAr_pI_fp0k04LUnIualTNNJeJoBIoP3Vjo_4nuaG2yyc0xpTtRQVpkBDrO3W4jjPOk-YXlm0b9dC6abxnoAn74Koj9agWXqDEcYMoA3Lwm5GGfZueYZ2j26K9TTF"/>
+</div>
+<span class="text-sm font-bold text-on-surface">John Doe</span>
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="flex items-center gap-3 p-2 pr-4 bg-surface-container-low rounded-full border border-outline/30 hover:border-primary transition-colors cursor-pointer opacity-60">
+<div class="w-8 h-8 rounded-full overflow-hidden bg-slate-200">
+<img alt="Supervisor" data-alt="Close up portrait of a professional woman manager with dark hair, professional attire, modern office background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDA5LsOobaQrF7ah1XB5XPFUSuxHd8vzjQrBnttFwjo9Vd3zKokolt-ZSvx8SQJq3S23DaHNIadfCp6sI9qLvNW-zHezJSee-LhJ_v9ycDPseM2VPr5-x7VEFh8Law5XOw4JlD8n_pqHC3dwqBTGv7SnT_Xx8fhb3zPbBDA_OZCKzY1k9_rjsQt-sgup5p59UN3UoHahNUUeofa55ksxOF5FP1eONzIzedWEzVLMQnhYTkyHKOGL-5RKTqZggbpEGAP3KFohlzKRqch"/>
+</div>
+<span class="text-sm font-medium text-on-surface">Sarah Smith</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Button -->
+<div class="pt-4">
+<button class="w-full bg-primary h-14 rounded-xl flex items-center justify-center gap-3 text-white font-bold text-lg shadow-xl shadow-primary/20 active:translate-y-0.5 duration-150 transition-all" type="submit">
+<span class="material-symbols-outlined">verified</span>
+                        Confirm Adjustment
+                    </button>
+</div>
+</form>
+</div>
+<!-- Recent Adjustments Log (Visual only) -->
+<div class="mt-12 space-y-4">
+<h3 class="text-[12px] font-bold uppercase tracking-widest text-on-surface-variant ml-2">Recent Record History</h3>
+<div class="space-y-2">
+<!-- Record Card -->
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border border-outline/10 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-error-container text-error flex items-center justify-center">
+<span class="material-symbols-outlined">delete_forever</span>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface leading-none">MacBook Air M2 Screen</p>
+<p class="text-[10px] text-on-surface-variant mt-1 uppercase font-bold tracking-tight">Scrap • 2 Units • John D.</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-xs font-bold text-on-surface-variant">Today, 09:42</p>
+<p class="text-sm font-extrabold text-on-surface">120,000 VUV</p>
+</div>
+</div>
+<!-- Record Card -->
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border border-outline/10 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-secondary-container text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined">science</span>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface leading-none">Li-ion Battery 5000mAh</p>
+<p class="text-[10px] text-on-surface-variant mt-1 uppercase font-bold tracking-tight">Testing • 5 Units • Sarah S.</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-xs font-bold text-on-surface-variant">Yesterday, 16:20</p>
+<p class="text-sm font-extrabold text-on-surface">15,000 VUV</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- NavigationDrawer (Mobile Sidebar Concept - Hidden by default, shown on md+) -->
+<nav class="hidden lg:flex fixed left-0 top-16 bottom-20 w-80 bg-white dark:bg-slate-900 flex-col py-6 border-r border-[#DAE6E7] z-40">
+<div class="px-6 mb-8">
+<h4 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-4">Core Management</h4>
+<div class="space-y-1">
+<a class="flex items-center gap-4 px-4 py-3 bg-[#007E85]/10 text-[#007E85] font-extrabold border-l-4 border-[#007E85] rounded-r-xl transition-all" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-manrope text-sm">Inventory Management</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-[#5E8A8D] hover:text-[#101818] hover:bg-[#F9FAFA] transition-all" href="#">
+<span class="material-symbols-outlined">badge</span>
+<span class="font-manrope text-sm">Staff Directory</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-[#5E8A8D] hover:text-[#101818] hover:bg-[#F9FAFA] transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-manrope text-sm">Business Settings</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-[#5E8A8D] hover:text-[#101818] hover:bg-[#F9FAFA] transition-all" href="#">
+<span class="material-symbols-outlined">contact_support</span>
+<span class="font-manrope text-sm">Support</span>
+</a>
+</div>
+</div>
+<div class="mt-auto px-6">
+<div class="p-4 bg-surface rounded-xl border border-outline/30">
+<p class="text-xs font-bold text-primary uppercase">Vanuatu HQ</p>
+<p class="text-[10px] text-on-surface-variant mt-1 leading-tight">Operational Excellence center in Port Vila.</p>
+</div>
+</div>
+</nav>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center h-20 px-2 pb-safe bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg z-50 border-t border-[#DAE6E7] shadow-xl-primary md:hidden">
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 hover:text-[#007E85] transition-all">
+<span class="material-symbols-outlined">build</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Repairs</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#007E85] dark:text-[#00A3AD] bg-[#007E85]/10 rounded-xl px-3 py-1 active:translate-y-0.5 duration-150">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings_input_component</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Parts</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 hover:text-[#007E85] transition-all">
+<span class="material-symbols-outlined">photo_library</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Photos</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 hover:text-[#007E85] transition-all">
+<span class="material-symbols-outlined">print</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Print</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 hover:text-[#007E85] transition-all">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Reports</span>
+</div>
+</nav>
+</body></html>

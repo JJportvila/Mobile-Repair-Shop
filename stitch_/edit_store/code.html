@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "outline-variant": "#bdc9c9",
+              "on-primary-fixed": "#002022",
+              "inverse-surface": "#222a34",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "on-tertiary-fixed": "#321200",
+              "tertiary-fixed-dim": "#ffb68b",
+              "secondary-fixed": "#c6e9ec",
+              "primary-container": "#e0f2f3",
+              "outline": "#dae6e7",
+              "on-secondary": "#ffffff",
+              "on-tertiary-container": "#321200",
+              "on-error": "#ffffff",
+              "inverse-primary": "#78d5dc",
+              "on-surface": "#101818",
+              "surface-tint": "#007e85",
+              "surface-container-lowest": "#ffffff",
+              "on-secondary-container": "#48686b",
+              "surface-variant": "#f0f4f4",
+              "background": "#f9fafa",
+              "error": "#ef4444",
+              "surface-container-high": "#ebefee",
+              "surface": "#f9fafa",
+              "on-tertiary": "#ffffff",
+              "on-tertiary-fixed-variant": "#71370c",
+              "primary-fixed": "#94f1f9",
+              "tertiary-container": "#ffdbc8",
+              "secondary-container": "#c3e6e9",
+              "error-container": "#fee2e2",
+              "primary": "#007e85",
+              "on-surface-variant": "#5e8a8d",
+              "surface-dim": "#d7dbdb",
+              "secondary-fixed-dim": "#aacdd0",
+              "on-error-container": "#93000a",
+              "surface-container-highest": "#dae6e7",
+              "on-primary": "#ffffff",
+              "inverse-on-surface": "#f9fafa",
+              "surface-container-low": "#f6fafa",
+              "surface-container": "#ffffff",
+              "surface-bright": "#ffffff",
+              "primary-fixed-dim": "#78d5dc",
+              "tertiary-fixed": "#ffdbc8",
+              "tertiary": "#f7a072",
+              "on-primary-fixed-variant": "#004f54",
+              "on-secondary-fixed": "#002022",
+              "on-primary-container": "#002022",
+              "secondary": "#436466",
+              "on-background": "#101818"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-body text-on-surface min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm border-b border-[#DAE6E7] dark:border-slate-800 flex items-center justify-between px-4 h-14">
+<div class="flex items-center gap-3">
+<button class="active:opacity-70 transition-opacity p-1">
+<span class="material-symbols-outlined text-[#007E85]">arrow_back</span>
+</button>
+<h1 class="font-manrope font-extrabold text-xl tracking-tight text-[#007E85]">编辑门店信息</h1>
+</div>
+<button class="text-[#007E85] font-bold text-sm px-3 py-1.5 hover:bg-[#F9FAFA] rounded-xl transition-colors">
+            保存
+        </button>
+</header>
+<main class="pt-20 px-4 max-w-2xl mx-auto space-y-6">
+<!-- Store Photo Section -->
+<section class="space-y-3">
+<h2 class="font-manrope font-extrabold text-lg text-on-surface">门店照片</h2>
+<div class="grid grid-cols-3 gap-3">
+<div class="aspect-square relative rounded-xl overflow-hidden shadow-sm group">
+<img alt="Store Front" class="w-full h-full object-cover" data-alt="Modern minimalist shop front in Vila Port with clean glass windows and tropical plants under bright daylight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDf4YJBLOaMPY8Y8qVQGanA-XpJ415OS8IexKZQ211jbKtAwgrAy76dJuk5lalXY-sIhfz37jpDi1VicZHjSajDfv27qrrsgwtzS-qvyqEpFenNPoCYtidp1H3qg__miZ30uXgg8e57H7nxdRlJ70fR2E6ma57_xWrLePwxtfVi9D4ZSJeyo02RfGM4Fpzkfd99pEv4ocNWyS8XNXIYX6xeBGxjWAbd1y1KvWmhnd7CSR0N7TvzD9sgBOJhr5k3nzCQsi39zWrBMRMh"/>
+<button class="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 backdrop-blur-sm">
+<span class="material-symbols-outlined text-sm">close</span>
+</button>
+</div>
+<div class="aspect-square relative rounded-xl overflow-hidden shadow-sm group">
+<img alt="Store Interior" class="w-full h-full object-cover" data-alt="Bright interior of a luxury boutique in Vila Port with polished white floors and teal accents" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMndU76g0orlq213r_fLtfwftMCzHcfoO3fsbU1jEy6O130A1M18-59a7n607dNQha30TvKxeh_XquLXnNX5nW0K0bUQKLv8x1wcSwntgGdXHS436GUReCh8BhwNW_U2pSdlK-eUptm7S7SslhCBLjO7XC795wWNt1lm98V63tWa2UmEUfPCJZYxKbleWV92HaGXbA6TS3kwRyu43b1S6e0uN5WdTbsDLUWLPox5-tL__sszktX61RG5ZpluN7LnOQyIyG3cYNvfBq"/>
+<button class="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 backdrop-blur-sm">
+<span class="material-symbols-outlined text-sm">close</span>
+</button>
+</div>
+<button class="aspect-square border-2 border-dashed border-outline rounded-xl flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-3xl mb-1">add_a_photo</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">添加照片</span>
+</button>
+</div>
+</section>
+<!-- Form Section -->
+<section class="bg-surface-container rounded-xl shadow-sm overflow-hidden divide-y divide-outline">
+<!-- Store Name -->
+<div class="p-4 space-y-1">
+<label class="block text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">门店名称</label>
+<input class="w-full border-none p-0 focus:ring-0 text-on-surface font-semibold bg-transparent" placeholder="请输入门店名称" type="text" value="维拉港高级维修中心"/>
+</div>
+<!-- Contact -->
+<div class="p-4 space-y-1">
+<label class="block text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">联系电话</label>
+<input class="w-full border-none p-0 focus:ring-0 text-on-surface font-semibold bg-transparent" placeholder="请输入联系电话" type="tel" value="+678 22334455"/>
+</div>
+<!-- Operating Hours -->
+<div class="p-4 space-y-3">
+<label class="block text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">营业时间</label>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="bg-primary-container text-on-primary-container px-3 py-1 rounded-lg font-bold text-sm">08:00</div>
+<span class="text-on-surface-variant">至</span>
+<div class="bg-primary-container text-on-primary-container px-3 py-1 rounded-lg font-bold text-sm">18:00</div>
+</div>
+<button class="text-primary">
+<span class="material-symbols-outlined">schedule</span>
+</button>
+</div>
+<div class="flex flex-wrap gap-2 pt-1">
+<span class="bg-primary text-white text-[10px] font-bold px-2 py-1 rounded-full">周一</span>
+<span class="bg-primary text-white text-[10px] font-bold px-2 py-1 rounded-full">周二</span>
+<span class="bg-primary text-white text-[10px] font-bold px-2 py-1 rounded-full">周三</span>
+<span class="bg-primary text-white text-[10px] font-bold px-2 py-1 rounded-full">周四</span>
+<span class="bg-primary text-white text-[10px] font-bold px-2 py-1 rounded-full">周五</span>
+<span class="bg-surface-variant text-on-surface-variant text-[10px] font-bold px-2 py-1 rounded-full">周六</span>
+<span class="bg-surface-variant text-on-surface-variant text-[10px] font-bold px-2 py-1 rounded-full">周日</span>
+</div>
+</div>
+</section>
+<!-- Location Section -->
+<section class="space-y-3">
+<h2 class="font-manrope font-extrabold text-lg text-on-surface">门店地址与定位</h2>
+<div class="bg-surface-container rounded-xl shadow-sm overflow-hidden">
+<div class="p-4 border-b border-outline">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary mt-0.5">location_on</span>
+<textarea class="w-full border-none p-0 focus:ring-0 text-on-surface font-semibold bg-transparent resize-none leading-relaxed" placeholder="请输入详细地址" rows="2">Lini Highway, Port Vila, Shefa Province, Vanuatu</textarea>
+</div>
+</div>
+<!-- Map Placeholder -->
+<div class="relative h-48 bg-surface-variant">
+<img alt="Location Map" class="w-full h-full object-cover" data-alt="Top-down satellite view of Port Vila harbor with turquoise water and lush tropical coastline" data-location="Port Vila" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCT3Asvgj9hGO09dWPTo06Tc0er8vVgOMrgE_bIZbJyuGYpDcAzWjd6thcMjivtQaP-Q9qjIjtac3b5Zgnk_yC6elgUZpjfaATine3vmtEu_S2dj7BQxk-Wxg9NJoRvwZYjO2COduIIUFCXu2OOA3OJfs7nFkhLpJlvrwxrXjBo5SFUOQGvf7yPhdH_at22JYJtiGiMfuzXqzvVBzMIOwAJdOunWdjqDy6UEGigZbUT54ovhmvjY9t7PktFyWHsI518BzVfhW_CZTbv"/>
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<div class="relative">
+<span class="material-symbols-outlined text-primary text-5xl" style="font-variation-settings: 'FILL' 1;">location_on</span>
+<div class="absolute bottom-1 left-1/2 -translate-x-1/2 w-4 h-1.5 bg-black/20 blur-sm rounded-full"></div>
+</div>
+</div>
+<button class="absolute bottom-3 right-3 bg-white shadow-lg rounded-full px-4 py-2 flex items-center gap-2 text-xs font-bold text-primary active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-sm">ads_click</span>
+                        调整定位
+                    </button>
+</div>
+</div>
+</section>
+<!-- Action Button -->
+<div class="pt-4">
+<button class="w-full bg-[#007E85] text-white h-12 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-[#007E85]/20 active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined">save</span>
+                更新门店信息
+            </button>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-2 py-3 pb-safe bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg z-50 border-t border-[#DAE6E7] dark:border-slate-800 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 px-3 py-1 hover:text-[#007E85] transition-all active:scale-95" href="#">
+<span class="material-symbols-outlined">handyman</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">工作台</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 px-3 py-1 hover:text-[#007E85] transition-all active:scale-95" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">库存</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 px-3 py-1 hover:text-[#007E85] transition-all active:scale-95" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">财务</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 px-3 py-1 hover:text-[#007E85] transition-all active:scale-95" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">客户</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#007E85] dark:text-[#00A3AD] bg-[#007E85]/10 dark:bg-[#007E85]/20 rounded-xl px-3 py-1 active:scale-95" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">设置</span>
+</a>
+</nav>
+</body></html>

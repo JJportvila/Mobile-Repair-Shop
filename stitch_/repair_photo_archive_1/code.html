@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface": "#f9fafa",
+              "inverse-primary": "#78d5dc",
+              "primary-container": "#e0f2f3",
+              "inverse-on-surface": "#f9fafa",
+              "on-surface-variant": "#5e8a8d",
+              "secondary-container": "#c3e6e9",
+              "tertiary-container": "#ffdbc8",
+              "tertiary": "#f7a072",
+              "on-tertiary-container": "#321200",
+              "on-tertiary-fixed": "#321200",
+              "surface-container": "#ffffff",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "on-tertiary": "#ffffff",
+              "secondary-fixed-dim": "#aacdd0",
+              "surface-container-lowest": "#ffffff",
+              "secondary-fixed": "#c6e9ec",
+              "on-primary": "#ffffff",
+              "inverse-surface": "#222a34",
+              "primary-fixed": "#94f1f9",
+              "outline-variant": "#bdc9c9",
+              "surface-container-high": "#ebefee",
+              "outline": "#dae6e7",
+              "on-primary-fixed": "#002022",
+              "surface-tint": "#007e85",
+              "surface-variant": "#f0f4f4",
+              "error-container": "#fee2e2",
+              "on-background": "#101818",
+              "on-primary-container": "#002022",
+              "on-primary-fixed-variant": "#004f54",
+              "on-error-container": "#93000a",
+              "surface-container-low": "#f6fafa",
+              "on-tertiary-fixed-variant": "#71370c",
+              "error": "#ef4444",
+              "on-secondary-fixed": "#002022",
+              "primary-fixed-dim": "#78d5dc",
+              "secondary": "#436466",
+              "tertiary-fixed": "#ffdbc8",
+              "on-secondary-container": "#48686b",
+              "primary": "#007e85",
+              "surface-container-highest": "#dae6e7",
+              "on-error": "#ffffff",
+              "on-secondary": "#ffffff",
+              "surface-bright": "#ffffff",
+              "background": "#f9fafa",
+              "tertiary-fixed-dim": "#ffb68b",
+              "on-surface": "#101818",
+              "surface-dim": "#d7dbdb"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface mb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm h-16 flex items-center justify-between px-4">
+<div class="flex items-center gap-3">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors active:scale-95">
+<span class="material-symbols-outlined text-cyan-700 dark:text-cyan-400">arrow_back</span>
+</button>
+<h1 class="font-manrope font-extrabold text-xl tracking-tight text-cyan-800 dark:text-cyan-100">Repair Photos</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-slate-500">share</span>
+</button>
+</div>
+</header>
+<main class="pt-20 px-4 max-w-2xl mx-auto space-y-6">
+<!-- Summary Card -->
+<section class="bg-surface-container rounded-xl p-5 shadow-sm border border-outline/30 relative overflow-hidden">
+<div class="absolute top-0 right-0 p-3 opacity-10">
+<span class="material-symbols-outlined text-6xl" style="font-variation-settings: 'FILL' 1;">build</span>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-start">
+<div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">维修单号</span>
+<h2 class="text-xl font-extrabold text-on-surface tracking-tight">#RP-99284-VU</h2>
+</div>
+<div class="bg-primary-container px-3 py-1 rounded-full">
+<span class="text-[10px] font-bold text-primary uppercase">已完成</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 pt-2">
+<div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">设备型号</span>
+<p class="font-bold text-on-secondary-fixed-variant">iPhone 14 Pro</p>
+</div>
+<div class="text-right">
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">总金额</span>
+<p class="font-extrabold text-primary text-lg leading-tight">12,500 VUV</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Category: Before Repair (维修前) -->
+<section class="space-y-4">
+<div class="flex items-center justify-between">
+<h3 class="text-lg font-extrabold tracking-tight text-on-surface">维修前</h3>
+<span class="bg-surface-container-highest px-2 py-0.5 rounded text-[10px] font-bold text-secondary">2 张照片</span>
+</div>
+<div class="grid grid-cols-1 gap-4">
+<div class="bg-surface-container rounded-xl overflow-hidden shadow-sm border border-outline/20">
+<div class="aspect-video relative group">
+<img class="w-full h-full object-cover" data-alt="Close up of a cracked smartphone screen with deep splintered fractures on a white workbench under professional studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLtoEiCccaaIBJYoMMfpTeV6SE3XvIHYobZes-efhLfoEixcX6vQWw1TvSzofIwfESG-IsLSqsiK9r-u4UJ7XySVrvtepMVXDe7U13s4tiFSt1EK6OZzzQbbextaz1wlIC01h9tgeayX5bovLYOkq7krZTpHXH1QcmclE3VG-JYKyOEl4W0u7cpMoSKQ6l_G15dzMFRrF7KvDlMpTZ_zteQRrmOEt0UrwFCr23wEx3fXIdvmROcRTQSmmgSwyUM40bHYPy3aU65fEs"/>
+<button class="absolute top-3 right-3 bg-black/40 backdrop-blur-sm text-white p-2 rounded-xl flex items-center gap-1 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-sm">zoom_in</span>
+<span class="text-[10px] font-bold">放大</span>
+</button>
+</div>
+<div class="p-4 flex items-start gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary text-lg">sticky_note_2</span>
+</div>
+<div class="space-y-1 flex-1">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">技师笔记</p>
+<p class="text-sm text-on-surface/80 leading-relaxed">屏幕左上角有严重碎裂，触控失效。</p>
+<p class="text-[10px] text-slate-400 font-medium">2023-10-12 10:15 AM</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Category: In Progress (维修中) -->
+<section class="space-y-4">
+<div class="flex items-center justify-between">
+<h3 class="text-lg font-extrabold tracking-tight text-on-surface">维修中</h3>
+<span class="bg-tertiary-container px-2 py-0.5 rounded text-[10px] font-bold text-on-tertiary-container">1 张照片</span>
+</div>
+<div class="grid grid-cols-1 gap-4">
+<div class="bg-surface-container rounded-xl overflow-hidden shadow-sm border border-outline/20">
+<div class="aspect-video relative">
+<img class="w-full h-full object-cover" data-alt="Interior of an iPhone 14 Pro during disassembly, showing the logic board and precision internal components with miniature tools nearby" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0e-bLjWZVOQBxZCB84ifSVQ89X_lYvhKRc1fL797luv4izeGtvIViyi7GFw97yZcazT2sPFOchumCWvusooe1vqbqy6kySIcP6NEBvbHhKGNHUnPqE09rqzPG8HIgiDX8VPohfR6A54cl0dM1XAyx-0tqEl9RQOVF86SItAkCOXxcFaAZF1UqbneEbnskCnxIKJLWK-jhjsqJV8_xQxVgZP74iHjLzOUKevCzkjoq5Y8LMuX-zE8fB-pV6gkh8NCu1eBGDbZlEXFY"/>
+<button class="absolute top-3 right-3 bg-black/40 backdrop-blur-sm text-white p-2 rounded-xl flex items-center gap-1 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-sm">zoom_in</span>
+<span class="text-[10px] font-bold">放大</span>
+</button>
+</div>
+<div class="p-4 flex items-start gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary text-lg">history</span>
+</div>
+<div class="space-y-1 flex-1">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">技师笔记</p>
+<p class="text-sm text-on-surface/80 leading-relaxed">正在更换原装显示屏总成，清理内部灰尘。</p>
+<p class="text-[10px] text-slate-400 font-medium">2023-10-12 11:30 AM</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Category: After Repair (维修后) -->
+<section class="space-y-4">
+<div class="flex items-center justify-between">
+<h3 class="text-lg font-extrabold tracking-tight text-on-surface">维修后</h3>
+<span class="bg-primary-container px-2 py-0.5 rounded text-[10px] font-bold text-primary">1 张照片</span>
+</div>
+<div class="grid grid-cols-1 gap-4">
+<div class="bg-surface-container rounded-xl overflow-hidden shadow-sm border border-outline/20">
+<div class="aspect-video relative">
+<img class="w-full h-full object-cover" data-alt="A perfectly repaired smartphone with a flawless glossy screen displaying a vibrant interface, resting on a clean wooden surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtRU5FSnNPCbYXxRrOam9j2keOrBm4A_laekmsumhBszi6YrfW6x16BfL_C1dg-gHCJJ3pkDfCx2Gqx5dNpHC91fd0SkmivK9tsNaIXQv-lVz4GSgLN2uQ16QnVJ83DjpWC24CspOcnNbwoyogJlOybULO-l2sqlY72edg73zvhZ9ygw5BfmZFpaF0kkdmUSvRO5AIio8lfZgEPjiGNByjn8fIIywXmJ9A2BOULeRYrhb8RX9mCjq3ZgWrnAngUwtSTZnjVr__kbBw"/>
+<button class="absolute top-3 right-3 bg-black/40 backdrop-blur-sm text-white p-2 rounded-xl flex items-center gap-1 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-sm">zoom_in</span>
+<span class="text-[10px] font-bold">放大</span>
+</button>
+</div>
+<div class="p-4 flex items-start gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary text-lg">check_circle</span>
+</div>
+<div class="space-y-1 flex-1">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">技师笔记</p>
+<p class="text-sm text-on-surface/80 leading-relaxed">更换完成，屏幕亮度及触控灵敏度测试正常。</p>
+<p class="text-[10px] text-slate-400 font-medium">2023-10-12 02:45 PM</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Floating Action Button -->
+<button class="fixed bottom-24 right-6 w-14 h-14 bg-primary text-white rounded-full shadow-xl shadow-primary/40 flex items-center justify-center active:scale-90 transition-all z-50">
+<span class="material-symbols-outlined text-3xl">add_a_photo</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg shadow-[0_-4px_12px_rgba(0,0,0,0.05)] flex justify-around items-center px-2 pb-6 pt-2 z-50 rounded-t-xl border-t border-slate-100 dark:border-slate-800">
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-3 py-1 hover:text-cyan-600 active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider">Inventory</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-3 py-1 hover:text-cyan-600 active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="build">build</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider">Repairs</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-cyan-50 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300 rounded-xl px-3 py-1 active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="photo_library" style="font-variation-settings: 'FILL' 1;">photo_library</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider">Archive</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-3 py-1 hover:text-cyan-600 active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider">Settings</span>
+</a>
+</nav>
+</body></html>

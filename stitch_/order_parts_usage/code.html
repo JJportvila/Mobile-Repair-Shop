@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-container-high": "#ebefee",
+                        "secondary": "#436466",
+                        "tertiary": "#f7a072",
+                        "on-tertiary-fixed-variant": "#71370c",
+                        "on-error-container": "#93000a",
+                        "surface-tint": "#007e85",
+                        "surface-container-low": "#f6fafa",
+                        "background": "#f9fafa",
+                        "on-secondary-fixed-variant": "#2b4c4f",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-tertiary-container": "#321200",
+                        "on-tertiary-fixed": "#321200",
+                        "on-secondary-container": "#48686b",
+                        "on-primary-fixed-variant": "#004f54",
+                        "on-primary-fixed": "#002022",
+                        "outline": "#dae6e7",
+                        "inverse-surface": "#222a34",
+                        "primary-fixed-dim": "#78d5dc",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed-dim": "#aacdd0",
+                        "secondary-container": "#c3e6e9",
+                        "error": "#ef4444",
+                        "primary-container": "#e0f2f3",
+                        "surface-variant": "#f0f4f4",
+                        "on-primary-container": "#002022",
+                        "surface-dim": "#d7dbdb",
+                        "surface-container-highest": "#dae6e7",
+                        "on-secondary-fixed": "#002022",
+                        "inverse-primary": "#78d5dc",
+                        "surface-bright": "#ffffff",
+                        "on-surface": "#101818",
+                        "tertiary-fixed": "#ffdbc8",
+                        "surface": "#f9fafa",
+                        "on-surface-variant": "#5e8a8d",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-container": "#ffdbc8",
+                        "error-container": "#fee2e2",
+                        "surface-container": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#f9fafa",
+                        "secondary-fixed": "#c6e9ec",
+                        "tertiary-fixed-dim": "#ffb68b",
+                        "primary-fixed": "#94f1f9",
+                        "primary": "#007e85",
+                        "outline-variant": "#bdc9c9",
+                        "on-background": "#101818"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-20">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm border-b border-[#DAE6E7] dark:border-slate-800">
+<div class="flex items-center justify-between px-4 h-14 w-full max-w-4xl mx-auto">
+<div class="flex items-center gap-3">
+<button class="transition-all duration-200 active:opacity-70 text-[#5E8A8D]">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-['Manrope'] font-bold text-lg tracking-tight text-[#007E85]">维修管理</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#5E8A8D]">search</span>
+<span class="material-symbols-outlined text-[#007E85]">account_circle</span>
+</div>
+</div>
+</header>
+<main class="pt-20 px-4 max-w-4xl mx-auto space-y-6">
+<!-- Order Identity Section -->
+<section class="bg-surface-container rounded-xl p-5 shadow-sm border border-outline/30">
+<div class="flex justify-between items-start mb-4">
+<div>
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">工单编号</p>
+<h2 class="text-2xl font-extrabold tracking-tight text-on-surface">#RO-2023-8892</h2>
+</div>
+<div class="bg-primary-container text-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">
+                    已完成
+                </div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">person</span>
+</div>
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase">主修技师</p>
+<p class="text-sm font-semibold">张建国 (Tech-04)</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">calendar_today</span>
+</div>
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase">消耗日期</p>
+<p class="text-sm font-semibold">2023-10-24</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Bento Grid Metrics -->
+<section class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container rounded-xl p-4 shadow-sm border border-outline/30 flex flex-col justify-between">
+<span class="material-symbols-outlined text-primary mb-2">inventory</span>
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase">消耗部件总数</p>
+<p class="text-xl font-extrabold text-on-surface">12 <span class="text-xs font-medium text-on-surface-variant">件</span></p>
+</div>
+</div>
+<div class="bg-surface-container rounded-xl p-4 shadow-sm border border-outline/30 flex flex-col justify-between">
+<span class="material-symbols-outlined text-tertiary mb-2">payments</span>
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase">备件总金额</p>
+<p class="text-xl font-extrabold text-on-surface">45,800 <span class="text-xs font-medium text-on-surface-variant">VUV</span></p>
+</div>
+</div>
+</section>
+<!-- Parts Usage List -->
+<section class="space-y-4">
+<div class="flex justify-between items-end px-1">
+<h3 class="text-xl font-extrabold tracking-tight text-on-surface">备件消耗明细</h3>
+<button class="text-[10px] font-bold text-primary uppercase flex items-center gap-1 hover:underline">
+<span class="material-symbols-outlined text-sm">history</span>
+                    查看库存日志
+                </button>
+</div>
+<!-- List of Task Cards -->
+<div class="space-y-3">
+<!-- Item 1 -->
+<div class="bg-surface-container rounded-xl p-4 shadow-sm border border-outline/10 flex items-center gap-4 group hover:shadow-md transition-shadow">
+<div class="w-12 h-12 rounded-xl bg-surface-container-high flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="close up of a high performance car brake disc assembly on a professional workbench" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8dM48GOzBDBJylv57oTotyQ8YtJsNOjUXm1axSTYD4QQ02w8uA3uTcPPhHQ8cYPygzjN1aEpDVejUeWZUnKPTDGRmrWAvqhwKs0qzuJATqkEG-vHIj1KWKfs2ckrMBGa8peqRjsaPUy2nn-MxKN5U8ZF8PqauSKiDlGUSUXBzn7uhdO_2cjeGznF-0aTCD9H0nbvPZ8bSkncWp6kFf2_Y3svBrSCxN1qSSlrFlZoqQfvX264ev6zkKzCFbUNTvkZSO7vskErA_XZp"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between">
+<h4 class="font-bold text-on-surface">高性能刹车盘</h4>
+<span class="text-sm font-bold text-on-surface">18,500 VUV</span>
+</div>
+<p class="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wide">SKU: BK-992-PORT</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-[10px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded">数量: 2</span>
+<span class="text-[10px] font-bold bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded">单位: 片</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+<!-- Item 2 -->
+<div class="bg-surface-container rounded-xl p-4 shadow-sm border border-outline/10 flex items-center gap-4 group hover:shadow-md transition-shadow">
+<div class="w-12 h-12 rounded-xl bg-surface-container-high flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="synthetic motor oil pouring from a gold container into a modern engine close up" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoZSE5aMPQMbVsXR3zFvz_mI2sVoJEQsgD4-vPT6PVrTxALYa3mKqtsZIAY-KgVW7AR29SUkMfUn2SZHNHvaaknV4smN72iPkPVNhBtXG9l_wC4NG-_fZsANVKEuOZHHJsGTJrizQdchrsjZW6M2mLAsEzLUtToSUzrbzT_iJKzqykoCZ4OysMr58RzugV01xufiluP8aINCWgvgc9tioIum_SbjvDyc3Jl-V9PSaVNCKj3th56Ca-foIeBfuXDvavUouyQobOYgDn"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between">
+<h4 class="font-bold text-on-surface">全合成机油 5W-30</h4>
+<span class="text-sm font-bold text-on-surface">2,200 VUV</span>
+</div>
+<p class="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wide">SKU: OIL-SYNT-05</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-[10px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded">数量: 4</span>
+<span class="text-[10px] font-bold bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded">单位: 升</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+<!-- Item 3 -->
+<div class="bg-surface-container rounded-xl p-4 shadow-sm border border-outline/10 flex items-center gap-4 group hover:shadow-md transition-shadow">
+<div class="w-12 h-12 rounded-xl bg-surface-container-high flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="stack of new car air filters in blue industrial packaging with soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTET-S_U11bQT63pB5q0CvyJvwPCNzpd5vxdQSFlHAhUh03g1CSE7O1Q0yYKo__EBfZwc7z9vX2BGvzOcYmjFiYljcorOTshUlw783lLCRzHhKNb17RHe2in2eGPuYpxAEBhhL0EuTUHWTrJ4RAdkdR6KcbRCnk2DkpCAm1Z0GS73pZHsfnBMDxlGhXgCYIFlN7gAOjShUvRK7B7813nLwd4WDwgSgBPDQxp-hVpX1WKEwWG5GdZwtwAo06xlKtoMoHI4cj4slF1F2"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between">
+<h4 class="font-bold text-on-surface">多层空气滤芯</h4>
+<span class="text-sm font-bold text-on-surface">3,500 VUV</span>
+</div>
+<p class="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wide">SKU: FLT-AIR-VILA</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-[10px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded">数量: 1</span>
+<span class="text-[10px] font-bold bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded">单位: 个</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+<!-- Item 4 -->
+<div class="bg-surface-container rounded-xl p-4 shadow-sm border border-outline/10 flex items-center gap-4 group hover:shadow-md transition-shadow">
+<div class="w-12 h-12 rounded-xl bg-surface-container-high flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="shiny new spark plugs aligned on a workshop metal table under bright led light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7rp1j4PTAUGWU9T8K4LT09T3U-dKHlNwLXyDrR65WNpgpITzOheG4Wdm7ph8L4NqegzyKsaCOJF9VjAanhur1rAdBeVx58NFAM6KrAnGlxLXy_tESK8Fkpw-lPwnOINEtxrSUyZLFwbOR1je3tVj-h6B3EQvj7QXLEL03v7Gs0zLl8FzPTs2x9pS1LOwxyfppsXZdhPbibbJnjys6lhz3ueOlMUwZH5F81mse_mUe3SVQ1lJ1EZosAo_McLVBa7ZzcIDvwgXSJ9us"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between">
+<h4 class="font-bold text-on-surface">铱金火花塞</h4>
+<span class="text-sm font-bold text-on-surface">1,350 VUV</span>
+</div>
+<p class="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wide">SKU: SPK-IRID-PR</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-[10px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded">数量: 5</span>
+<span class="text-[10px] font-bold bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded">单位: 支</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</div>
+</section>
+<!-- Final Summary Action -->
+<div class="mt-8 flex flex-col gap-3">
+<button class="w-full h-12 bg-[#007E85] text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-[#007E85]/20 active:scale-[0.98] transition-transform">
+<span class="material-symbols-outlined">print</span>
+                打印备件消耗单
+            </button>
+<button class="w-full h-12 bg-white border border-[#DAE6E7] text-[#5E8A8D] rounded-xl font-bold flex items-center justify-center gap-2 active:bg-slate-50 transition-colors">
+<span class="material-symbols-outlined">analytics</span>
+                生成成本报告
+            </button>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-safe h-16 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-[#DAE6E7] dark:border-slate-800 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] z-50">
+<div class="flex flex-col items-center justify-center text-[#007E85] dark:text-[#007E85] bg-[#007E85]/10 rounded-xl px-3 py-1 transition-transform active:scale-95">
+<span class="material-symbols-outlined">build</span>
+<span class="font-['Manrope'] font-bold text-[10px] uppercase tracking-wider">维修</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 px-3 py-1 transition-transform active:scale-95 hover:text-[#007E85]">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-['Manrope'] font-bold text-[10px] uppercase tracking-wider">库存</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 px-3 py-1 transition-transform active:scale-95 hover:text-[#007E85]">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-['Manrope'] font-bold text-[10px] uppercase tracking-wider">供应商</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 px-3 py-1 transition-transform active:scale-95 hover:text-[#007E85]">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-['Manrope'] font-bold text-[10px] uppercase tracking-wider">财务</span>
+</div>
+</nav>
+<!-- FAB -->
+<button class="fixed right-6 bottom-24 w-14 h-14 bg-primary text-white rounded-full shadow-xl shadow-primary/40 flex items-center justify-center active:scale-90 transition-transform z-40">
+<span class="material-symbols-outlined text-2xl">add</span>
+</button>
+</body></html>

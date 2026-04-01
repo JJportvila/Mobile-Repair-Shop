@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Repair Queue - Vila Port Cyan</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "inverse-surface": "#222a34",
+              "primary-fixed-dim": "#78d5dc",
+              "on-tertiary-container": "#321200",
+              "on-secondary": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "secondary-fixed-dim": "#aacdd0",
+              "on-primary-fixed-variant": "#004f54",
+              "secondary": "#436466",
+              "error": "#ef4444",
+              "on-background": "#101818",
+              "surface-tint": "#007e85",
+              "tertiary-fixed-dim": "#ffb68b",
+              "surface-dim": "#d7dbdb",
+              "on-primary-container": "#002022",
+              "primary-fixed": "#94f1f9",
+              "background": "#f9fafa",
+              "surface-container": "#ffffff",
+              "on-tertiary-fixed": "#321200",
+              "on-surface": "#101818",
+              "surface-container-low": "#f6fafa",
+              "error-container": "#fee2e2",
+              "on-surface-variant": "#5e8a8d",
+              "surface-container-highest": "#dae6e7",
+              "primary-container": "#e0f2f3",
+              "outline-variant": "#bdc9c9",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "surface": "#f9fafa",
+              "on-tertiary": "#ffffff",
+              "on-error": "#ffffff",
+              "on-primary-fixed": "#002022",
+              "on-error-container": "#93000a",
+              "outline": "#dae6e7",
+              "secondary-fixed": "#c6e9ec",
+              "surface-variant": "#f0f4f4",
+              "tertiary": "#f7a072",
+              "primary": "#007e85",
+              "surface-container-high": "#ebefee",
+              "inverse-primary": "#78d5dc",
+              "tertiary-container": "#ffdbc8",
+              "secondary-container": "#c3e6e9",
+              "on-secondary-fixed": "#002022",
+              "tertiary-fixed": "#ffdbc8",
+              "inverse-on-surface": "#f9fafa",
+              "surface-bright": "#ffffff",
+              "on-secondary-container": "#48686b",
+              "on-tertiary-fixed-variant": "#71370c",
+              "on-primary": "#ffffff"
+            },
+            fontFamily: {
+              "headline": ["Manrope", "sans-serif"],
+              "body": ["Manrope", "sans-serif"],
+              "label": ["Manrope", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="sticky top-0 z-50 flex items-center justify-between px-4 h-16 w-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-cyan-100/50 dark:border-cyan-900/30 shadow-sm">
+<div class="flex items-center gap-3">
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-cyan-50 transition-colors active:scale-95 duration-200 text-cyan-700">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="font-manrope font-extrabold text-xl tracking-tight text-cyan-800">Repairs</h1>
+</div>
+<div class="flex items-center gap-1">
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-cyan-50 transition-colors active:scale-95 duration-200 text-cyan-700">
+<span class="material-symbols-outlined">search</span>
+</button>
+</div>
+</header>
+<main class="max-w-3xl mx-auto px-4 py-6 space-y-8">
+<!-- Search & Filter Section -->
+<section class="space-y-4">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors">search</span>
+<input class="w-full h-14 pl-12 pr-4 bg-surface-container border-none rounded-xl shadow-sm focus:ring-2 focus:ring-primary/20 text-on-surface placeholder:text-on-surface-variant/60 font-medium" placeholder="Search orders, devices or customers..." type="text"/>
+</div>
+<div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
+<button class="px-5 py-2 rounded-full bg-primary text-on-primary text-xs font-bold uppercase tracking-wider whitespace-nowrap shadow-md">All</button>
+<button class="px-5 py-2 rounded-full bg-surface-container text-on-surface-variant hover:bg-cyan-50 text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-colors">In Progress</button>
+<button class="px-5 py-2 rounded-full bg-surface-container text-on-surface-variant hover:bg-cyan-50 text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-colors">Awaiting Parts</button>
+<button class="px-5 py-2 rounded-full bg-surface-container text-on-surface-variant hover:bg-cyan-50 text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-colors">Completed</button>
+</div>
+</section>
+<!-- Stats Bento Overview (Optional Utility) -->
+<section class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="bg-white p-4 rounded-xl shadow-sm border border-outline/50">
+<p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Active</p>
+<p class="text-2xl font-extrabold text-on-surface mt-1">12</p>
+</div>
+<div class="bg-white p-4 rounded-xl shadow-sm border border-outline/50">
+<p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Pending</p>
+<p class="text-2xl font-extrabold text-on-surface mt-1">04</p>
+</div>
+<div class="bg-white p-4 rounded-xl shadow-sm border border-outline/50">
+<p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Urgent</p>
+<p class="text-2xl font-extrabold text-error mt-1">02</p>
+</div>
+<div class="bg-white p-4 rounded-xl shadow-sm border border-outline/50">
+<p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Revenue (Est)</p>
+<p class="text-2xl font-extrabold text-primary mt-1">45k<span class="text-xs ml-1">VT</span></p>
+</div>
+</section>
+<!-- Repair Queue List -->
+<section class="space-y-4">
+<h2 class="text-xl font-extrabold text-on-surface tracking-tight">Active Queue</h2>
+<!-- Card 3 (Urgent First) -->
+<div class="bg-surface-container rounded-xl shadow-sm border-l-4 border-error p-5 flex flex-col gap-4 relative overflow-hidden">
+<div class="flex justify-between items-start">
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-xl bg-error/10 flex items-center justify-center text-error">
+<span class="material-symbols-outlined">laptop_mac</span>
+</div>
+<div>
+<h3 class="font-bold text-on-surface text-lg">MacBook Air M2</h3>
+<p class="text-on-surface-variant text-sm font-medium">#RO-2023-8894 • <span class="text-primary">1h 12m elapsed</span></p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-2">
+<span class="bg-error/10 text-error px-2 py-1 rounded text-[10px] font-black uppercase tracking-tighter">Urgent</span>
+<p class="font-bold text-on-surface text-sm">32,500 VT</p>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">
+<span>Diagnostic</span>
+<span>15%</span>
+</div>
+<div class="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-error rounded-full" style="width: 15%"></div>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-outline/30">
+<p class="text-xs font-medium text-on-surface-variant">Assigned: Tech Sam</p>
+<button class="bg-primary text-on-primary px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest active:scale-95 transition-transform">Details</button>
+</div>
+</div>
+<!-- Card 1 -->
+<div class="bg-surface-container rounded-xl shadow-sm border-l-4 border-primary p-5 flex flex-col gap-4">
+<div class="flex justify-between items-start">
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">smartphone</span>
+</div>
+<div>
+<h3 class="font-bold text-on-surface text-lg">iPhone 14 Pro</h3>
+<p class="text-on-surface-variant text-sm font-medium">Midnight Blue • #RO-2023-8892</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-2">
+<span class="bg-primary/10 text-primary px-2 py-1 rounded text-[10px] font-black uppercase tracking-tighter">High Priority</span>
+<p class="font-bold text-on-surface text-sm">12,000 VT</p>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">
+<span>In Progress</span>
+<span>65%</span>
+</div>
+<div class="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 65%"></div>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-outline/30">
+<p class="text-xs font-medium text-on-surface-variant">Time in shop: 45m</p>
+<button class="bg-primary text-on-primary px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest active:scale-95 transition-transform">Details</button>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container rounded-xl shadow-sm border-l-4 border-tertiary p-5 flex flex-col gap-4">
+<div class="flex justify-between items-start">
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-xl bg-tertiary/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined">devices_other</span>
+</div>
+<div>
+<h3 class="font-bold text-on-surface text-lg">Samsung S22</h3>
+<p class="text-on-surface-variant text-sm font-medium">#RO-2023-8893 • <span class="text-on-surface-variant">3d 2h elapsed</span></p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-2">
+<span class="bg-secondary/10 text-secondary px-2 py-1 rounded text-[10px] font-black uppercase tracking-tighter">Normal</span>
+<p class="font-bold text-on-surface text-sm">8,500 VT</p>
+</div>
+</div>
+<div class="bg-tertiary/5 p-3 rounded-lg border border-tertiary/20">
+<div class="flex items-center gap-2 text-on-tertiary-fixed-variant">
+<span class="material-symbols-outlined text-sm">inventory_2</span>
+<p class="text-xs font-bold uppercase tracking-tight">Awaiting Parts: Screen Assembly</p>
+</div>
+<p class="text-[10px] text-on-tertiary-fixed-variant/70 mt-1 font-medium italic">ETA: Tomorrow, 10:00 AM</p>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-outline/30">
+<p class="text-xs font-medium text-on-surface-variant">Time in shop: 3 days</p>
+<button class="bg-primary text-on-primary px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest active:scale-95 transition-transform">Details</button>
+</div>
+</div>
+</section>
+</main>
+<!-- FAB -->
+<button class="fixed bottom-24 right-6 w-14 h-14 bg-primary text-on-primary rounded-full shadow-xl shadow-primary/40 flex items-center justify-center z-40 active:scale-90 transition-transform">
+<span class="material-symbols-outlined scale-125">add</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full flex justify-around items-center px-2 py-3 pb-safe bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg z-50 shadow-[0_-4px_6px_-1px_rgba(0,126,133,0.1)] border-t border-cyan-100/50 dark:border-cyan-900/30">
+<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-3 py-1 hover:text-cyan-600 active:scale-90 transition-transform">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Dashboard</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-cyan-100/50 dark:bg-cyan-900/40 text-cyan-800 dark:text-cyan-200 rounded-xl px-3 py-1 active:scale-90 transition-transform">
+<span class="material-symbols-outlined">build</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Repairs</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-3 py-1 hover:text-cyan-600 active:scale-90 transition-transform">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Inventory</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-3 py-1 hover:text-cyan-600 active:scale-90 transition-transform">
+<span class="material-symbols-outlined">person</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Profile</span>
+</div>
+</nav>
+</body></html>

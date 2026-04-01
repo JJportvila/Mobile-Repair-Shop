@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-highest": "#dae6e7",
+              "inverse-surface": "#222a34",
+              "secondary-fixed": "#c6e9ec",
+              "tertiary-container": "#ffdbc8",
+              "secondary-fixed-dim": "#aacdd0",
+              "surface-tint": "#007e85",
+              "error": "#ef4444",
+              "outline-variant": "#bdc9c9",
+              "primary-fixed-dim": "#78d5dc",
+              "on-primary-container": "#002022",
+              "secondary-container": "#c3e6e9",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "on-error": "#ffffff",
+              "primary-container": "#e0f2f3",
+              "on-secondary": "#ffffff",
+              "on-surface-variant": "#5e8a8d",
+              "inverse-on-surface": "#f9fafa",
+              "surface-container-low": "#f6fafa",
+              "on-primary": "#ffffff",
+              "tertiary-fixed": "#ffdbc8",
+              "on-primary-fixed": "#002022",
+              "surface-container-high": "#ebefee",
+              "on-surface": "#101818",
+              "on-secondary-fixed": "#002022",
+              "tertiary": "#f7a072",
+              "on-tertiary-fixed-variant": "#71370c",
+              "on-tertiary-fixed": "#321200",
+              "secondary": "#436466",
+              "outline": "#dae6e7",
+              "surface-container": "#ffffff",
+              "primary-fixed": "#94f1f9",
+              "on-primary-fixed-variant": "#004f54",
+              "surface": "#f9fafa",
+              "surface-bright": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "surface-variant": "#f0f4f4",
+              "on-tertiary-container": "#321200",
+              "tertiary-fixed-dim": "#ffb68b",
+              "inverse-primary": "#78d5dc",
+              "surface-dim": "#d7dbdb",
+              "on-background": "#101818",
+              "primary": "#007e85",
+              "error-container": "#fee2e2",
+              "on-error-container": "#93000a",
+              "background": "#f9fafa",
+              "on-secondary-container": "#48686b",
+              "on-tertiary": "#ffffff"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-[#DAE6E7] dark:border-slate-800 shadow-sm flex items-center justify-between px-4 h-14 w-full">
+<div class="flex items-center gap-3">
+<button class="active:opacity-70 transition-opacity text-[#007E85] dark:text-[#00A3AD]">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="font-manrope font-extrabold text-xl tracking-tight text-[#007E85] dark:text-[#00A3AD]">维修管理</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#5E8A8D]" data-icon="more_vert">more_vert</span>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="pt-20 px-4 max-w-5xl mx-auto">
+<!-- Search & Filter Header -->
+<div class="mb-8">
+<h2 class="text-2xl font-extrabold text-on-surface mb-2">客户中心</h2>
+<p class="text-on-surface-variant text-sm mb-6">管理您的所有客户及其维修历史记录</p>
+<div class="relative group">
+<div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-[#5E8A8D]" data-icon="search">search</span>
+</div>
+<input class="w-full h-14 pl-12 pr-4 bg-surface-container border-none rounded-xl shadow-sm ring-1 ring-outline focus:ring-2 focus:ring-primary transition-all outline-none text-on-surface" placeholder="快速搜索客户名称或联系电话..." type="text"/>
+</div>
+</div>
+<!-- Metrics Overview (Bento Style) -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border border-outline/50">
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">总客户数</p>
+<p class="text-2xl font-extrabold text-primary">1,284</p>
+</div>
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border border-outline/50">
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">活跃客户</p>
+<p class="text-2xl font-extrabold text-primary">412</p>
+</div>
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border border-outline/50">
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">今日预约</p>
+<p class="text-2xl font-extrabold text-tertiary">12</p>
+</div>
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border border-outline/50">
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">满意度</p>
+<p class="text-2xl font-extrabold text-[#078832]">98%</p>
+</div>
+</div>
+<!-- Customer List Section -->
+<div class="space-y-4">
+<!-- Customer Card 1 -->
+<div class="bg-surface-container p-5 rounded-xl shadow-sm border border-outline/30 flex items-center justify-between hover:bg-surface-container-low transition-colors group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</div>
+<div>
+<h3 class="font-bold text-on-surface text-lg">李明勋</h3>
+<div class="flex items-center gap-3 mt-1">
+<span class="text-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="call">call</span>
+                                138-xxxx-8890
+                            </span>
+<span class="h-1 w-1 rounded-full bg-outline-variant"></span>
+<span class="text-sm text-on-surface-variant">上海市徐汇区</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end gap-2">
+<div class="flex items-center gap-2 bg-primary/10 px-3 py-1 rounded-full">
+<span class="text-[10px] font-bold text-primary uppercase tracking-tight">维修次数: 8</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+<!-- Customer Card 2 -->
+<div class="bg-surface-container p-5 rounded-xl shadow-sm border border-outline/30 flex items-center justify-between hover:bg-surface-container-low transition-colors group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</div>
+<div>
+<h3 class="font-bold text-on-surface text-lg">张晓雅</h3>
+<div class="flex items-center gap-3 mt-1">
+<span class="text-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="call">call</span>
+                                159-xxxx-1234
+                            </span>
+<span class="h-1 w-1 rounded-full bg-outline-variant"></span>
+<span class="text-sm text-on-surface-variant">北京市朝阳区</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end gap-2">
+<div class="flex items-center gap-2 bg-primary/10 px-3 py-1 rounded-full">
+<span class="text-[10px] font-bold text-primary uppercase tracking-tight">维修次数: 3</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+<!-- Customer Card 3 -->
+<div class="bg-surface-container p-5 rounded-xl shadow-sm border border-outline/30 flex items-center justify-between hover:bg-surface-container-low transition-colors group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</div>
+<div>
+<h3 class="font-bold text-on-surface text-lg">王建国</h3>
+<div class="flex items-center gap-3 mt-1">
+<span class="text-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="call">call</span>
+                                131-xxxx-5678
+                            </span>
+<span class="h-1 w-1 rounded-full bg-outline-variant"></span>
+<span class="text-sm text-on-surface-variant">深圳市南山区</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end gap-2">
+<div class="flex items-center gap-2 bg-primary/10 px-3 py-1 rounded-full">
+<span class="text-[10px] font-bold text-primary uppercase tracking-tight">维修次数: 15</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+<!-- Customer Card 4 -->
+<div class="bg-surface-container p-5 rounded-xl shadow-sm border border-outline/30 flex items-center justify-between hover:bg-surface-container-low transition-colors group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</div>
+<div>
+<h3 class="font-bold text-on-surface text-lg">陈静</h3>
+<div class="flex items-center gap-3 mt-1">
+<span class="text-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="call">call</span>
+                                136-xxxx-9900
+                            </span>
+<span class="h-1 w-1 rounded-full bg-outline-variant"></span>
+<span class="text-sm text-on-surface-variant">广州市天河区</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end gap-2">
+<div class="flex items-center gap-2 bg-primary/10 px-3 py-1 rounded-full">
+<span class="text-[10px] font-bold text-primary uppercase tracking-tight">维修次数: 1</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+</div>
+</main>
+<!-- FAB -->
+<button class="fixed right-6 bottom-24 w-14 h-14 bg-primary text-white rounded-full shadow-xl shadow-primary/40 flex items-center justify-center active:scale-95 transition-transform z-40">
+<span class="material-symbols-outlined text-2xl" data-icon="person_add">person_add</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-[#DAE6E7] dark:border-slate-800 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] flex justify-around items-center px-2 py-3 pb-safe z-50">
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 px-3 py-1 hover:text-[#007E85] transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="handyman">handyman</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">工作台</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 px-3 py-1 hover:text-[#007E85] transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">库存</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 px-3 py-1 hover:text-[#007E85] transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">财务</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#007E85] dark:text-[#00A3AD] bg-[#007E85]/10 dark:bg-[#007E85]/20 rounded-xl px-3 py-1 active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="group" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">客户</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 px-3 py-1 hover:text-[#007E85] transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">设置</span>
+</a>
+</nav>
+</body></html>

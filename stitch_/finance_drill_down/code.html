@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>财务流水穿透视图 - Vila Port Cyan</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-high": "#ebefee",
+              "secondary": "#436466",
+              "tertiary": "#f7a072",
+              "on-tertiary-fixed-variant": "#71370c",
+              "on-error-container": "#93000a",
+              "surface-tint": "#007e85",
+              "surface-container-low": "#f6fafa",
+              "background": "#f9fafa",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "surface-container-lowest": "#ffffff",
+              "on-error": "#ffffff",
+              "on-tertiary-container": "#321200",
+              "on-tertiary-fixed": "#321200",
+              "on-secondary-container": "#48686b",
+              "on-primary-fixed-variant": "#004f54",
+              "on-primary-fixed": "#002022",
+              "outline": "#dae6e7",
+              "inverse-surface": "#222a34",
+              "primary-fixed-dim": "#78d5dc",
+              "on-secondary": "#ffffff",
+              "secondary-fixed-dim": "#aacdd0",
+              "secondary-container": "#c3e6e9",
+              "error": "#ef4444",
+              "primary-container": "#e0f2f3",
+              "surface-variant": "#f0f4f4",
+              "on-primary-container": "#002022",
+              "surface-dim": "#d7dbdb",
+              "surface-container-highest": "#dae6e7",
+              "on-secondary-fixed": "#002022",
+              "inverse-primary": "#78d5dc",
+              "surface-bright": "#ffffff",
+              "on-surface": "#101818",
+              "tertiary-fixed": "#ffdbc8",
+              "surface": "#f9fafa",
+              "on-surface-variant": "#5e8a8d",
+              "on-tertiary": "#ffffff",
+              "tertiary-container": "#ffdbc8",
+              "error-container": "#fee2e2",
+              "surface-container": "#ffffff",
+              "on-primary": "#ffffff",
+              "inverse-on-surface": "#f9fafa",
+              "secondary-fixed": "#c6e9ec",
+              "tertiary-fixed-dim": "#ffb68b",
+              "primary-fixed": "#94f1f9",
+              "primary": "#007e85",
+              "outline-variant": "#bdc9c9",
+              "on-background": "#101818"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      body { font-family: 'Manrope', sans-serif; }
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-header {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(12px);
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen pb-20">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 glass-header border-b border-outline shadow-sm h-14 flex items-center justify-between px-4 max-w-md mx-auto left-0 right-0">
+<div class="flex items-center gap-3">
+<button class="text-primary active:opacity-70 transition-all duration-200">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-headline font-bold text-lg tracking-tight text-on-surface">现金收入明细</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant active:opacity-70 transition-all duration-200">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+<button class="text-primary active:opacity-70 transition-all duration-200">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</header>
+<main class="pt-20 px-4 max-w-md mx-auto">
+<!-- Summary Dashboard Card (Bento Style) -->
+<section class="grid grid-cols-2 gap-3 mb-6">
+<div class="col-span-2 bg-surface-container p-5 rounded-xl shadow-sm border border-outline">
+<div class="flex justify-between items-start mb-2">
+<span class="text-on-surface-variant text-xs font-bold uppercase tracking-wider">总现金收入 (本月)</span>
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">payments</span>
+</div>
+<div class="text-3xl font-headline font-extrabold text-on-surface tracking-tight">
+                    1,245,800 <span class="text-sm font-medium text-on-surface-variant ml-1">VUV</span>
+</div>
+<div class="mt-3 flex items-center gap-2">
+<span class="bg-emerald-100 text-[#078832] text-[10px] font-bold px-2 py-0.5 rounded-full">+12.4%</span>
+<span class="text-on-surface-variant text-[10px]">对比上月同期</span>
+</div>
+</div>
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border border-outline">
+<span class="text-on-surface-variant text-[10px] font-bold uppercase block mb-1">交易笔数</span>
+<div class="text-xl font-headline font-bold text-on-surface">142</div>
+</div>
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border border-outline">
+<span class="text-on-surface-variant text-[10px] font-bold uppercase block mb-1">平均客单价</span>
+<div class="text-xl font-headline font-bold text-on-surface">8,773 <span class="text-[10px] font-medium">VUV</span></div>
+</div>
+</section>
+<!-- Transaction List Header -->
+<div class="flex justify-between items-end mb-4">
+<div>
+<h2 class="font-headline font-extrabold text-xl text-on-surface">流水穿透视图</h2>
+<p class="text-on-surface-variant text-sm font-medium">查看 2023年10月 所有现金交易</p>
+</div>
+<button class="text-primary text-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">download</span> 导出
+            </button>
+</div>
+<!-- Transaction Feed -->
+<div class="space-y-3">
+<!-- Transaction Item 1 -->
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border border-outline flex items-center gap-4 active:scale-[0.98] transition-transform cursor-pointer">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">hand_bones</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h3 class="font-headline font-bold text-on-surface">工单 #RO-8821</h3>
+<span class="text-primary font-headline font-extrabold">24,500 <span class="text-[10px]">VUV</span></span>
+</div>
+<p class="text-on-surface-variant text-xs mt-0.5">Toyota Hilux - 定期保养</p>
+<div class="flex items-center gap-3 mt-2">
+<span class="text-[10px] text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">calendar_today</span> 10月24日 14:30
+                        </span>
+<span class="bg-primary/10 text-primary text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">已结清</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</div>
+<!-- Transaction Item 2 -->
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border border-outline flex items-center gap-4 active:scale-[0.98] transition-transform cursor-pointer">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">build</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h3 class="font-headline font-bold text-on-surface">工单 #RO-8819</h3>
+<span class="text-primary font-headline font-extrabold">128,000 <span class="text-[10px]">VUV</span></span>
+</div>
+<p class="text-on-surface-variant text-xs mt-0.5">Isuzu D-Max - 变速箱大修</p>
+<div class="flex items-center gap-3 mt-2">
+<span class="text-[10px] text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">calendar_today</span> 10月24日 11:15
+                        </span>
+<span class="bg-primary/10 text-primary text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">已结清</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</div>
+<!-- Transaction Item 3 -->
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border border-outline flex items-center gap-4 active:scale-[0.98] transition-transform cursor-pointer">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">tire_repair</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h3 class="font-headline font-bold text-on-surface">工单 #RO-8815</h3>
+<span class="text-primary font-headline font-extrabold">8,500 <span class="text-[10px]">VUV</span></span>
+</div>
+<p class="text-on-surface-variant text-xs mt-0.5">Ford Ranger - 轮胎更换</p>
+<div class="flex items-center gap-3 mt-2">
+<span class="text-[10px] text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">calendar_today</span> 10月23日 16:45
+                        </span>
+<span class="bg-primary/10 text-primary text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">已结清</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</div>
+<!-- Transaction Item 4 -->
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border border-outline flex items-center gap-4 active:scale-[0.98] transition-transform cursor-pointer">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">hand_bones</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h3 class="font-headline font-bold text-on-surface">工单 #RO-8812</h3>
+<span class="text-primary font-headline font-extrabold">15,000 <span class="text-[10px]">VUV</span></span>
+</div>
+<p class="text-on-surface-variant text-xs mt-0.5">Nissan Navara - 刹车检查</p>
+<div class="flex items-center gap-3 mt-2">
+<span class="text-[10px] text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">calendar_today</span> 10月23日 10:20
+                        </span>
+<span class="bg-primary/10 text-primary text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">已结清</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</div>
+<!-- Date Separator -->
+<div class="py-4 flex items-center gap-3">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest bg-outline/30 px-2 py-1 rounded">10月22日</span>
+<div class="h-[1px] flex-1 bg-outline"></div>
+</div>
+<!-- Transaction Item 5 -->
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border border-outline flex items-center gap-4 active:scale-[0.98] transition-transform cursor-pointer">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">engineering</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h3 class="font-headline font-bold text-on-surface">工单 #RO-8805</h3>
+<span class="text-primary font-headline font-extrabold">310,000 <span class="text-[10px]">VUV</span></span>
+</div>
+<p class="text-on-surface-variant text-xs mt-0.5">Fleet Service - 批量维护</p>
+<div class="flex items-center gap-3 mt-2">
+<span class="text-[10px] text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">calendar_today</span> 10月22日 15:00
+                        </span>
+<span class="bg-primary/10 text-primary text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">已结清</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</div>
+</div>
+<!-- FAB for Print/Share -->
+<button class="fixed bottom-20 right-4 w-14 h-14 bg-primary text-white rounded-full shadow-[0_8px_24px_rgba(0,126,133,0.4)] flex items-center justify-center active:scale-95 transition-transform z-40">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">print</span>
+</button>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-safe h-16 bg-white/95 backdrop-blur-lg border-t border-outline shadow-[0_-4px_12px_rgba(0,0,0,0.05)] z-50 rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined">build</span>
+<span class="font-headline font-bold text-[10px] uppercase tracking-wider mt-0.5">维修</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-headline font-bold text-[10px] uppercase tracking-wider mt-0.5">库存</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-headline font-bold text-[10px] uppercase tracking-wider mt-0.5">供应商</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary bg-primary/10 rounded-xl px-3 py-1 transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">payments</span>
+<span class="font-headline font-bold text-[10px] uppercase tracking-wider mt-0.5">财务</span>
+</a>
+</nav>
+</body></html>

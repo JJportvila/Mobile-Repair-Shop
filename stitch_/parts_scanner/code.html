@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary-container": "#002022",
+              "surface-container-lowest": "#ffffff",
+              "on-secondary-fixed": "#002022",
+              "tertiary-container": "#ffdbc8",
+              "primary-fixed": "#94f1f9",
+              "on-tertiary-fixed-variant": "#71370c",
+              "surface-tint": "#007e85",
+              "secondary": "#436466",
+              "on-tertiary-fixed": "#321200",
+              "on-primary": "#ffffff",
+              "outline": "#dae6e7",
+              "surface-bright": "#ffffff",
+              "on-primary-fixed-variant": "#004f54",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "surface-dim": "#d7dbdb",
+              "secondary-container": "#c3e6e9",
+              "on-error-container": "#93000a",
+              "on-surface": "#101818",
+              "secondary-fixed-dim": "#aacdd0",
+              "on-primary-fixed": "#002022",
+              "surface-container-highest": "#dae6e7",
+              "primary-container": "#e0f2f3",
+              "tertiary": "#f7a072",
+              "primary-fixed-dim": "#78d5dc",
+              "primary": "#007e85",
+              "inverse-surface": "#222a34",
+              "surface": "#f9fafa",
+              "outline-variant": "#bdc9c9",
+              "on-tertiary-container": "#321200",
+              "error": "#ef4444",
+              "tertiary-fixed": "#ffdbc8",
+              "inverse-on-surface": "#f9fafa",
+              "secondary-fixed": "#c6e9ec",
+              "inverse-primary": "#78d5dc",
+              "background": "#f9fafa",
+              "on-background": "#101818",
+              "surface-container-low": "#f6fafa",
+              "on-secondary-container": "#48686b",
+              "surface-variant": "#f0f4f4",
+              "surface-container": "#ffffff",
+              "on-secondary": "#ffffff",
+              "tertiary-fixed-dim": "#ffb68b",
+              "surface-container-high": "#ebefee",
+              "on-tertiary": "#ffffff",
+              "on-surface-variant": "#5e8a8d",
+              "error-container": "#fee2e2",
+              "on-error": "#ffffff"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+        .scanner-viewport {
+            position: relative;
+            overflow: hidden;
+            background: #000;
+        }
+        .scanner-laser {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #007e85;
+            box-shadow: 0 0 15px #007e85;
+            top: 20%;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-lg border-b border-[#DAE6E7] dark:border-slate-800 shadow-sm flex items-center justify-between px-4 h-16 w-full">
+<div class="flex items-center gap-3">
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors active:scale-95 duration-200 text-[#007E85]">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="font-manrope font-bold text-lg tracking-tight text-[#007E85]">Scanner</h1>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-bold uppercase tracking-wider text-[#5E8A8D] bg-slate-100 px-2 py-1 rounded">Vila Port Branch</span>
+<div class="w-8 h-8 rounded-full bg-primary-container overflow-hidden border border-outline">
+<img alt="User" class="w-full h-full object-cover" data-alt="professional staff portrait profile picture for a technician in a repair shop setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBK7szAhF0CZIRdihlzlnrCyknlpfNwNkoOwpb2fkhhMHmjqofPe7pSYR7yYgop_AxA_2bKEhMJfuH3d2JcieV1LbXwjQ4n0WgwkOntar8alcfou75MJzf09BpTy-irQ6sb0nr--m69UrBf5HZXLnQ5WbS17YmgCJUUdKJkaYmD3GHWcS3DRwVhEH4sYnBWEE4QIoxzURRlm-9mbEsXPx22g5hMDmI_TRO6GmZkxbVNr_7JUByRr3W9BhgwBSe7v3T9vN3i9qjfjIm7"/>
+</div>
+</div>
+</header>
+<main class="pt-20 px-4 max-w-2xl mx-auto space-y-6">
+<!-- Toggle Switch -->
+<div class="bg-surface-container rounded-2xl p-1.5 flex shadow-sm border border-outline">
+<button class="flex-1 py-2.5 text-sm font-bold rounded-xl transition-all duration-300 text-on-surface-variant hover:text-primary">
+                扫描设备/订单
+            </button>
+<button class="flex-1 py-2.5 text-sm font-bold rounded-xl transition-all duration-300 bg-primary text-white shadow-md">
+                扫描零件
+            </button>
+</div>
+<!-- Scanning Interface -->
+<div class="relative group">
+<div class="aspect-square w-full max-w-[400px] mx-auto scanner-viewport rounded-3xl border-4 border-surface-container shadow-2xl relative">
+<img alt="Camera Feed" class="w-full h-full object-cover opacity-60" data-alt="Close up view of a microchip and electronic components on a green circuit board with shallow depth of field" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBySyU63htxm8lHM9GEXUICBrBSvU6LdbJkb-R5LH_ddWzy6lwON4_rm4fYDFQD_wgUoOyrHMuD-YxATGB7COtdMaBz05FtJ7l96NDhlN-zAh16lteA1TdOai72wM9sHJBmzbpj65DjbR_bd_zncig9d5S1Gtt0mBNoUH4G_4MkuFerCtryMio_PvqH6o18mtVUxU_VpFUd06-u6glrIxiN1AGHETBaI6fREZ9Hz89enjSe-SAyTaEpW_YnNLmo_y8N9DDyRR2bXMBh"/>
+<!-- Scanner Overlay -->
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-64 h-64 border-2 border-primary/50 rounded-2xl relative">
+<div class="absolute -top-1 -left-1 w-8 h-8 border-t-4 border-l-4 border-primary rounded-tl-lg"></div>
+<div class="absolute -top-1 -right-1 w-8 h-8 border-t-4 border-r-4 border-primary rounded-tr-lg"></div>
+<div class="absolute -bottom-1 -left-1 w-8 h-8 border-b-4 border-l-4 border-primary rounded-bl-lg"></div>
+<div class="absolute -bottom-1 -right-1 w-8 h-8 border-b-4 border-r-4 border-primary rounded-br-lg"></div>
+<div class="scanner-laser"></div>
+</div>
+</div>
+<!-- Floating Controls -->
+<div class="absolute bottom-6 left-0 right-0 flex justify-center gap-4">
+<button class="w-12 h-12 rounded-full bg-black/40 backdrop-blur-md text-white flex items-center justify-center hover:bg-black/60 transition-all active:scale-90">
+<span class="material-symbols-outlined" data-icon="flashlight_on">flashlight_on</span>
+</button>
+<button class="w-12 h-12 rounded-full bg-black/40 backdrop-blur-md text-white flex items-center justify-center hover:bg-black/60 transition-all active:scale-90">
+<span class="material-symbols-outlined" data-icon="image">image</span>
+</button>
+</div>
+</div>
+<p class="text-center text-xs font-bold text-on-surface-variant mt-4 tracking-widest uppercase">
+                请将二维码或条形码置于框内
+            </p>
+</div>
+<!-- Manual Entry -->
+<div class="space-y-2">
+<label class="text-[10px] font-extrabold text-on-surface-variant uppercase tracking-widest ml-1">手动输入序列号</label>
+<div class="relative">
+<input class="w-full h-14 bg-white border-outline rounded-xl px-5 pr-12 text-on-surface font-medium focus:ring-2 focus:ring-primary focus:border-transparent transition-all shadow-sm" placeholder="输入零件号或序列号..." type="text"/>
+<button class="absolute right-3 top-2.5 w-9 h-9 bg-primary-container text-primary rounded-lg flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+</div>
+</div>
+<!-- Recent Scans -->
+<section class="space-y-4 pb-12">
+<div class="flex items-center justify-between px-1">
+<h2 class="text-xl font-extrabold text-on-surface tracking-tight">最近扫描</h2>
+<button class="text-xs font-bold text-primary hover:underline">查看全部</button>
+</div>
+<div class="grid gap-3">
+<!-- Item 1 -->
+<div class="bg-surface-container rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow border border-transparent hover:border-outline">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+<span class="material-symbols-outlined" data-icon="phone_iphone">phone_iphone</span>
+</div>
+<div class="flex-1 min-w-0">
+<h3 class="font-bold text-on-surface truncate">iPhone 14 Pro Screen</h3>
+<p class="text-xs text-on-surface-variant font-medium">SKU: VILA-772-IPH</p>
+</div>
+<div class="text-right">
+<div class="text-sm font-extrabold text-on-surface">12,500 VUV</div>
+<div class="inline-flex items-center px-2 py-0.5 rounded bg-secondary-container text-on-secondary-container text-[10px] font-bold mt-1">
+                            库存: 12
+                        </div>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="bg-surface-container rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow border border-transparent hover:border-outline">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+<span class="material-symbols-outlined" data-icon="battery_full">battery_full</span>
+</div>
+<div class="flex-1 min-w-0">
+<h3 class="font-bold text-on-surface truncate">Samsung S23 Ultra Battery</h3>
+<p class="text-xs text-on-surface-variant font-medium">SKU: VILA-441-SAM</p>
+</div>
+<div class="text-right">
+<div class="text-sm font-extrabold text-on-surface">8,200 VUV</div>
+<div class="inline-flex items-center px-2 py-0.5 rounded bg-error-container text-on-error-container text-[10px] font-bold mt-1">
+                            库存: 3
+                        </div>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="bg-surface-container rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow border border-transparent hover:border-outline">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+<span class="material-symbols-outlined" data-icon="charging_station">charging_station</span>
+</div>
+<div class="flex-1 min-w-0">
+<h3 class="font-bold text-on-surface truncate">Universal USB-C Port</h3>
+<p class="text-xs text-on-surface-variant font-medium">SKU: VILA-009-UNV</p>
+</div>
+<div class="text-right">
+<div class="text-sm font-extrabold text-on-surface">1,500 VUV</div>
+<div class="inline-flex items-center px-2 py-0.5 rounded bg-secondary-container text-on-secondary-container text-[10px] font-bold mt-1">
+                            库存: 45
+                        </div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-[#DAE6E7] dark:border-slate-800 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] flex justify-around items-center h-20 pb-safe px-2">
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] hover:text-[#007E85] transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">Inventory</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#007E85] bg-[#007E85]/10 rounded-xl px-3 py-1 transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="qr_code_scanner" style="font-variation-settings: 'FILL' 1;">qr_code_scanner</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">Scanner</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] hover:text-[#007E85] transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="build">build</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">Repairs</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] hover:text-[#007E85] transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">Settings</span>
+</a>
+</nav>
+<!-- Contextual Floating Action Button -->
+<button class="fixed right-6 bottom-24 w-14 h-14 rounded-full bg-primary text-white shadow-xl shadow-primary/40 flex items-center justify-center active:scale-90 transition-transform z-40">
+<span class="material-symbols-outlined" data-icon="print">print</span>
+</button>
+</body></html>

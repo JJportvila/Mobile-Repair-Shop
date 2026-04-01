@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Inventory Audit History - Vila Port Cyan</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-dim": "#d7dbdb",
+                        "on-secondary-fixed-variant": "#2b4c4f",
+                        "surface-container-high": "#ebefee",
+                        "tertiary-fixed-dim": "#ffb68b",
+                        "error-container": "#fee2e2",
+                        "surface-bright": "#ffffff",
+                        "tertiary-container": "#ffdbc8",
+                        "surface-tint": "#007e85",
+                        "on-secondary-container": "#48686b",
+                        "on-primary-fixed": "#002022",
+                        "on-secondary": "#ffffff",
+                        "inverse-on-surface": "#f9fafa",
+                        "outline-variant": "#bdc9c9",
+                        "on-tertiary-fixed-variant": "#71370c",
+                        "surface-container-highest": "#dae6e7",
+                        "outline": "#dae6e7",
+                        "on-primary-fixed-variant": "#004f54",
+                        "surface-container-low": "#f6fafa",
+                        "secondary-fixed-dim": "#aacdd0",
+                        "on-secondary-fixed": "#002022",
+                        "surface-container": "#ffffff",
+                        "secondary-container": "#c3e6e9",
+                        "on-error-container": "#93000a",
+                        "primary-fixed": "#94f1f9",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#5e8a8d",
+                        "tertiary-fixed": "#ffdbc8",
+                        "on-error": "#ffffff",
+                        "surface": "#f9fafa",
+                        "primary-container": "#e0f2f3",
+                        "on-surface": "#101818",
+                        "inverse-surface": "#222a34",
+                        "on-tertiary-fixed": "#321200",
+                        "surface-variant": "#f0f4f4",
+                        "secondary": "#436466",
+                        "inverse-primary": "#78d5dc",
+                        "secondary-fixed": "#c6e9ec",
+                        "primary": "#007e85",
+                        "on-tertiary-container": "#321200",
+                        "on-primary-container": "#002022",
+                        "surface-container-lowest": "#ffffff",
+                        "error": "#ef4444",
+                        "on-background": "#101818",
+                        "primary-fixed-dim": "#78d5dc",
+                        "background": "#f9fafa",
+                        "tertiary": "#f7a072",
+                        "on-primary": "#ffffff"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm border-b border-slate-100 dark:border-slate-800">
+<div class="flex items-center justify-between px-4 h-16 w-full">
+<div class="flex items-center gap-3">
+<button class="p-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-cyan-700 dark:text-cyan-400">menu</span>
+</button>
+<h1 class="font-manrope font-extrabold text-xl tracking-tight text-cyan-800 dark:text-cyan-100">Audit History</h1>
+</div>
+<div class="flex items-center">
+<button class="p-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-cyan-700 dark:text-cyan-400">search</span>
+</button>
+</div>
+</div>
+</header>
+<main class="pt-20 px-4 max-w-5xl mx-auto space-y-6">
+<!-- Search and Filter Bar -->
+<section class="space-y-4">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container border-none rounded-xl py-4 pl-12 pr-4 shadow-sm focus:ring-2 focus:ring-primary text-sm font-medium placeholder:text-on-surface-variant" placeholder="Search by ID or Technician..." type="text"/>
+</div>
+<div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+<button class="px-5 py-2 rounded-full bg-primary text-on-primary text-xs font-bold uppercase tracking-wider whitespace-nowrap shadow-md">All Audits</button>
+<button class="px-5 py-2 rounded-full bg-white text-on-surface-variant border border-outline-variant text-xs font-bold uppercase tracking-wider whitespace-nowrap hover:bg-surface-container-high transition-colors">Completed</button>
+<button class="px-5 py-2 rounded-full bg-white text-on-surface-variant border border-outline-variant text-xs font-bold uppercase tracking-wider whitespace-nowrap hover:bg-surface-container-high transition-colors">In Progress</button>
+</div>
+</section>
+<!-- Summary Metrics (Bento Style Lite) -->
+<section class="grid grid-cols-2 md:grid-cols-4 gap-3">
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border-l-4 border-primary">
+<p class="text-[10px] font-bold uppercase text-on-surface-variant tracking-widest">Total Audits</p>
+<p class="text-2xl font-extrabold text-on-surface mt-1 tracking-tight">128</p>
+</div>
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border-l-4 border-tertiary">
+<p class="text-[10px] font-bold uppercase text-on-surface-variant tracking-widest">Pending</p>
+<p class="text-2xl font-extrabold text-on-surface mt-1 tracking-tight">4</p>
+</div>
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border-l-4 border-error">
+<p class="text-[10px] font-bold uppercase text-on-surface-variant tracking-widest">High Variance</p>
+<p class="text-2xl font-extrabold text-on-surface mt-1 tracking-tight">12%</p>
+</div>
+<div class="bg-primary p-4 rounded-xl shadow-lg shadow-primary/20">
+<p class="text-[10px] font-bold uppercase text-on-primary/70 tracking-widest">Accuracy</p>
+<p class="text-2xl font-extrabold text-on-primary mt-1 tracking-tight">94.2%</p>
+</div>
+</section>
+<!-- Audit List -->
+<div class="space-y-3">
+<h2 class="text-sm font-bold text-on-surface-variant uppercase tracking-widest px-1">Recent Logs</h2>
+<!-- Audit Item 1: Discrepancy -->
+<div class="bg-white rounded-xl p-4 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow cursor-pointer">
+<div class="w-12 h-12 rounded-xl bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">inventory_2</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<h3 class="font-bold text-on-surface truncate">AD-20240520</h3>
+<span class="text-[10px] bg-error-container text-on-error-container px-2 py-0.5 rounded font-black">7 DISCREPANCIES</span>
+</div>
+<div class="flex items-center gap-3 mt-1">
+<span class="text-xs text-on-surface-variant font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">calendar_today</span> May 20, 2024
+                        </span>
+<span class="text-xs text-on-surface-variant font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">person</span> Jean-Paul V.
+                        </span>
+</div>
+</div>
+<div class="text-right flex flex-col items-end">
+<p class="text-xs font-bold text-on-surface">412 Items</p>
+<p class="text-[10px] font-medium text-on-surface-variant">Value: 84,200 VUV</p>
+<span class="material-symbols-outlined text-outline-variant mt-1">chevron_right</span>
+</div>
+</div>
+<!-- Audit Item 2: Success -->
+<div class="bg-white rounded-xl p-4 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow cursor-pointer">
+<div class="w-12 h-12 rounded-xl bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary">assignment_turned_in</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<h3 class="font-bold text-on-surface truncate">AD-20240518</h3>
+<span class="text-[10px] bg-primary-container text-primary px-2 py-0.5 rounded font-black uppercase">Cleared</span>
+</div>
+<div class="flex items-center gap-3 mt-1">
+<span class="text-xs text-on-surface-variant font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">calendar_today</span> May 18, 2024
+                        </span>
+<span class="text-xs text-on-surface-variant font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">person</span> Marie T.
+                        </span>
+</div>
+</div>
+<div class="text-right flex flex-col items-end">
+<p class="text-xs font-bold text-on-surface">156 Items</p>
+<p class="text-[10px] font-medium text-on-surface-variant">Value: 31,500 VUV</p>
+<span class="material-symbols-outlined text-outline-variant mt-1">chevron_right</span>
+</div>
+</div>
+<!-- Audit Item 3: In Progress -->
+<div class="bg-white rounded-xl p-4 shadow-sm flex items-center gap-4 border border-tertiary/20 hover:shadow-md transition-shadow cursor-pointer">
+<div class="w-12 h-12 rounded-xl bg-tertiary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-tertiary">history_edu</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<h3 class="font-bold text-on-surface truncate">AD-20240521</h3>
+<span class="text-[10px] bg-tertiary text-white px-2 py-0.5 rounded font-black uppercase">In Progress</span>
+</div>
+<div class="flex items-center gap-3 mt-1">
+<span class="text-xs text-on-surface-variant font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">schedule</span> Started 2h ago
+                        </span>
+<span class="text-xs text-on-surface-variant font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">person</span> Admin User
+                        </span>
+</div>
+</div>
+<div class="text-right flex flex-col items-end">
+<p class="text-xs font-bold text-on-surface">88 / 200</p>
+<div class="w-16 h-1.5 bg-slate-100 rounded-full mt-2 overflow-hidden">
+<div class="bg-tertiary h-full w-[44%]"></div>
+</div>
+<span class="material-symbols-outlined text-outline-variant mt-1">chevron_right</span>
+</div>
+</div>
+<!-- Audit Item 4 -->
+<div class="bg-white rounded-xl p-4 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow cursor-pointer opacity-80">
+<div class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-400">inventory_2</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<h3 class="font-bold text-on-surface truncate">AD-20240512</h3>
+<span class="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded font-black uppercase tracking-tighter">Archived</span>
+</div>
+<div class="flex items-center gap-3 mt-1">
+<span class="text-xs text-on-surface-variant font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">calendar_today</span> May 12, 2024
+                        </span>
+<span class="text-xs text-on-surface-variant font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">person</span> Jean-Paul V.
+                        </span>
+</div>
+</div>
+<div class="text-right flex flex-col items-end">
+<p class="text-xs font-bold text-on-surface">1,024 Items</p>
+<p class="text-[10px] font-medium text-on-surface-variant">Value: 210,000 VUV</p>
+<span class="material-symbols-outlined text-outline-variant mt-1">chevron_right</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button -->
+<button class="fixed right-6 bottom-24 w-14 h-14 bg-primary text-on-primary rounded-full shadow-xl shadow-primary/40 flex items-center justify-center active:scale-90 transition-transform z-40">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-2 pb-safe h-20 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-slate-100 dark:border-slate-800 z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+<div class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-3 py-1 hover:text-cyan-600 dark:hover:text-cyan-300 active:scale-90 transition-transform">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Inventory</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-cyan-50 dark:bg-cyan-900/30 text-cyan-800 dark:text-cyan-200 rounded-xl px-3 py-1 active:scale-90 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">history_edu</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Audits</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-3 py-1 hover:text-cyan-600 dark:hover:text-cyan-300 active:scale-90 transition-transform">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Reports</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-3 py-1 hover:text-cyan-600 dark:hover:text-cyan-300 active:scale-90 transition-transform">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Settings</span>
+</div>
+</nav>
+</body></html>

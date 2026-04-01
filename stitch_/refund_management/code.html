@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Refund Management | Vila Port Repair</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-variant": "#f0f4f4",
+              "on-tertiary-container": "#321200",
+              "on-secondary-fixed": "#002022",
+              "surface-bright": "#ffffff",
+              "inverse-surface": "#222a34",
+              "surface": "#f9fafa",
+              "on-primary-container": "#002022",
+              "on-error": "#ffffff",
+              "primary-container": "#e0f2f3",
+              "on-tertiary-fixed": "#321200",
+              "secondary-container": "#c3e6e9",
+              "secondary": "#436466",
+              "inverse-primary": "#78d5dc",
+              "surface-container-highest": "#dae6e7",
+              "primary-fixed": "#94f1f9",
+              "tertiary": "#f7a072",
+              "on-primary-fixed-variant": "#004f54",
+              "on-tertiary-fixed-variant": "#71370c",
+              "tertiary-fixed-dim": "#ffb68b",
+              "secondary-fixed": "#c6e9ec",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "on-error-container": "#93000a",
+              "secondary-fixed-dim": "#aacdd0",
+              "outline-variant": "#bdc9c9",
+              "on-primary": "#ffffff",
+              "surface-container": "#ffffff",
+              "on-tertiary": "#ffffff",
+              "tertiary-fixed": "#ffdbc8",
+              "tertiary-container": "#ffdbc8",
+              "error-container": "#fee2e2",
+              "on-secondary-container": "#48686b",
+              "outline": "#dae6e7",
+              "on-surface-variant": "#5e8a8d",
+              "surface-container-high": "#ebefee",
+              "surface-container-low": "#f6fafa",
+              "inverse-on-surface": "#f9fafa",
+              "surface-dim": "#d7dbdb",
+              "on-background": "#101818",
+              "primary": "#007e85",
+              "on-primary-fixed": "#002022",
+              "primary-fixed-dim": "#78d5dc",
+              "on-surface": "#101818",
+              "on-secondary": "#ffffff",
+              "surface-tint": "#007e85",
+              "error": "#ef4444",
+              "background": "#f9fafa"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen">
+<!-- TopAppBar -->
+<header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md text-[#007E85] font-manrope font-extrabold text-[20px] tracking-tight docked full-width top-0 sticky z-50 border-b border-[#DAE6E7] dark:border-slate-800 shadow-sm flex justify-between items-center w-full px-6 h-16">
+<div class="flex items-center gap-3">
+<span class="text-xl font-black text-[#101818] dark:text-white">Vila Port Repair</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined p-2 text-[#5E8A8D] hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors rounded-full">notifications</button>
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center overflow-hidden border border-outline">
+<img alt="User profile" data-alt="Close-up portrait of a professional male technician in a clean workshop environment with soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLCyPFwG4qGEAf6-qsqq_q8zWYSFOxKvISP5jXLgQ9AD39X4p2z404gP1khwO_1bcFuSTtyaXV6lS20WRgyh1hdJwAPybpXArmzx4af-8xhL9xF0vmBqwQO8X9L2tv_rGNB6SZzNQamQhhaGUZsU6hwDX-9kSINuDW2qS6hsTwMJuCyKx6Gl3HIzwgdLdS_dzZibRV45YlJ1S2oJWUuADgljzy6sEzw_mGn8Z4XPzDOX5JR3M17Rs5tZNXoLM1U0QteUgy8VtORvtG"/>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-32">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Left: Orders List (Bento-style Cards) -->
+<div class="lg:col-span-7 space-y-6">
+<div class="flex items-center justify-between">
+<h2 class="text-[20px] font-extrabold tracking-tight text-on-background">已完成订单 (Completed Orders)</h2>
+<span class="text-xs font-bold bg-primary-container text-primary px-3 py-1 rounded-full uppercase tracking-wider">Latest 30 Days</span>
+</div>
+<div class="grid gap-4">
+<!-- Order Card 1 -->
+<div class="group bg-surface-container border border-outline rounded-xl p-5 shadow-sm hover:shadow-md transition-all">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-bold text-lg text-on-surface">iPhone 13 Screen Repair</h3>
+<p class="text-on-surface-variant text-sm">Order: #VPR-90821 • 12 Oct 2023</p>
+</div>
+<span class="text-[10px] font-bold text-on-primary bg-primary px-2 py-1 rounded">PAID</span>
+</div>
+<div class="flex items-end justify-between">
+<div class="space-y-1">
+<p class="text-[10px] uppercase font-bold text-on-surface-variant tracking-widest">Amount</p>
+<p class="text-xl font-extrabold text-on-background">15,500 VUV</p>
+</div>
+<button class="bg-primary/10 text-primary font-bold text-sm px-4 py-2 rounded-lg hover:bg-primary hover:text-white transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">undo</span> 发起退款
+                            </button>
+</div>
+</div>
+<!-- Order Card 2 -->
+<div class="group bg-surface-container border border-outline rounded-xl p-5 shadow-sm hover:shadow-md transition-all">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-bold text-lg text-on-surface">Samsung S22 Battery Swap</h3>
+<p class="text-on-surface-variant text-sm">Order: #VPR-89942 • 08 Oct 2023</p>
+</div>
+<span class="text-[10px] font-bold text-on-primary bg-primary px-2 py-1 rounded">PAID</span>
+</div>
+<div class="flex items-end justify-between">
+<div class="space-y-1">
+<p class="text-[10px] uppercase font-bold text-on-surface-variant tracking-widest">Amount</p>
+<p class="text-xl font-extrabold text-on-background">8,200 VUV</p>
+</div>
+<button class="bg-primary/10 text-primary font-bold text-sm px-4 py-2 rounded-lg hover:bg-primary hover:text-white transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">undo</span> 发起退款
+                            </button>
+</div>
+</div>
+<!-- Order Card 3 -->
+<div class="group bg-surface-container border border-outline rounded-xl p-5 shadow-sm hover:shadow-md transition-all opacity-60">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-bold text-lg text-on-surface">MacBook Air Logic Board</h3>
+<p class="text-on-surface-variant text-sm">Order: #VPR-88120 • 25 Sep 2023</p>
+</div>
+<span class="text-[10px] font-bold text-on-primary bg-primary px-2 py-1 rounded">PAID</span>
+</div>
+<div class="flex items-end justify-between">
+<div class="space-y-1">
+<p class="text-[10px] uppercase font-bold text-on-surface-variant tracking-widest">Amount</p>
+<p class="text-xl font-extrabold text-on-background">45,000 VUV</p>
+</div>
+<button class="bg-slate-100 text-slate-400 font-bold text-sm px-4 py-2 rounded-lg cursor-not-allowed">
+                                超过时限
+                            </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Right: Refund Form -->
+<div class="lg:col-span-5">
+<div class="sticky top-24 bg-white rounded-2xl shadow-2xl overflow-hidden border border-outline">
+<div class="bg-[#007E85]/5 p-6 border-b border-outline">
+<h2 class="text-xl font-extrabold text-on-background">退款申请表单 (Refund Request)</h2>
+<p class="text-sm text-on-surface-variant">请核对订单信息并选择退款路径</p>
+</div>
+<div class="p-6 space-y-6">
+<!-- Original Order Info -->
+<div class="bg-surface-container-low rounded-xl p-4 grid grid-cols-2 gap-4 border border-outline-variant/30">
+<div>
+<label class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest block">订单编号</label>
+<span class="font-bold text-on-background">#VPR-90821</span>
+</div>
+<div>
+<label class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest block">原支付方式</label>
+<span class="font-bold text-on-background">Cash (現金)</span>
+</div>
+</div>
+<!-- Refund Reason -->
+<div class="space-y-2">
+<label class="text-sm font-bold text-on-background block">退款原因 (Reason for Refund)</label>
+<select class="w-full bg-surface-container border-outline rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary focus:border-primary">
+<option>维修后再次故障 (Defect reappeared)</option>
+<option>零件不符 (Incorrect parts used)</option>
+<option>客户取消 (Customer Cancellation)</option>
+<option>服务延时 (Service Delay)</option>
+<option>其他 (Other)</option>
+</select>
+</div>
+<!-- Refund Amount -->
+<div class="space-y-2">
+<label class="text-sm font-bold text-on-background block">退款金额 (VUV)</label>
+<div class="relative">
+<input class="w-full bg-surface-container border-outline rounded-xl pl-4 pr-16 py-3 text-lg font-extrabold text-primary focus:ring-2 focus:ring-primary focus:border-primary" type="number" value="15500"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-on-surface-variant text-sm">VUV</span>
+</div>
+<p class="text-[11px] text-on-surface-variant italic">默认为全额退款。Vanuatu VAT included.</p>
+</div>
+<!-- Refund Path -->
+<div class="space-y-3">
+<label class="text-sm font-bold text-on-background block">退款路径 (Refund Path)</label>
+<div class="grid grid-cols-1 gap-2">
+<label class="flex items-center p-3 rounded-xl border border-primary bg-primary/5 cursor-pointer">
+<input checked="" class="text-primary focus:ring-primary h-4 w-4" name="path" type="radio"/>
+<div class="ml-3">
+<span class="block font-bold text-sm">Cash (现金)</span>
+<span class="text-[11px] text-on-surface-variant">柜台即时处理 - Recommended for small amounts</span>
+</div>
+<span class="material-symbols-outlined ml-auto text-primary">payments</span>
+</label>
+<label class="flex items-center p-3 rounded-xl border border-outline hover:border-primary transition-colors cursor-pointer">
+<input class="text-primary focus:ring-primary h-4 w-4" name="path" type="radio"/>
+<div class="ml-3">
+<span class="block font-bold text-sm">Bank Transfer (银行转账)</span>
+<span class="text-[11px] text-on-surface-variant">BSP or ANZ - 1-2 business days</span>
+</div>
+<span class="material-symbols-outlined ml-auto text-on-surface-variant">account_balance</span>
+</label>
+<label class="flex items-center p-3 rounded-xl border border-outline hover:border-primary transition-colors cursor-pointer">
+<input class="text-primary focus:ring-primary h-4 w-4" name="path" type="radio"/>
+<div class="ml-3">
+<span class="block font-bold text-sm">Cheque (支票)</span>
+<span class="text-[11px] text-on-surface-variant">Corporate processing only</span>
+</div>
+<span class="material-symbols-outlined ml-auto text-on-surface-variant">history_edu</span>
+</label>
+</div>
+</div>
+<!-- Confirm Button -->
+<button class="w-full bg-primary text-white font-extrabold py-4 rounded-xl shadow-xl shadow-primary/30 hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-3">
+<span class="material-symbols-outlined">check_circle</span> 确认退款 (Confirm Refund)
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Success Confirmation Overlay (Conceptual) -->
+<div class="hidden fixed inset-0 z-[60] bg-[#101818]/60 backdrop-blur-sm flex items-center justify-center p-4">
+<div class="bg-white rounded-3xl max-w-sm w-full p-8 text-center shadow-2xl">
+<div class="w-20 h-20 bg-primary-container text-primary rounded-full flex items-center justify-center mx-auto mb-6">
+<span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<h3 class="text-2xl font-extrabold text-on-background mb-2">退款已提交</h3>
+<p class="text-on-surface-variant mb-8">订单 #VPR-90821 的 15,500 VUV 退款申请已进入财务审核流程。</p>
+<button class="w-full bg-on-background text-white font-bold py-3 rounded-xl">返回控制台</button>
+</div>
+</div>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-4 pt-2 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-[#DAE6E7] dark:border-slate-800 z-50 md:hidden">
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 px-3 py-1">
+<span class="material-symbols-outlined">build</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">Orders</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 px-3 py-1">
+<span class="material-symbols-outlined">badge</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">Staff</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#007E85] dark:text-[#007E85] bg-[#007E85]/10 rounded-xl px-3 py-1">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">Refunds</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 px-3 py-1">
+<span class="material-symbols-outlined">notifications_active</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">Alerts</span>
+</div>
+</nav>
+<!-- Desktop SideNav (Drawer implementation for larger screens) -->
+<div class="hidden md:flex fixed left-0 top-0 h-full w-20 lg:w-64 flex-col bg-white border-r border-outline py-8 px-4 z-40">
+<div class="mb-10 px-4">
+<span class="text-[#007E85] font-black text-xl lg:block hidden">VILA PORT</span>
+<span class="text-[#007E85] font-black text-xl lg:hidden block">VP</span>
+</div>
+<div class="space-y-2">
+<div class="flex items-center gap-4 p-3 text-[#5E8A8D] hover:bg-slate-50 rounded-xl transition-all cursor-pointer">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-medium text-sm lg:block hidden">Dashboard</span>
+</div>
+<div class="flex items-center gap-4 p-3 text-[#5E8A8D] hover:bg-slate-50 rounded-xl transition-all cursor-pointer">
+<span class="material-symbols-outlined">handyman</span>
+<span class="font-medium text-sm lg:block hidden">Repair Queue</span>
+</div>
+<div class="flex items-center gap-4 p-3 bg-[#007E85]/10 text-[#007E85] font-bold border-r-4 border-[#007E85] rounded-xl transition-all cursor-pointer">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-medium text-sm lg:block hidden">Refunds</span>
+</div>
+<div class="flex items-center gap-4 p-3 text-[#5E8A8D] hover:bg-slate-50 rounded-xl transition-all cursor-pointer">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-medium text-sm lg:block hidden">Inventory</span>
+</div>
+</div>
+<div class="mt-auto p-4 bg-primary-container rounded-2xl lg:block hidden">
+<p class="text-[10px] font-bold text-primary uppercase tracking-widest mb-1">Active Tech</p>
+<p class="text-xs font-extrabold text-on-primary-container">VUV Specialist Lead</p>
+</div>
+</div>
+</body></html>

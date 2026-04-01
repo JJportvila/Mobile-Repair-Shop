@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>盘点差异处理 - Vila Port Cyan</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-high": "#ebefee",
+              "secondary": "#436466",
+              "tertiary": "#f7a072",
+              "on-tertiary-fixed-variant": "#71370c",
+              "on-error-container": "#93000a",
+              "surface-tint": "#007e85",
+              "surface-container-low": "#f6fafa",
+              "background": "#f9fafa",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "surface-container-lowest": "#ffffff",
+              "on-error": "#ffffff",
+              "on-tertiary-container": "#321200",
+              "on-tertiary-fixed": "#321200",
+              "on-secondary-container": "#48686b",
+              "on-primary-fixed-variant": "#004f54",
+              "on-primary-fixed": "#002022",
+              "outline": "#dae6e7",
+              "inverse-surface": "#222a34",
+              "primary-fixed-dim": "#78d5dc",
+              "on-secondary": "#ffffff",
+              "secondary-fixed-dim": "#aacdd0",
+              "secondary-container": "#c3e6e9",
+              "error": "#ef4444",
+              "primary-container": "#e0f2f3",
+              "surface-variant": "#f0f4f4",
+              "on-primary-container": "#002022",
+              "surface-dim": "#d7dbdb",
+              "surface-container-highest": "#dae6e7",
+              "on-secondary-fixed": "#002022",
+              "inverse-primary": "#78d5dc",
+              "surface-bright": "#ffffff",
+              "on-surface": "#101818",
+              "tertiary-fixed": "#ffdbc8",
+              "surface": "#f9fafa",
+              "on-surface-variant": "#5e8a8d",
+              "on-tertiary": "#ffffff",
+              "tertiary-container": "#ffdbc8",
+              "error-container": "#fee2e2",
+              "surface-container": "#ffffff",
+              "on-primary": "#ffffff",
+              "inverse-on-surface": "#f9fafa",
+              "secondary-fixed": "#c6e9ec",
+              "tertiary-fixed-dim": "#ffb68b",
+              "primary-fixed": "#94f1f9",
+              "primary": "#007e85",
+              "outline-variant": "#bdc9c9",
+              "on-background": "#101818"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      body { font-family: 'Manrope', sans-serif; }
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md shadow-sm border-b border-outline">
+<div class="flex items-center justify-between px-4 h-14 w-full max-w-md mx-auto">
+<div class="flex items-center gap-3">
+<button class="text-on-surface-variant active:opacity-70 transition-all">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-headline font-bold text-lg tracking-tight text-primary">盘点差异处理</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant">history</span>
+<span class="material-symbols-outlined text-primary">account_circle</span>
+</div>
+</div>
+</header>
+<main class="pt-20 px-4 max-w-md mx-auto space-y-6">
+<!-- Discrepancy Alert Banner -->
+<div class="bg-error-container/50 border border-error/20 rounded-xl p-4 flex items-start gap-3">
+<span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">warning</span>
+<div>
+<p class="text-on-error-container font-bold text-sm">检测到库存差异</p>
+<p class="text-on-error-container/80 text-xs">当前扫描结果与系统记录不符，请确认并处理。</p>
+</div>
+</div>
+<!-- Product Details Card (Bento Style) -->
+<div class="grid grid-cols-2 gap-3">
+<div class="col-span-2 bg-surface-container rounded-xl p-5 shadow-sm border border-outline/50">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 bg-surface-variant rounded-lg flex items-center justify-center overflow-hidden">
+<img alt="iPhone 14 Screen" class="w-full h-full object-cover" data-alt="Close-up of a high-quality smartphone screen replacement part on a clean tech repair workbench with soft studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8JbQ51I5wm5XNMrV8jkkxZUrhlk2ln9tPgKkyU17WLxkCl5Y-hU8cm_zGH15wJM6TohmKm1cMcxYttUo49lF3V48hSnQq-B4Qfq2-qxo7iqKT7B9TTKEEqkuaZiN48p1rDfitY9Ss8XPvz5cjr80Jj3ltGznRhQuT2n8bNy8lZG95qlvNt8DRBg5_Z3Kltkv-ClyJCPPpnroV9suKhj05d_HY-__Jr1kXOohaqpIStzIVl7FhyunR_m2Xb0iRB7m60gurlzPSALbh"/>
+</div>
+<div>
+<h2 class="font-headline font-extrabold text-lg text-on-surface">iPhone 14 屏幕组件</h2>
+<p class="text-on-surface-variant text-xs">SKU: APP-I14-SCR-ORG</p>
+</div>
+</div>
+<div class="mt-6 grid grid-cols-2 gap-4 border-t border-outline pt-4">
+<div class="text-center">
+<p class="text-on-surface-variant text-[10px] uppercase font-bold tracking-widest">系统库存</p>
+<p class="text-2xl font-black text-on-surface">2 <span class="text-sm font-medium">件</span></p>
+</div>
+<div class="text-center border-l border-outline">
+<p class="text-error text-[10px] uppercase font-bold tracking-widest">实盘数量</p>
+<p class="text-2xl font-black text-error">0 <span class="text-sm font-medium text-on-surface">件</span></p>
+</div>
+</div>
+<div class="mt-4 bg-surface-variant/50 rounded-lg p-3 flex justify-between items-center">
+<span class="text-xs font-bold text-on-surface-variant uppercase">库存价值损失</span>
+<span class="text-sm font-extrabold text-error">15,000 VUV</span>
+</div>
+</div>
+<!-- Reason Selection Section -->
+<div class="col-span-2 space-y-3">
+<h3 class="font-headline font-bold text-sm text-on-surface-variant px-1 uppercase tracking-wider">选择差异原因</h3>
+<div class="grid grid-cols-1 gap-2">
+<!-- Reason: Damaged -->
+<label class="relative flex items-center p-4 bg-surface-container rounded-xl border border-outline cursor-pointer hover:bg-surface-variant transition-colors group">
+<input checked="" class="hidden peer" name="reason" type="radio"/>
+<div class="w-10 h-10 rounded-lg bg-tertiary/10 flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-tertiary">heart_broken</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-bold text-on-surface">物品损坏 (Damaged)</p>
+<p class="text-[10px] text-on-surface-variant">零件在存储或移动过程中受损，无法使用</p>
+</div>
+<div class="w-5 h-5 border-2 border-outline rounded-full flex items-center justify-center peer-checked:border-primary peer-checked:bg-primary">
+<div class="w-2 h-2 bg-white rounded-full"></div>
+</div>
+</label>
+<!-- Reason: Lost -->
+<label class="relative flex items-center p-4 bg-surface-container rounded-xl border border-outline cursor-pointer hover:bg-surface-variant transition-colors group">
+<input class="hidden peer" name="reason" type="radio"/>
+<div class="w-10 h-10 rounded-lg bg-error/10 flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-error">search_off</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-bold text-on-surface">物品丢失 (Lost)</p>
+<p class="text-[10px] text-on-surface-variant">无法在指定库位找到实物</p>
+</div>
+<div class="w-5 h-5 border-2 border-outline rounded-full flex items-center justify-center peer-checked:border-primary peer-checked:bg-primary">
+<div class="w-2 h-2 bg-white rounded-full"></div>
+</div>
+</label>
+<!-- Reason: Admin Error -->
+<label class="relative flex items-center p-4 bg-surface-container rounded-xl border border-outline cursor-pointer hover:bg-surface-variant transition-colors group">
+<input class="hidden peer" name="reason" type="radio"/>
+<div class="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-secondary">edit_note</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-bold text-on-surface">行政错误 (Admin Error)</p>
+<p class="text-[10px] text-on-surface-variant">入库或出库单据录入错误</p>
+</div>
+<div class="w-5 h-5 border-2 border-outline rounded-full flex items-center justify-center peer-checked:border-primary peer-checked:bg-primary">
+<div class="w-2 h-2 bg-white rounded-full"></div>
+</div>
+</label>
+</div>
+</div>
+<!-- Notes Field -->
+<div class="col-span-2">
+<label class="block font-headline font-bold text-sm text-on-surface-variant mb-2 px-1 uppercase tracking-wider">备注说明</label>
+<textarea class="w-full bg-surface-container border-outline rounded-xl p-4 text-sm focus:ring-primary focus:border-primary min-h-[100px]" placeholder="请输入更多差异详情..."></textarea>
+</div>
+</div>
+<!-- Action Section -->
+<div class="pt-4 pb-8">
+<button class="w-full bg-primary text-white font-headline font-extrabold py-4 rounded-xl shadow-lg shadow-primary/30 flex items-center justify-center gap-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined">inventory</span>
+                调整库存 (Adjust Inventory)
+            </button>
+<p class="text-center text-[10px] text-on-surface-variant mt-4 uppercase tracking-widest font-bold">此操作将同步更新零件管理系统并生成财务账单</p>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-safe h-16 bg-white/95 backdrop-blur-lg border-t border-outline shadow-[0_-4px_12px_rgba(0,0,0,0.05)] z-50">
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 transition-transform active:scale-95">
+<span class="material-symbols-outlined">build</span>
+<span class="font-headline font-bold text-[10px] uppercase tracking-wider">维修</span>
+</div>
+<div class="flex flex-col items-center justify-center text-primary bg-primary/10 rounded-xl px-3 py-1 transition-transform active:scale-95">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span class="font-headline font-bold text-[10px] uppercase tracking-wider">库存</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 transition-transform active:scale-95">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-headline font-bold text-[10px] uppercase tracking-wider">供应商</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 transition-transform active:scale-95">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-headline font-bold text-[10px] uppercase tracking-wider">财务</span>
+</div>
+</nav>
+</body></html>

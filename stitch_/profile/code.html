@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Technician Profile - Vila Port Cyan</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#007e85",
+                        "surface-variant": "#f0f4f4",
+                        "on-background": "#101818",
+                        "inverse-primary": "#78d5dc",
+                        "tertiary": "#f7a072",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed": "#002022",
+                        "on-tertiary-fixed": "#321200",
+                        "on-tertiary": "#ffffff",
+                        "secondary-container": "#c3e6e9",
+                        "primary-fixed": "#94f1f9",
+                        "on-secondary-fixed": "#002022",
+                        "primary-fixed-dim": "#78d5dc",
+                        "outline-variant": "#bdc9c9",
+                        "surface-container-highest": "#dae6e7",
+                        "on-primary": "#ffffff",
+                        "primary-container": "#e0f2f3",
+                        "secondary-fixed-dim": "#aacdd0",
+                        "tertiary-fixed-dim": "#ffb68b",
+                        "outline": "#dae6e7",
+                        "secondary": "#436466",
+                        "on-surface": "#101818",
+                        "on-secondary-container": "#48686b",
+                        "on-surface-variant": "#5e8a8d",
+                        "on-tertiary-fixed-variant": "#71370c",
+                        "error": "#ef4444",
+                        "surface-container": "#ffffff",
+                        "tertiary-container": "#ffdbc8",
+                        "on-secondary-fixed-variant": "#2b4c4f",
+                        "on-primary-container": "#002022",
+                        "surface-container-low": "#f6fafa",
+                        "surface": "#f9fafa",
+                        "on-primary-fixed-variant": "#004f54",
+                        "surface-tint": "#007e85",
+                        "secondary-fixed": "#c6e9ec",
+                        "error-container": "#fee2e2",
+                        "on-tertiary-container": "#321200",
+                        "tertiary-fixed": "#ffdbc8",
+                        "surface-container-high": "#ebefee",
+                        "inverse-surface": "#222a34",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "inverse-on-surface": "#f9fafa",
+                        "surface-bright": "#ffffff",
+                        "background": "#f9fafa",
+                        "on-error-container": "#93000a",
+                        "surface-dim": "#d7dbdb"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md shadow-sm flex justify-between items-center px-4 h-16 w-full">
+<div class="flex items-center gap-3">
+<button class="p-2 hover:bg-slate-100 transition-colors active:scale-95 duration-200 rounded-lg">
+<span class="material-symbols-outlined text-[#007E85]">menu</span>
+</button>
+<h1 class="font-manrope font-extrabold tracking-tight text-lg text-[#101818]">Repair Dashboard</h1>
+</div>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary/20">
+<img alt="Technician Profile" class="w-full h-full object-cover" data-alt="Professional close-up portrait of a friendly male technician in a clean workshop setting with soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqANMDm8hzPi6HsBG1EK8yG4Wb56krTlZYatP5KZJH9mTL8vuYUajyv7MGDYZ4K6BHTUqZTGBl3XO31fbQQ5AeaRBOluvcZIx0eZ_ng-PiBKJLyy2OzEjKM7sR7tl3oLOSHXHMOH8R7_AXSEok4Zi-kd_gdDkNWqcJHpKsaokcehZkO1rB2FMDWIWBk4qIhvFo2pEMTqrKQD0HOOEuNjDd-TZClUjHkU4DX86kZyACj47-Q2bsO9qSCElV_fOLgcUTPx84Yu7ZYWpO"/>
+</div>
+</header>
+<main class="pt-20 px-4 space-y-6 max-w-2xl mx-auto">
+<!-- Profile Header Section -->
+<section class="relative overflow-hidden rounded-xl bg-gradient-to-br from-primary to-[#005F66] p-6 text-white shadow-xl">
+<!-- Subtle Pattern Overlay -->
+<div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 24px 24px;"></div>
+<div class="relative z-10 flex flex-col items-center text-center">
+<div class="relative mb-4">
+<div class="w-24 h-24 rounded-full border-4 border-white/30 overflow-hidden shadow-2xl">
+<img alt="Aiden (阿登)" class="w-full h-full object-cover" data-alt="Close-up of a friendly male technician with a confident smile, wearing professional work attire, studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDu3jvMweH0OeoAu9IJ0UXC_TfyZSUqi7lFxnvvk_xcbTLC0DUpKKTflbpiKb8CJpf6bpzZjTslgVjRUcyc9TMlihGtpjIW65FYPq7vnaIAVtKOVY7HeDdgXd6ZZu7ZU58y1BAcwvCMr6TKuL7e7IVOFMaboIkGrAbicLzOOrmwDp2S4zfL8nH3BKcgb_AaSEG-UWfGEaF-TN1n9g8oZ39xdqydzyPHDZG7c6Uow7YxpjJXM1ZfHYrWnZPL315lCEsl4St47MkxR3Bh"/>
+</div>
+<div class="absolute -bottom-1 -right-1 bg-accent-green bg-[#078832] p-1 rounded-full border-2 border-white">
+<span class="material-symbols-outlined text-[14px] block" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+</div>
+<h2 class="text-2xl font-extrabold tracking-tight">Aiden (阿登)</h2>
+<p class="text-white/80 text-sm font-medium mb-3">Employee ID: VPR-088</p>
+<div class="inline-flex items-center px-4 py-1.5 bg-white/20 backdrop-blur-sm rounded-full border border-white/30">
+<span class="material-symbols-outlined text-[16px] mr-2" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+<span class="text-xs font-bold tracking-wider uppercase">Senior Specialist (高级认证专家)</span>
+</div>
+</div>
+</section>
+<!-- Performance Stats Card -->
+<section class="bg-surface-container rounded-xl p-5 shadow-sm border border-outline">
+<div class="flex items-center justify-between mb-5">
+<h3 class="font-headline font-extrabold text-lg text-on-surface">Today's Performance (今日成就)</h3>
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest bg-surface-variant px-2 py-1 rounded">Live Data</span>
+</div>
+<div class="grid grid-cols-3 gap-4">
+<div class="flex flex-col items-center p-3 rounded-lg bg-surface-container-low border border-outline-variant/30">
+<span class="material-symbols-outlined text-primary mb-1">task_alt</span>
+<span class="text-2xl font-extrabold text-on-surface">8</span>
+<span class="text-[10px] text-center font-bold text-on-surface-variant leading-tight">Orders Completed<br/>(已完成单数)</span>
+</div>
+<div class="flex flex-col items-center p-3 rounded-lg bg-surface-container-low border border-outline-variant/30">
+<span class="material-symbols-outlined text-tertiary mb-1">payments</span>
+<span class="text-xl font-extrabold text-on-surface">45.2k</span>
+<span class="text-[10px] text-center font-bold text-on-surface-variant leading-tight">Daily Revenue<br/>(今日产值)</span>
+</div>
+<div class="flex flex-col items-center p-3 rounded-lg bg-surface-container-low border border-outline-variant/30">
+<span class="material-symbols-outlined text-primary mb-1" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-2xl font-extrabold text-on-surface">4.9</span>
+<span class="text-[10px] text-center font-bold text-on-surface-variant leading-tight">Avg. Rating<br/>(平均评分)</span>
+</div>
+</div>
+</section>
+<!-- Menu List -->
+<section class="bg-surface-container rounded-xl overflow-hidden shadow-sm border border-outline">
+<nav class="flex flex-col divide-y divide-outline">
+<a class="flex items-center justify-between p-4 hover:bg-surface-container-low transition-colors group" href="#">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">history</span>
+</div>
+<span class="font-semibold text-on-surface">My Repair History (我的维修记录)</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform">chevron_right</span>
+</a>
+<a class="flex items-center justify-between p-4 hover:bg-surface-container-low transition-colors group" href="#">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">calendar_month</span>
+</div>
+<span class="font-semibold text-on-surface">My Work Schedule (我的排班表)</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform">chevron_right</span>
+</a>
+<a class="flex items-center justify-between p-4 hover:bg-surface-container-low transition-colors group" href="#">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">verified</span>
+</div>
+<span class="font-semibold text-on-surface">Certifications &amp; Awards (专业认证与奖项)</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform">chevron_right</span>
+</a>
+<a class="flex items-center justify-between p-4 hover:bg-surface-container-low transition-colors group" href="#">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+</div>
+<span class="font-semibold text-on-surface">Payroll &amp; Invoices (薪资账单)</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform">chevron_right</span>
+</a>
+<a class="flex items-center justify-between p-4 hover:bg-surface-container-low transition-colors group" href="#">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">security</span>
+</div>
+<span class="font-semibold text-on-surface">Account Security (账户与安全)</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform">chevron_right</span>
+</a>
+</nav>
+</section>
+<!-- Log Out Button -->
+<button class="w-full flex items-center justify-center gap-2 py-4 px-6 rounded-xl bg-error-container text-error font-extrabold transition-all hover:bg-error/10 active:scale-[0.98]">
+<span class="material-symbols-outlined">logout</span>
+<span>Log Out (退出登录)</span>
+</button>
+<!-- Version Info -->
+<div class="text-center pb-8">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Vila Port Management System v2.4.0</p>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-2 py-3 pb-safe bg-white/95 backdrop-blur-lg shadow-[0_-4px_12px_rgba(0,0,0,0.05)] z-50 rounded-t-xl border-t border-[#DAE6E7]">
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] hover:text-[#007E85] active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] hover:text-[#007E85] active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">build_circle</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">Orders</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] hover:text-[#007E85] active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">calendar_month</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">Schedule</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-[#007E85]/10 text-[#007E85] rounded-xl px-3 py-1 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">Profile</span>
+</a>
+</nav>
+</body></html>

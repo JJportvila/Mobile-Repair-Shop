@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+
+<html class="light" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>打印机设置 - Vila Port Cyan</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary-container": "#321200",
+              "on-primary-container": "#002022",
+              "secondary": "#436466",
+              "tertiary-fixed": "#ffdbc8",
+              "surface-variant": "#f0f4f4",
+              "tertiary-container": "#ffdbc8",
+              "primary": "#007e85",
+              "error-container": "#fee2e2",
+              "on-surface-variant": "#5e8a8d",
+              "inverse-primary": "#78d5dc",
+              "error": "#ef4444",
+              "surface-container-high": "#ebefee",
+              "on-secondary-container": "#48686b",
+              "surface": "#f9fafa",
+              "on-tertiary": "#ffffff",
+              "on-background": "#101818",
+              "on-secondary": "#ffffff",
+              "on-error-container": "#93000a",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary-fixed": "#321200",
+              "primary-fixed-dim": "#78d5dc",
+              "inverse-surface": "#222a34",
+              "inverse-on-surface": "#f9fafa",
+              "surface-container": "#ffffff",
+              "on-tertiary-fixed-variant": "#71370c",
+              "surface-tint": "#007e85",
+              "surface-container-low": "#f6fafa",
+              "secondary-container": "#c3e6e9",
+              "background": "#f9fafa",
+              "on-surface": "#101818",
+              "on-secondary-fixed": "#002022",
+              "outline": "#dae6e7",
+              "on-error": "#ffffff",
+              "secondary-fixed": "#c6e9ec",
+              "tertiary-fixed-dim": "#ffb68b",
+              "surface-dim": "#d7dbdb",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "primary-container": "#e0f2f3",
+              "outline-variant": "#bdc9c9",
+              "tertiary": "#f7a072",
+              "on-primary-fixed-variant": "#004f54",
+              "on-primary": "#ffffff",
+              "surface-container-highest": "#dae6e7",
+              "surface-bright": "#ffffff",
+              "secondary-fixed-dim": "#aacdd0",
+              "on-primary-fixed": "#002022",
+              "primary-fixed": "#94f1f9"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            boxShadow: {
+                'xl-primary': '0 20px 25px -5px rgba(0, 126, 133, 0.1), 0 10px 10px -5px rgba(0, 126, 133, 0.04)',
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-surface">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-[#DAE6E7] dark:border-slate-800 shadow-sm flex justify-between items-center px-4 h-16 w-full">
+<div class="flex items-center gap-3">
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-[#F9FAFA] transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-[#007E85]">arrow_back</span>
+</button>
+<h1 class="font-manrope font-extrabold tracking-tight text-[20px] text-[#007E85]">打印机设置</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="Close up of a professional repair technician profile photo with soft lighting and clean background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5vIYemWNViCsTeF7AiwKM6gbCDuAQT_IcPpVvHxc-g1wiGoXWAYU2Gw4X7OGBJOHGuXeAdFL-csHthid74rSbIGuctTDw2diTNUPq0fhCzil5Z2YUrgTbk0YOHbTMHaA1GdjfwTCVsxjBgK0-FHKN8BVEj1R9rLZflTSr1RTHGW1WCPbPZC-5M8r5ygiIg9aZv3C9bV2vTiw8ScCO0_RytvWO-NgbMJXkw_N43BPbDAcMfJJ1NQxek97gTr-Ku-2CXz2CsSec8lp3"/>
+</button>
+</div>
+</header>
+<main class="pt-20 pb-28 px-4 max-w-2xl mx-auto space-y-6">
+<!-- Connection Status Bento Section -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Active Device Card -->
+<div class="col-span-1 md:col-span-2 bg-surface-container rounded-xl p-5 shadow-sm border border-outline/50">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-3xl">print</span>
+</div>
+<div>
+<h3 class="font-bold text-lg leading-tight">POS-58-Thermal</h3>
+<div class="flex items-center gap-2 mt-1">
+<span class="w-2 h-2 rounded-full bg-[#078832]"></span>
+<span class="text-[10px] font-bold uppercase tracking-wider text-[#078832]">已连接</span>
+</div>
+</div>
+</div>
+<button class="px-4 py-2 bg-error/10 text-error text-xs font-bold rounded-lg hover:bg-error/20 transition-colors">
+                        断开连接
+                    </button>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-outline/30">
+<span class="text-xs text-on-surface-variant">连接方式: 蓝牙 5.0</span>
+<span class="text-xs text-on-surface-variant">电量: 85%</span>
+</div>
+</div>
+<!-- Connectivity Toggles -->
+<div class="bg-surface-container rounded-xl p-4 shadow-sm border border-outline/50 flex flex-col justify-between">
+<span class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-4">通信开关</span>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">bluetooth</span>
+<span class="text-sm font-semibold">蓝牙</span>
+</div>
+<div class="relative inline-flex h-6 w-11 items-center rounded-full bg-primary">
+<span class="inline-block h-4 w-4 translate-x-6 rounded-full bg-white transition"></span>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">wifi</span>
+<span class="text-sm font-semibold">Wi-Fi</span>
+</div>
+<div class="relative inline-flex h-6 w-11 items-center rounded-full bg-outline">
+<span class="inline-block h-4 w-4 translate-x-1 rounded-full bg-white transition"></span>
+</div>
+</div>
+</div>
+</div>
+<!-- Test Action Card -->
+<div class="bg-primary rounded-xl p-4 shadow-xl-primary flex flex-col items-center justify-center text-center gap-2 group cursor-pointer active:scale-95 transition-transform duration-200">
+<div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center mb-1">
+<span class="material-symbols-outlined text-white text-2xl">receipt_long</span>
+</div>
+<span class="text-white font-bold text-sm">测试打印</span>
+<span class="text-white/70 text-[10px] px-2">发送测试页到当前打印机</span>
+</div>
+</section>
+<!-- Configuration Section -->
+<section class="space-y-4">
+<h2 class="text-[20px] font-extrabold tracking-tight text-on-background flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">settings</span>
+                打印配置
+            </h2>
+<div class="bg-surface-container rounded-xl overflow-hidden shadow-sm border border-outline/50 divide-y divide-outline/30">
+<!-- Auto Print -->
+<div class="p-4 flex items-center justify-between hover:bg-surface-container-low transition-colors">
+<div class="flex flex-col">
+<span class="text-sm font-bold">自动打印收据</span>
+<span class="text-xs text-on-surface-variant">结算完成后立即打印</span>
+</div>
+<div class="relative inline-flex h-6 w-11 items-center rounded-full bg-primary">
+<span class="inline-block h-4 w-4 translate-x-6 rounded-full bg-white transition"></span>
+</div>
+</div>
+<!-- Number of Copies -->
+<div class="p-4 flex items-center justify-between hover:bg-surface-container-low transition-colors">
+<div class="flex flex-col">
+<span class="text-sm font-bold">打印份数</span>
+<span class="text-xs text-on-surface-variant">默认每单打印数量</span>
+</div>
+<div class="flex items-center gap-4 bg-surface-variant rounded-lg p-1">
+<button class="w-8 h-8 flex items-center justify-center text-primary font-bold">-</button>
+<span class="text-sm font-extrabold w-4 text-center">1</span>
+<button class="w-8 h-8 flex items-center justify-center text-primary font-bold">+</button>
+</div>
+</div>
+<!-- Receipt Logo -->
+<div class="p-4 flex items-center justify-between hover:bg-surface-container-low transition-colors">
+<div class="flex flex-col">
+<span class="text-sm font-bold">打印店铺 Logo</span>
+<span class="text-xs text-on-surface-variant">在页眉显示 Vila Repair 标志</span>
+</div>
+<div class="relative inline-flex h-6 w-11 items-center rounded-full bg-primary">
+<span class="inline-block h-4 w-4 translate-x-6 rounded-full bg-white transition"></span>
+</div>
+</div>
+<!-- Paper Width -->
+<div class="p-4 flex items-center justify-between hover:bg-surface-container-low transition-colors">
+<div class="flex flex-col">
+<span class="text-sm font-bold">纸张宽度</span>
+<span class="text-xs text-on-surface-variant">58mm / 80mm</span>
+</div>
+<div class="flex gap-2">
+<button class="px-3 py-1.5 text-[10px] font-bold rounded-lg bg-primary text-white">58MM</button>
+<button class="px-3 py-1.5 text-[10px] font-bold rounded-lg bg-surface-variant text-on-surface-variant">80MM</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Search Devices Section -->
+<section class="space-y-4">
+<div class="flex items-center justify-between">
+<h2 class="text-[20px] font-extrabold tracking-tight text-on-background flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">search</span>
+                    搜索新设备
+                </h2>
+<span class="text-[10px] font-bold text-primary animate-pulse uppercase tracking-widest">搜索中...</span>
+</div>
+<div class="space-y-3">
+<!-- Device Item -->
+<div class="bg-surface-container p-4 rounded-xl border border-outline/50 flex items-center justify-between group hover:border-primary/50 transition-all cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary">print</span>
+</div>
+<div>
+<span class="text-sm font-bold block">XP-80 Printer</span>
+<span class="text-[10px] text-on-surface-variant uppercase tracking-tighter">MAC: 00:11:22:33:FF:EE</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">add_circle</span>
+</div>
+<!-- Device Item -->
+<div class="bg-surface-container p-4 rounded-xl border border-outline/50 flex items-center justify-between group hover:border-primary/50 transition-all cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary">desktop_windows</span>
+</div>
+<div>
+<span class="text-sm font-bold block">Desktop-PC-Vila</span>
+<span class="text-[10px] text-on-surface-variant uppercase tracking-tighter">网络共享打印机</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">add_circle</span>
+</div>
+</div>
+</section>
+</main>
+<!-- FAB -->
+<button class="fixed bottom-24 right-6 w-14 h-14 bg-primary text-white rounded-full shadow-xl-primary flex items-center justify-center active:scale-95 duration-200 z-50">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">print</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center h-20 px-2 pb-safe bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg z-50 shadow-xl-primary">
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 hover:text-[#007E85] transition-all active:translate-y-0.5 duration-150">
+<span class="material-symbols-outlined">build</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider">Repairs</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 hover:text-[#007E85] transition-all active:translate-y-0.5 duration-150">
+<span class="material-symbols-outlined">settings_input_component</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider">Parts</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#007E85] dark:text-[#00A3AD] bg-[#007E85]/10 rounded-xl px-3 py-1 active:translate-y-0.5 duration-150">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">print</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider">Print</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 hover:text-[#007E85] transition-all active:translate-y-0.5 duration-150">
+<span class="material-symbols-outlined">photo_library</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider">Photos</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 hover:text-[#007E85] transition-all active:translate-y-0.5 duration-150">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider">Reports</span>
+</div>
+</nav>
+</body></html>

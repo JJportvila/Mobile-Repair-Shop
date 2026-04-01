@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+
+<html class="light" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#007e85",
+                        "background-light": "#f4f5f6",
+                        "background-dark": "#1a1c1e",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<title>收银结算与打印</title>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-[#101818] dark:text-gray-100 antialiased">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 bg-white dark:bg-background-dark border-b border-gray-100 dark:border-gray-800">
+<div class="flex items-center p-4 justify-between max-w-md mx-auto">
+<div class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+<span class="material-symbols-outlined text-[#101818] dark:text-white">arrow_back_ios_new</span>
+</div>
+<h1 class="text-lg font-bold leading-tight tracking-tight flex-1 text-center pr-10">收银结算与打印</h1>
+</div>
+</header>
+<main class="max-w-md mx-auto pb-32">
+<!-- Device Info Section -->
+<section class="mt-4 px-4">
+<h3 class="text-[#101818] dark:text-white text-sm font-bold uppercase tracking-wider mb-3 px-1">设备详情</h3>
+<div class="bg-white dark:bg-gray-900 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-800">
+<div class="flex items-start justify-between gap-4">
+<div class="flex flex-col gap-1">
+<p class="text-[#101818] dark:text-white text-base font-bold">iPhone 13 Pro</p>
+<p class="text-[#5e8a8d] dark:text-gray-400 text-sm">序列号: DX3G9L0K8P</p>
+<div class="mt-2 inline-flex items-center px-2 py-1 rounded bg-primary/10 text-primary text-xs font-medium">
+                            待支付维修
+                        </div>
+</div>
+<div class="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-lg bg-cover bg-center" data-alt="Modern smartphone back view showing triple camera system" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDE_nc43-r-q0wsiq1ZNkorVapOS6wLdNyJEbWAFoAUnZWic7gS5umBvDFxRPHJUp1qI_wHiRou62-kuk_5-nO6w_AX78EFGRS9n_8rLsfx3IGwvuD1HTd8hp8xL3DE6Oeu6jITsfDmGWdh3Vtj75G0hfKZQiBUsY3EZNoy76egO4bybm0ddhpD98ZAZsk9qxGibYjkbeDm0WZZVVX-v6-TEmwSQQ-CeC-Bxkso8ikLwzssGwfjXCZMU81g7W9yzHJ9ZscxoAkK6NJO");'>
+</div>
+</div>
+</div>
+</section>
+<!-- Order Summary Section -->
+<section class="mt-6 px-4">
+<div class="flex justify-between items-center mb-3 px-1">
+<h3 class="text-[#101818] dark:text-white text-sm font-bold uppercase tracking-wider">费用明细</h3>
+<span class="text-xs text-[#5e8a8d]">订单号: #RE-20231024</span>
+</div>
+<div class="bg-white dark:bg-gray-900 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-800">
+<div class="space-y-4">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-sm font-medium text-[#101818] dark:text-white">屏幕更换劳务费</p>
+<p class="text-xs text-[#5e8a8d]">标准人工工时</p>
+</div>
+<p class="text-sm font-bold text-[#101818] dark:text-white">VUV 200.00</p>
+</div>
+<div class="h-px bg-gray-50 dark:bg-gray-800"></div>
+<div class="flex justify-between items-start">
+<div>
+<p class="text-sm font-medium text-[#101818] dark:text-white">OLED 显示面板 (原装)</p>
+<p class="text-xs text-[#5e8a8d]">零配件 x 1</p>
+</div>
+<p class="text-sm font-bold text-[#101818] dark:text-white">VUV 1,249.00</p>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<p class="text-sm font-medium text-[#101818] dark:text-white">密封胶条与清洁套装</p>
+<p class="text-xs text-[#5e8a8d]">耗材 x 1</p>
+</div>
+<p class="text-sm font-bold text-[#101818] dark:text-white">VUV 50.00</p>
+</div>
+<div class="pt-4 mt-2 border-t-2 border-dashed border-gray-100 dark:border-gray-800">
+<div class="flex justify-between items-center">
+<p class="text-base font-bold text-[#101818] dark:text-white">应付总额</p>
+<p class="text-2xl font-bold text-primary">VUV 1,499.00</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Payment Method Section -->
+<section class="mt-6 px-4">
+<h3 class="text-[#101818] dark:text-white text-sm font-bold uppercase tracking-wider mb-3 px-1">支付方式</h3>
+<div class="grid grid-cols-1 gap-3">
+<!-- Cash -->
+<label class="relative flex items-center p-4 bg-white dark:bg-gray-900 rounded-xl border-2 border-primary shadow-sm cursor-pointer group">
+<input checked="" class="hidden" name="payment" type="radio"/>
+<div class="flex items-center justify-center w-10 h-10 rounded-full bg-orange-50 dark:bg-orange-900/30 text-orange-600 mr-3">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<div class="flex-1">
+<p class="font-bold text-[#101818] dark:text-white">现金支付</p>
+<p class="text-xs text-[#5e8a8d]">Cash</p>
+</div>
+<div class="w-6 h-6 rounded-full border-2 border-primary flex items-center justify-center">
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+</div>
+</label>
+<!-- Bank Transfer -->
+<label class="relative flex items-center p-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm cursor-pointer hover:border-primary/50 transition-all">
+<input class="hidden" name="payment" type="radio"/>
+<div class="flex items-center justify-center w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 mr-3">
+<span class="material-symbols-outlined">account_balance</span>
+</div>
+<div class="flex-1">
+<p class="font-bold text-[#101818] dark:text-white">银行转账</p>
+<p class="text-xs text-[#5e8a8d]">Bank Transfer</p>
+</div>
+<div class="w-6 h-6 rounded-full border-2 border-gray-200 dark:border-gray-700"></div>
+</label>
+<!-- Cheque -->
+<label class="relative flex items-center p-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm cursor-pointer hover:border-primary/50 transition-all">
+<input class="hidden" name="payment" type="radio"/>
+<div class="flex items-center justify-center w-10 h-10 rounded-full bg-purple-50 dark:bg-purple-900/30 text-purple-600 mr-3">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div class="flex-1">
+<p class="font-bold text-[#101818] dark:text-white">支票支付</p>
+<p class="text-xs text-[#5e8a8d]">Cheque</p>
+</div>
+<div class="w-6 h-6 rounded-full border-2 border-gray-200 dark:border-gray-700"></div>
+</label>
+</div>
+</section>
+</main>
+<!-- Fixed Footer CTA -->
+<footer class="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-background-dark border-t border-gray-100 dark:border-gray-800 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] z-50">
+<div class="max-w-md mx-auto">
+<button class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-2 transition-transform active:scale-[0.98]">
+<span class="material-symbols-outlined">print</span>
+<span>确认支付并打印</span>
+</button>
+<p class="text-center text-[10px] text-[#5e8a8d] mt-2 uppercase tracking-widest">完成后将自动打印收据</p>
+</div>
+</footer>
+</body></html>

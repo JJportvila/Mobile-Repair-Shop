@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>维修照片档案 - Vila Port Cyan</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary-container": "#321200",
+              "on-primary-container": "#002022",
+              "secondary": "#436466",
+              "tertiary-fixed": "#ffdbc8",
+              "surface-variant": "#f0f4f4",
+              "tertiary-container": "#ffdbc8",
+              "primary": "#007e85",
+              "error-container": "#fee2e2",
+              "on-surface-variant": "#5e8a8d",
+              "inverse-primary": "#78d5dc",
+              "error": "#ef4444",
+              "surface-container-high": "#ebefee",
+              "on-secondary-container": "#48686b",
+              "surface": "#f9fafa",
+              "on-tertiary": "#ffffff",
+              "on-background": "#101818",
+              "on-secondary": "#ffffff",
+              "on-error-container": "#93000a",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary-fixed": "#321200",
+              "primary-fixed-dim": "#78d5dc",
+              "inverse-surface": "#222a34",
+              "inverse-on-surface": "#f9fafa",
+              "surface-container": "#ffffff",
+              "on-tertiary-fixed-variant": "#71370c",
+              "surface-tint": "#007e85",
+              "surface-container-low": "#f6fafa",
+              "secondary-container": "#c3e6e9",
+              "background": "#f9fafa",
+              "on-surface": "#101818",
+              "on-secondary-fixed": "#002022",
+              "outline": "#dae6e7",
+              "on-error": "#ffffff",
+              "secondary-fixed": "#c6e9ec",
+              "tertiary-fixed-dim": "#ffb68b",
+              "surface-dim": "#d7dbdb",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "primary-container": "#e0f2f3",
+              "outline-variant": "#bdc9c9",
+              "tertiary": "#f7a072",
+              "on-primary-fixed-variant": "#004f54",
+              "on-primary": "#ffffff",
+              "surface-container-highest": "#dae6e7",
+              "surface-bright": "#ffffff",
+              "secondary-fixed-dim": "#aacdd0",
+              "on-primary-fixed": "#002022",
+              "primary-fixed": "#94f1f9"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            boxShadow: {
+                'sm': '0 1px 2px 0 rgba(0, 126, 133, 0.05)',
+                'xl-primary': '0 20px 25px -5px rgba(0, 126, 133, 0.1), 0 10px 10px -5px rgba(0, 126, 133, 0.04)',
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface antialiased pb-32">
+<!-- TopAppBar -->
+<header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md fixed top-0 w-full z-50 border-b border-[#DAE6E7] dark:border-slate-800 shadow-sm flex justify-between items-center px-4 h-16 w-full">
+<div class="flex items-center gap-3">
+<button class="text-[#007E85] dark:text-[#00A3AD] hover:bg-[#F9FAFA] dark:hover:bg-slate-800 transition-colors active:scale-95 duration-200 p-2 rounded-full">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="font-manrope font-extrabold tracking-tight text-[20px] text-[#101818] dark:text-white">维修照片档案</h1>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center overflow-hidden border border-outline">
+<img class="w-full h-full object-cover" data-alt="Professional technician headshot with friendly expression, neutral studio background, high resolution" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpJ2NpCkhSYGQ2odU4HB6W5lZrwh4Jmz-dgAbyoTGaZ0_jupePYXtgbCj5sbsp02jxPVAZm1PGEUy6DUb7I65nKy-yRSTlqk-sZ0m8nwspfGtOor4UoFLrXJxGNj2kCEsngLV1FiyIJETMv98x4cZn5TX-C7i-8j1xvh9RoZQhg2dH4OiXZIein3m7J6mkRwJzx2wKcF-qgl-yhLqr0Ejj1OJ-7hqMKh2avc8IWk25YN6yc8Q2CDzvBjRJmJ1z-YVke27rEx8JNJwb"/>
+</div>
+</div>
+</header>
+<main class="pt-20 px-4 max-w-5xl mx-auto space-y-8">
+<!-- Order Context Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 py-4">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary px-2 py-0.5 rounded-full">Active Order</span>
+<span class="text-on-surface-variant text-sm font-medium">#RP-99284-VU</span>
+</div>
+<h2 class="text-3xl font-extrabold tracking-tight text-on-surface">iPhone 14 Pro Max</h2>
+<p class="text-on-surface-variant flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-sm">person</span>
+                    Customer: John V.
+                </p>
+</div>
+<button class="bg-primary text-white font-bold py-3 px-6 rounded-xl flex items-center justify-center gap-2 shadow-xl-primary active:scale-95 transition-all">
+<span class="material-symbols-outlined">add_a_photo</span>
+<span>Add Photo</span>
+</button>
+</div>
+<!-- Bento Grid Photography Archive -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Category 1: Before Repair (Large Feature) -->
+<section class="md:col-span-12 space-y-4">
+<div class="flex items-center gap-3 border-l-4 border-error pl-3">
+<span class="material-symbols-outlined text-error">history</span>
+<h3 class="text-xl font-extrabold text-on-surface">1. Before Repair</h3>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+<div class="bg-surface-container rounded-xl overflow-hidden shadow-sm border border-outline group">
+<div class="relative h-64 overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Close up of a smartphone with a severely shattered glass screen, macro detail of cracks, neutral industrial background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB269GeGKBQjJii_RoNSHogljOCAt_Wko6x7FihqwmWyFEpnzYJszNQzsT0_lBb3dI-PayZ6WwsHFxCt2-KVInNOzBqCTG1uaWTnMvdZYoWMtTQ6zzy6Sa3BINfCtv1XH1JaBQKrEp4DpVWK_USivUD69EoLZr8LR_Tr3g--U-Kc67iEedVW945AVF69cKx6y7KLi470z9urQPDWw2pTZ6SUJCYUa6twwp1xWMmPMAZvA_tu3SZSfcgbp_w38p1JHkg9hzc8dxAL761"/>
+<div class="absolute top-4 left-4 bg-error/90 backdrop-blur-sm text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">Shattered Screen</div>
+</div>
+<div class="p-4">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-on-surface-variant mt-1">sticky_note_2</span>
+<div class="space-y-1">
+<p class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Technician Note</p>
+<p class="text-sm text-on-surface leading-relaxed">Impact point at bottom right corner. Digitizer unresponsive in lower quadrant. Glass shards present near lightning port.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-surface-container rounded-xl overflow-hidden shadow-sm border border-outline group">
+<div class="relative h-64 overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Side profile of mobile phone showing slight frame deformation and glass protrusion, sharp focus on the metallic edge" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFSwfByGcoPpdK06-3LvWBmVV0vHGslWzICXNVb3Ch8cidC4PnQGTFTuMlkoUYPOevm9OudBQ8SnrqOiCaa1CFZnSI1yispfZUX6Xfund2t-gRuC2wjKZNSRKFRoVB9_ut-inY2w9k3mBOLPn_KuyfcAU7EbWKc-BqsrZ3jWD0Cnw43WKImnbWf-jP8Xr-N_cawCkOe7cH-3of3KXGekTjmuqhvbhLc6Ayzq6Pt77MQsYXbJqDAaVu_6UonRX0UFIxejgPdWF27EHX"/>
+<div class="absolute top-4 left-4 bg-error/90 backdrop-blur-sm text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">Frame Damage</div>
+</div>
+<div class="p-4">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-on-surface-variant mt-1">sticky_note_2</span>
+<div class="space-y-1">
+<p class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Technician Note</p>
+<p class="text-sm text-on-surface leading-relaxed">Minor scuffing on the surgical-grade stainless steel band. Pentalobe screws intact.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Category 2: During Repair (Asymmetric Layout) -->
+<section class="md:col-span-8 space-y-4">
+<div class="flex items-center gap-3 border-l-4 border-tertiary pl-3">
+<span class="material-symbols-outlined text-tertiary">construction</span>
+<h3 class="text-xl font-extrabold text-on-surface">2. During Repair</h3>
+</div>
+<div class="bg-surface-container rounded-xl overflow-hidden shadow-sm border border-outline flex flex-col md:flex-row h-full">
+<div class="md:w-1/2 relative h-64 md:h-auto">
+<img class="w-full h-full object-cover" data-alt="Interior view of a disassembled modern smartphone, showing motherboard, battery, and intricate copper shielding under bright lab lights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnHlqMaTygNQ7niDR6Ge4Kg_KfYXastVOTABCwCalx2MvPvFhF36WvOIz8o4z5Im3rNwxcsRzHFMH4RKeuzq1VHEezZWNI8RY1IRt6MmjbKo8NjUA5iAQ1gxIddDSYU-DIatTpC_RQm1hZ6j8FSEVc3uzal3m6vqSbwpBVUJY2-Ae2RRWI4W-vjR4UGw_BP1tGytgPSaq8naJKBXALBTxsGpA0pFhFyfqcGMSdofNgGz2YFwOn9pVHiE20Tnc3QnwLqJHlX9xwOk8u"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4 md:hidden">
+<span class="text-white text-xs font-bold">Internal Inspection</span>
+</div>
+</div>
+<div class="md:w-1/2 p-6 flex flex-col justify-center">
+<div class="inline-flex items-center gap-2 mb-4">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Live Process</span>
+</div>
+<h4 class="text-lg font-bold mb-3">Motherboard &amp; Battery Shielding</h4>
+<div class="space-y-4">
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<p class="text-sm text-on-surface-variant italic">"Display cables disconnected carefully. No signs of water ingress detected on the liquid contact indicators."</p>
+</div>
+<div class="p-3 bg-surface-container-high rounded-lg border-l-4 border-primary">
+<p class="text-[10px] font-bold text-primary uppercase mb-1">Tools Used</p>
+<p class="text-xs text-on-surface-variant font-medium">Heat gun (80°C), suction handle, precision tweezers, iFixit Pro Kit.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Category 2: Secondary Process Image -->
+<section class="md:col-span-4 space-y-4">
+<div class="h-6 flex items-center"></div> <!-- Spacer for alignment -->
+<div class="bg-surface-container rounded-xl overflow-hidden shadow-sm border border-outline h-full flex flex-col">
+<div class="relative h-48 flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A replacement smartphone screen display assembly on a blue anti-static work mat" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPEnfyfxl3NnAKMA026uVgLFkpqy5U6GgwpQJNg2zBqCEbJS6rukXhPFgQ8dWgPzckbNdD9L2efxbL3ni8AmcQ-CbzIzcgInVyPeVcS17Q1rLQaJmYsTqEVE4e62MAg_Fs4wz_hB8aHZYUtjXODH7JhhS9WHixo7kL3sZf2OFHxradHaK8uDMfeX_ihXZ0-umi07EmsWu1V3xf70-moYiBzx2xgKikF4lXu0gIPQQLXLiHPjGv7pU6Kvuj163YrS-kH9krstfExrM7"/>
+</div>
+<div class="p-4 flex-grow bg-primary/5">
+<p class="text-xs font-bold text-primary uppercase tracking-wider mb-1">Replacement Part</p>
+<p class="text-sm font-bold text-on-surface">OLED Assembly #661-2934</p>
+<p class="text-xs text-on-surface-variant mt-2 leading-tight">Verified genuine component with matching serial numbers for FaceID compatibility.</p>
+</div>
+</div>
+</section>
+<!-- Category 3: After Repair -->
+<section class="md:col-span-12 space-y-4">
+<div class="flex items-center gap-3 border-l-4 border-accent-green pl-3" style="border-color: #078832;">
+<span class="material-symbols-outlined" style="color: #078832;">verified</span>
+<h3 class="text-xl font-extrabold text-on-surface">3. After Repair</h3>
+</div>
+<div class="bg-surface-container rounded-xl overflow-hidden shadow-sm border border-outline flex flex-col lg:flex-row items-stretch">
+<div class="lg:w-2/3 grid grid-cols-2 gap-1 p-1 bg-outline">
+<img class="w-full h-64 lg:h-80 object-cover bg-white" data-alt="Front view of a perfectly repaired smartphone with glowing screen, reflecting soft studio lighting, pristine condition" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-JXkXdBPVfnDv0NBYBn7o1R9avBoMdnThCXdpmPIFMriq4_wk8yPZ-5oYFzzevj3FTghsac1iBW2f3-R6eGUavj2Js6zO7D3OVtqPyioUYm_5qEKax1mYFqr1a-H9U_ELLFaAx2xH0qPFjEO3YvMf_w0VcG76ojeZK7vjwxcf5ma_P78DAcDQwjbHAlwrfyCyf4mrQQ05Z9Eq5ZO4qMmOXvNR8ApGG3taFnlqKTBk-lvcNu0JVQL1k5dx41-z4RiuwTFzIseZN5R0"/>
+<img class="w-full h-64 lg:h-80 object-cover bg-white" data-alt="Back and side view of a repaired mobile phone, showing clean seams and polished edges, professional presentation" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQ-WONOhdePB5v3fudJr9tiuiDjXEbI7bHFjYbGYo_U4om6fZdro3nJkAnhwQTArYZBWevBc6ig9S-M1SjfqUoMB0sjLFxPKH94oduiKYGKMU1BNsEKQh_dI9VQnjDv7yMekGvelg69sIQAH4kjouqJtmXwNKOFplgM_D37QtYcYK2nKbcDuWe8sblp1uecI20jgG7pTKCFaTgVYqGZWUS115jdJVQmVpKrwBK8ZPQjJjfDye46Q0lSKoj9Mbgve_cHzpsXrAGl8k0"/>
+</div>
+<div class="lg:w-1/3 p-6 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="bg-[#078832]/10 text-[#078832] text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-widest">Quality Passed</span>
+<span class="text-on-surface-variant text-xs font-medium">10:45 AM</span>
+</div>
+<h4 class="text-xl font-extrabold text-on-surface mb-2">Final Verification</h4>
+<p class="text-sm text-on-surface-variant leading-relaxed">System diagnostics passed. TrueTone restored. Touch sensitivity 100% functional. Device cleaned and sanitized for customer pickup.</p>
+</div>
+<div class="mt-6 pt-6 border-t border-outline flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-primary font-bold">VB</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Vila Build Center</p>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase">Certified Repair Hub</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center h-20 px-2 pb-safe bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-[#DAE6E7] dark:border-slate-800 z-50">
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 hover:text-[#007E85] transition-all active:translate-y-0.5 duration-150" href="#">
+<span class="material-symbols-outlined">build</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Repairs</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 hover:text-[#007E85] transition-all active:translate-y-0.5 duration-150" href="#">
+<span class="material-symbols-outlined">settings_input_component</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Parts</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#007E85] dark:text-[#00A3AD] bg-[#007E85]/10 rounded-xl px-3 py-1 active:translate-y-0.5 duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">photo_library</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Photos</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 hover:text-[#007E85] transition-all active:translate-y-0.5 duration-150" href="#">
+<span class="material-symbols-outlined">print</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Print</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 hover:text-[#007E85] transition-all active:translate-y-0.5 duration-150" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Reports</span>
+</a>
+</nav>
+<!-- Optional FAB (Only for main action on Home/Dashboard, but keeping for stylistic consistency with system if needed) -->
+<!-- Suppressed based on "Contextual FAB Suppression" rule as this is a Details/Archive screen -->
+</body></html>

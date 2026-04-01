@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+
+<html class="light" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vila Port Cyan - 扫描器</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-error-container": "#93000a",
+                        "tertiary": "#f7a072",
+                        "surface": "#f9fafa",
+                        "primary-fixed": "#94f1f9",
+                        "on-tertiary-container": "#321200",
+                        "surface-bright": "#ffffff",
+                        "outline": "#dae6e7",
+                        "on-background": "#101818",
+                        "primary": "#007e85",
+                        "tertiary-container": "#ffdbc8",
+                        "surface-tint": "#007e85",
+                        "on-secondary-fixed-variant": "#2b4c4f",
+                        "outline-variant": "#bdc9c9",
+                        "tertiary-fixed": "#ffdbc8",
+                        "secondary-fixed-dim": "#aacdd0",
+                        "primary-fixed-dim": "#78d5dc",
+                        "on-secondary-container": "#48686b",
+                        "surface-container-high": "#ebefee",
+                        "on-error": "#ffffff",
+                        "on-primary-fixed": "#002022",
+                        "surface-variant": "#f0f4f4",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface-variant": "#5e8a8d",
+                        "on-primary": "#ffffff",
+                        "on-primary-container": "#002022",
+                        "secondary": "#436466",
+                        "background": "#f9fafa",
+                        "surface-container-highest": "#dae6e7",
+                        "on-tertiary-fixed-variant": "#71370c",
+                        "on-tertiary-fixed": "#321200",
+                        "inverse-surface": "#222a34",
+                        "secondary-fixed": "#c6e9ec",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-low": "#f6fafa",
+                        "on-secondary-fixed": "#002022",
+                        "on-primary-fixed-variant": "#004f54",
+                        "on-surface": "#101818",
+                        "surface-container": "#ffffff",
+                        "inverse-on-surface": "#f9fafa",
+                        "tertiary-fixed-dim": "#ffb68b",
+                        "on-secondary": "#ffffff",
+                        "error": "#ef4444",
+                        "primary-container": "#e0f2f3",
+                        "surface-dim": "#d7dbdb",
+                        "error-container": "#fee2e2",
+                        "secondary-container": "#c3e6e9",
+                        "inverse-primary": "#78d5dc"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .scan-animation {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #007e85, transparent);
+            box-shadow: 0 0 15px 2px #007e85;
+            animation: scan 3s ease-in-out infinite;
+        }
+        @keyframes scan {
+            0%, 100% { top: 0%; }
+            50% { top: 100%; }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-body text-on-background selection:bg-primary-container">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm h-16 flex items-center justify-between px-4">
+<div class="flex items-center gap-3">
+<button class="active:scale-95 transition-transform text-[#007E85]">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="font-['Manrope'] font-extrabold text-[20px] tracking-tight text-[#007E85]">Scanner</h1>
+</div>
+<button class="active:scale-95 transition-transform text-[#007E85]">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+</button>
+</header>
+<main class="pt-16 pb-32 px-4 max-w-2xl mx-auto space-y-6">
+<!-- Segmented Control -->
+<div class="bg-surface-container p-1 rounded-xl flex items-center shadow-sm">
+<button class="flex-1 py-2.5 text-sm font-bold rounded-lg bg-primary text-on-primary transition-all">
+                扫描设备/订单
+            </button>
+<button class="flex-1 py-2.5 text-sm font-bold text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all">
+                扫描零件
+            </button>
+</div>
+<!-- Viewfinder Area -->
+<div class="relative aspect-square w-full bg-slate-900 rounded-3xl overflow-hidden shadow-2xl border-4 border-surface-container">
+<img alt="Camera View" class="w-full h-full object-cover opacity-60" data-alt="industrial electronic circuit board with copper traces and components under dim professional workshop lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqtetWcXxQ3RJrNcez801NGiIseMVQI6Y8EKQWF__QtQcf8E3Df99arq9oNu9hbCthzgvOOtgsgNjf28qnVah3-doyxEh4CarFl9Ie19O5t04PXUHbpIiMkI_0OWK762eDmmlBe0M5O8YROXKR6FvzhMnqeTpVkMf6Gri-GDFDU6ZnrCN7bzKQSCaPn7FCcKSDcUFNFCZrksIbZ0EzJqork4olobP4otsA1C6d3RaOsNn5iZSt6VRljnCB9SbFZgpzmT2JlB3tur3M"/>
+<!-- Scanning Overlay -->
+<div class="absolute inset-0 flex items-center justify-center p-12">
+<div class="relative w-full h-full border-2 border-white/30 rounded-2xl">
+<!-- Corners -->
+<div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-primary -mt-1 -ml-1 rounded-tl-lg"></div>
+<div class="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-primary -mt-1 -mr-1 rounded-tr-lg"></div>
+<div class="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-primary -mb-1 -ml-1 rounded-bl-lg"></div>
+<div class="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-primary -mb-1 -mr-1 rounded-br-lg"></div>
+<div class="scan-animation"></div>
+</div>
+</div>
+<!-- Floating Actions -->
+<div class="absolute bottom-6 left-0 right-0 flex justify-center gap-4">
+<button class="w-12 h-12 rounded-full bg-black/40 backdrop-blur-md text-white flex items-center justify-center active:scale-90 transition-all border border-white/20">
+<span class="material-symbols-outlined" data-icon="flashlight_on">flashlight_on</span>
+</button>
+<button class="w-12 h-12 rounded-full bg-black/40 backdrop-blur-md text-white flex items-center justify-center active:scale-90 transition-all border border-white/20">
+<span class="material-symbols-outlined" data-icon="image">image</span>
+</button>
+</div>
+</div>
+<!-- Manual Input Section -->
+<section class="space-y-3">
+<div class="flex items-center justify-between">
+<h3 class="font-headline font-extrabold text-on-surface">手动输入</h3>
+<span class="text-[10px] uppercase tracking-widest font-bold text-primary bg-primary/10 px-2 py-0.5 rounded">如果扫描失败</span>
+</div>
+<div class="relative">
+<input class="w-full h-14 bg-surface-container border-outline rounded-xl px-4 text-on-surface focus:ring-primary focus:border-primary transition-all pr-12" placeholder="输入序列号或订单号..." type="text"/>
+<button class="absolute right-3 top-2.5 w-9 h-9 bg-primary rounded-lg text-white flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</section>
+<!-- Recent Scans - Bento Grid Style -->
+<section class="space-y-4">
+<h3 class="font-headline font-extrabold text-on-surface">最近扫描</h3>
+<div class="grid grid-cols-2 gap-3">
+<!-- Item 1 -->
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border border-outline/30 hover:shadow-md transition-shadow cursor-pointer">
+<div class="flex items-center gap-2 mb-2">
+<div class="p-2 bg-primary/10 rounded-lg text-primary">
+<span class="material-symbols-outlined text-[18px]" data-icon="smartphone">smartphone</span>
+</div>
+<span class="text-[10px] font-bold text-on-surface-variant uppercase">设备</span>
+</div>
+<p class="font-bold text-on-surface">iPhone 14 Pro</p>
+<div class="mt-3 flex justify-between items-end">
+<span class="text-xs text-on-surface-variant">42,500 VUV</span>
+<span class="text-[10px] font-medium text-on-surface-variant">10:45 AM</span>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border border-outline/30 hover:shadow-md transition-shadow cursor-pointer">
+<div class="flex items-center gap-2 mb-2">
+<div class="p-2 bg-tertiary/10 rounded-lg text-tertiary">
+<span class="material-symbols-outlined text-[18px]" data-icon="settings_input_component">settings_input_component</span>
+</div>
+<span class="text-[10px] font-bold text-on-surface-variant uppercase">零件</span>
+</div>
+<p class="font-bold text-on-surface">RO-8892 屏</p>
+<div class="mt-3 flex justify-between items-end">
+<span class="text-xs text-on-surface-variant">12,000 VUV</span>
+<span class="text-[10px] font-medium text-on-surface-variant">昨天</span>
+</div>
+</div>
+<!-- Item 3: Full Width -->
+<div class="col-span-2 bg-surface-container p-4 rounded-xl shadow-sm border border-outline/30 flex items-center justify-between hover:shadow-md transition-shadow cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">订单 #VAN-7721</p>
+<p class="text-xs text-on-surface-variant">瓦努阿图港维修中心</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-bold text-primary">已确认</p>
+<p class="text-[10px] text-on-surface-variant">2023年10月24日</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-2 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-[#DAE6E7] dark:border-slate-800 z-50">
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-['Manrope'] font-bold text-[10px] uppercase tracking-wider">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#007E85] dark:text-[#007E85] bg-[#007E85]/10 rounded-xl px-3 py-1 active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="qr_code_scanner" style="font-variation-settings: 'FILL' 1;">qr_code_scanner</span>
+<span class="font-['Manrope'] font-bold text-[10px] uppercase tracking-wider">Scanner</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="build">build</span>
+<span class="font-['Manrope'] font-bold text-[10px] uppercase tracking-wider">Repair</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-400 active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-['Manrope'] font-bold text-[10px] uppercase tracking-wider">Profile</span>
+</div>
+</nav>
+</body></html>

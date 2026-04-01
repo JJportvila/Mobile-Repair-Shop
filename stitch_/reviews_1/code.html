@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>维修管理 - 客户反馈</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary-container": "#c3e6e9",
+              "on-error": "#ffffff",
+              "on-secondary-container": "#48686b",
+              "inverse-primary": "#78d5dc",
+              "surface-container": "#ffffff",
+              "on-primary": "#ffffff",
+              "surface-container-low": "#f6fafa",
+              "on-secondary-fixed": "#002022",
+              "surface-tint": "#007e85",
+              "tertiary-fixed": "#ffdbc8",
+              "primary-container": "#e0f2f3",
+              "surface-container-high": "#ebefee",
+              "outline-variant": "#bdc9c9",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "on-primary-fixed": "#002022",
+              "tertiary-fixed-dim": "#ffb68b",
+              "tertiary-container": "#ffdbc8",
+              "surface-bright": "#ffffff",
+              "on-tertiary-fixed": "#321200",
+              "primary-fixed": "#94f1f9",
+              "on-background": "#101818",
+              "on-secondary": "#ffffff",
+              "on-primary-container": "#002022",
+              "background": "#f9fafa",
+              "error-container": "#fee2e2",
+              "tertiary": "#f7a072",
+              "on-surface-variant": "#5e8a8d",
+              "surface-dim": "#d7dbdb",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary": "#ffffff",
+              "primary-fixed-dim": "#78d5dc",
+              "outline": "#dae6e7",
+              "on-tertiary-fixed-variant": "#71370c",
+              "surface-variant": "#f0f4f4",
+              "secondary": "#436466",
+              "on-primary-fixed-variant": "#004f54",
+              "surface-container-highest": "#dae6e7",
+              "inverse-surface": "#222a34",
+              "error": "#ef4444",
+              "on-tertiary-container": "#321200",
+              "secondary-fixed-dim": "#aacdd0",
+              "inverse-on-surface": "#f9fafa",
+              "surface": "#f9fafa",
+              "primary": "#007e85",
+              "on-surface": "#101818",
+              "secondary-fixed": "#c6e9ec",
+              "on-error-container": "#93000a"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .filled-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-[#DAE6E7] dark:border-slate-800 shadow-sm flex items-center justify-between px-4 h-14">
+<div class="flex items-center gap-3">
+<button class="active:opacity-70 transition-opacity text-[#007E85]">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-manrope font-extrabold text-xl tracking-tight text-[#007E85]">维修管理</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#5E8A8D]">search</span>
+<span class="material-symbols-outlined text-[#5E8A8D]">notifications</span>
+</div>
+</header>
+<main class="pt-20 px-4 max-w-5xl mx-auto">
+<!-- Average Rating Summary Section (Bento Style) -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+<div class="md:col-span-2 bg-surface-container p-6 rounded-xl shadow-sm border border-outline/30 flex flex-col md:flex-row items-center gap-8">
+<div class="text-center md:text-left">
+<div class="text-5xl font-extrabold text-primary mb-1">4.8</div>
+<div class="flex items-center justify-center md:justify-start gap-1 text-tertiary mb-2">
+<span class="material-symbols-outlined filled-icon" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined filled-icon" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined filled-icon" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined filled-icon" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined filled-icon" style="font-variation-settings: 'FILL' 1;">star_half</span>
+</div>
+<p class="text-on-surface-variant text-sm font-medium">基于 1,248 条真实评价</p>
+</div>
+<div class="flex-grow w-full space-y-2">
+<div class="flex items-center gap-3">
+<span class="text-xs font-bold w-4">5</span>
+<div class="flex-grow h-2 bg-primary-container rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[85%]"></div>
+</div>
+<span class="text-xs text-on-surface-variant w-8">85%</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-xs font-bold w-4">4</span>
+<div class="flex-grow h-2 bg-primary-container rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[10%]"></div>
+</div>
+<span class="text-xs text-on-surface-variant w-8">10%</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-xs font-bold w-4">3</span>
+<div class="flex-grow h-2 bg-primary-container rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[3%]"></div>
+</div>
+<span class="text-xs text-on-surface-variant w-8">3%</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-xs font-bold w-4">2</span>
+<div class="flex-grow h-2 bg-primary-container rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[1%]"></div>
+</div>
+<span class="text-xs text-on-surface-variant w-8">1%</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-xs font-bold w-4">1</span>
+<div class="flex-grow h-2 bg-primary-container rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[1%]"></div>
+</div>
+<span class="text-xs text-on-surface-variant w-8">1%</span>
+</div>
+</div>
+</div>
+<div class="bg-primary p-6 rounded-xl shadow-lg shadow-primary/20 flex flex-col justify-between text-on-primary">
+<div>
+<h3 class="text-lg font-bold mb-1">满意度高达 98%</h3>
+<p class="text-primary-container/80 text-xs leading-relaxed">我们的技术团队始终坚持“客户至上”的服务准则。</p>
+</div>
+<div class="mt-4">
+<button class="w-full py-2 bg-white text-primary font-bold rounded-lg text-sm hover:bg-primary-container transition-colors">查看详情报告</button>
+</div>
+</div>
+</section>
+<!-- Feedback List -->
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-xl font-extrabold text-on-surface tracking-tight">客户评价列表</h2>
+<div class="flex gap-2">
+<button class="px-3 py-1.5 rounded-lg border border-outline text-xs font-bold text-on-surface-variant bg-white flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">filter_list</span> 筛选
+                </button>
+<button class="px-3 py-1.5 rounded-lg border border-outline text-xs font-bold text-on-surface-variant bg-white flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">sort</span> 最新
+                </button>
+</div>
+</div>
+<div class="space-y-4">
+<!-- Feedback Entry 1 -->
+<article class="bg-surface-container p-5 rounded-xl shadow-sm border border-outline/20">
+<div class="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-secondary-container flex items-center justify-center shrink-0">
+<img class="w-full h-full object-cover" data-alt="portrait of a middle aged man with professional attire smiling in a clean studio setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXFLUo4Ngm7XBl9zv10EDDn19-IteHAJVGB1aYy3Wt8-PX9VK0-R3hMCyLInYADM8PAyswqfVqRHDJK9SyAFDxbwoUuqWWxht9nobgA6OKWRsuuOIZ6td6AyoiMMo80w5G9HBl2x2yo3-NOzG907F57orRvWePkkRe6oUyCw8NMkMYFK2jnp1I3dLPv958ZadIwIMhR0GJSdCjGCWp9QQUR9MoCnuL5sRPxWbYo2LISDuIgjjyZxGG4_odvkac5oqKLEbT3HTgrSYh"/>
+</div>
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="font-bold text-on-surface">张明远</span>
+<div class="flex text-tertiary">
+<span class="material-symbols-outlined text-sm filled-icon" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm filled-icon" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm filled-icon" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm filled-icon" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm filled-icon" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<div class="flex items-center gap-2 text-xs text-on-surface-variant">
+<span class="bg-surface-variant px-2 py-0.5 rounded font-bold">工单 #RO-20231082</span>
+<span>2023-10-24 14:30</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="text-[10px] font-bold uppercase tracking-widest text-primary bg-primary/10 px-2 py-1 rounded">已回复</span>
+</div>
+</div>
+<p class="text-on-surface text-[15px] leading-relaxed mb-4">
+                    技术非常专业，维修速度比预期的要快很多。更换的零部件也提供了原厂认证，非常放心。接待人员态度很好，休息室环境也不错。
+                </p>
+<div class="bg-surface-variant/50 rounded-xl p-4 border-l-4 border-primary">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary text-sm">support_agent</span>
+<span class="text-xs font-bold text-primary uppercase tracking-tighter">技术主管回复</span>
+</div>
+<p class="text-sm text-on-secondary-container leading-relaxed">
+                        感谢张先生的信任！我们一直致力于为客户提供最高效的原厂级维修服务。您的满意是我们最大的动力，期待下次为您服务。
+                    </p>
+</div>
+</article>
+<!-- Feedback Entry 2 -->
+<article class="bg-surface-container p-5 rounded-xl shadow-sm border border-outline/20">
+<div class="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-secondary-container flex items-center justify-center shrink-0">
+<img class="w-full h-full object-cover" data-alt="close up profile of a professional woman with a friendly expression in a bright modern office" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhvfgtIymC2L0Yn_DJM8HpkvCp4jLYDWhHaiz34zi_AKEZUpWxqMEDBLb6HxGBtDcjVheJeND_avUgEpdn5AdrbQl1L1BxyRHSg2CvGw115AnWyEq_vxHC4-dYrOxf0Q59EWTd2zX9ybGGFB8g9NzguhFvjGtTTpg681a8yddP7ONiBPQ0NnZcapoz4X0jMHxjNEmX23Nz0I_HP0TFhLSwH0KnNHWvdOsrsf-kTEVt1bRgb1A68tXDCjWHz9QUOrWrUnQ8FhG0voa-"/>
+</div>
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="font-bold text-on-surface">林清</span>
+<div class="flex text-tertiary">
+<span class="material-symbols-outlined text-sm filled-icon" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm filled-icon" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm filled-icon" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm filled-icon" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 0;">star</span>
+</div>
+</div>
+<div class="flex items-center gap-2 text-xs text-on-surface-variant">
+<span class="bg-surface-variant px-2 py-0.5 rounded font-bold">工单 #RO-20231105</span>
+<span>2023-10-23 09:15</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant bg-surface-variant px-2 py-1 rounded">待回复</span>
+</div>
+</div>
+<p class="text-on-surface text-[15px] leading-relaxed mb-4">
+                    整体服务很规范，但是洗车环节排队时间有点长，希望以后能优化一下流程，减少等待时间。
+                </p>
+<div class="relative">
+<textarea class="w-full p-4 text-sm rounded-xl border border-outline focus:ring-1 focus:ring-primary focus:border-primary bg-white outline-none min-h-[100px]" placeholder="输入回复内容..."></textarea>
+<div class="absolute bottom-3 right-3">
+<button class="bg-primary text-on-primary px-4 py-1.5 rounded-lg text-xs font-bold hover:opacity-90 active:scale-95 transition-all">发送回复</button>
+</div>
+</div>
+</article>
+<!-- Feedback Entry 3 -->
+<article class="bg-surface-container p-5 rounded-xl shadow-sm border border-outline/20">
+<div class="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-secondary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary">person</span>
+</div>
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="font-bold text-on-surface">匿名用户</span>
+<div class="flex text-tertiary">
+<span class="material-symbols-outlined text-sm filled-icon" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm filled-icon" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm filled-icon" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm filled-icon" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm filled-icon" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<div class="flex items-center gap-2 text-xs text-on-surface-variant">
+<span class="bg-surface-variant px-2 py-0.5 rounded font-bold">工单 #RO-20230988</span>
+<span>2023-10-22 17:45</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="text-[10px] font-bold uppercase tracking-widest text-primary bg-primary/10 px-2 py-1 rounded">已回复</span>
+</div>
+</div>
+<p class="text-on-surface text-[15px] leading-relaxed mb-4">
+                    第二次来这里了，陈技师技术没得说，发动机异响的问题跑了好几家店都没查出来，在这里半小时就定位到了问题。
+                </p>
+<div class="bg-surface-variant/50 rounded-xl p-4 border-l-4 border-primary">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary text-sm">engineering</span>
+<span class="text-xs font-bold text-primary uppercase tracking-tighter">技术主管回复</span>
+</div>
+<p class="text-sm text-on-secondary-container leading-relaxed">
+                        您的认可对陈技师和我们的团队意义重大！针对疑难杂症的精准诊断是我们一直以来钻研的方向。欢迎随时回来。
+                    </p>
+</div>
+</article>
+</div>
+</main>
+<!-- FAB (Suppressed based on context, but rendering here as it could be useful for 'Add Feedback' in some contexts, but let's stick to the rule) -->
+<!-- Rule says: Suppress on Details/Transaction screens. This is a list/dashboard, keeping it for 'Export' or 'New Feedback' trigger if required. Let's suppress to focus on content. -->
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-[#DAE6E7] dark:border-slate-800 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] flex justify-around items-center px-2 py-3 pb-safe">
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 px-3 py-1 hover:text-[#007E85] transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">handyman</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">工作台</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 px-3 py-1 hover:text-[#007E85] transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">库存</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 px-3 py-1 hover:text-[#007E85] transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">财务</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#007E85] dark:text-[#00A3AD] bg-[#007E85]/10 dark:bg-[#007E85]/20 rounded-xl px-3 py-1 active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined filled-icon" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">客户</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 px-3 py-1 hover:text-[#007E85] transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">设置</span>
+</a>
+</nav>
+</body></html>

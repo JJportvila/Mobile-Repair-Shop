@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>维修管理 - 订单详情</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-highest": "#dae6e7",
+              "inverse-surface": "#222a34",
+              "secondary-fixed": "#c6e9ec",
+              "tertiary-container": "#ffdbc8",
+              "secondary-fixed-dim": "#aacdd0",
+              "surface-tint": "#007e85",
+              "error": "#ef4444",
+              "outline-variant": "#bdc9c9",
+              "primary-fixed-dim": "#78d5dc",
+              "on-primary-container": "#002022",
+              "secondary-container": "#c3e6e9",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "on-error": "#ffffff",
+              "primary-container": "#e0f2f3",
+              "on-secondary": "#ffffff",
+              "on-surface-variant": "#5e8a8d",
+              "inverse-on-surface": "#f9fafa",
+              "surface-container-low": "#f6fafa",
+              "on-primary": "#ffffff",
+              "tertiary-fixed": "#ffdbc8",
+              "on-primary-fixed": "#002022",
+              "surface-container-high": "#ebefee",
+              "on-surface": "#101818",
+              "on-secondary-fixed": "#002022",
+              "tertiary": "#f7a072",
+              "on-tertiary-fixed-variant": "#71370c",
+              "on-tertiary-fixed": "#321200",
+              "secondary": "#436466",
+              "outline": "#dae6e7",
+              "surface-container": "#ffffff",
+              "primary-fixed": "#94f1f9",
+              "on-primary-fixed-variant": "#004f54",
+              "surface": "#f9fafa",
+              "surface-bright": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "surface-variant": "#f0f4f4",
+              "on-tertiary-container": "#321200",
+              "tertiary-fixed-dim": "#ffb68b",
+              "inverse-primary": "#78d5dc",
+              "surface-dim": "#d7dbdb",
+              "on-background": "#101818",
+              "primary": "#007e85",
+              "error-container": "#fee2e2",
+              "on-error-container": "#93000a",
+              "background": "#f9fafa",
+              "on-secondary-container": "#48686b",
+              "on-tertiary": "#ffffff"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md fixed top-0 w-full z-50 shadow-sm border-b border-[#DAE6E7] dark:border-slate-800">
+<div class="flex items-center justify-between px-4 h-14 w-full">
+<div class="flex items-center gap-4">
+<button class="text-[#007E85] active:opacity-70 transition-opacity">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="text-[#007E85] font-manrope font-extrabold text-xl tracking-tight">维修管理</h1>
+</div>
+<div class="flex gap-2">
+<button class="p-2 text-[#5E8A8D] hover:bg-[#F9FAFA] rounded-full transition-colors">
+<span class="material-symbols-outlined">share</span>
+</button>
+<button class="p-2 text-[#5E8A8D] hover:bg-[#F9FAFA] rounded-full transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+</header>
+<main class="pt-20 px-4 max-w-5xl mx-auto space-y-6">
+<!-- Order Header Status -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="text-on-surface-variant font-bold text-xs tracking-wider uppercase">订单编号</span>
+<span class="text-on-surface font-extrabold">#RO-2023-8842</span>
+</div>
+<h2 class="text-2xl font-extrabold tracking-tight">iPhone 14 Pro 屏幕更换</h2>
+</div>
+<div class="inline-flex items-center px-4 py-2 rounded-xl bg-primary-container text-primary font-bold text-sm">
+<span class="material-symbols-outlined mr-2" style="font-variation-settings: 'FILL' 1;">build</span>
+                维修中 (Progressing)
+            </div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Left Column: Device & Customer -->
+<div class="md:col-span-2 space-y-6">
+<!-- Device Specs Card -->
+<section class="bg-surface-container rounded-xl p-6 shadow-sm border border-outline/30">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-extrabold text-on-surface">设备信息</h3>
+<span class="material-symbols-outlined text-primary">smartphone</span>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-1">
+<p class="text-xs text-on-surface-variant font-bold uppercase tracking-tighter">品牌型号</p>
+<p class="font-bold">Apple iPhone 14 Pro</p>
+</div>
+<div class="space-y-1">
+<p class="text-xs text-on-surface-variant font-bold uppercase tracking-tighter">序列号/IMEI</p>
+<p class="font-bold">G87XJ92LL0</p>
+</div>
+<div class="space-y-1">
+<p class="text-xs text-on-surface-variant font-bold uppercase tracking-tighter">电池健康</p>
+<p class="font-bold">92%</p>
+</div>
+<div class="space-y-1">
+<p class="text-xs text-on-surface-variant font-bold uppercase tracking-tighter">存储容量</p>
+<p class="font-bold">256 GB</p>
+</div>
+</div>
+</section>
+<!-- Customer Contact Card -->
+<section class="bg-surface-container rounded-xl p-6 shadow-sm border border-outline/30">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-extrabold text-on-surface">客户详情</h3>
+<span class="material-symbols-outlined text-primary">person</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="h-12 w-12 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-bold text-xl">
+                            张
+                        </div>
+<div class="flex-1">
+<p class="font-bold text-lg">张伟 (Zhang Wei)</p>
+<div class="flex flex-wrap gap-4 mt-1">
+<span class="flex items-center text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-sm mr-1">call</span>
+                                    +678 555 1234
+                                </span>
+<span class="flex items-center text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-sm mr-1">mail</span>
+                                    wei.zhang@email.vu
+                                </span>
+</div>
+</div>
+<button class="bg-primary/10 text-primary px-4 py-2 rounded-lg font-bold text-sm hover:bg-primary/20 transition-colors">
+                            联系客户
+                        </button>
+</div>
+</section>
+<!-- Problem & Notes -->
+<section class="bg-surface-container rounded-xl p-6 shadow-sm border border-outline/30">
+<h3 class="text-lg font-extrabold text-on-surface mb-4">故障诊断与维修记录</h3>
+<div class="space-y-4">
+<div class="bg-surface-variant p-4 rounded-lg">
+<p class="text-xs text-on-surface-variant font-bold uppercase mb-2">主要问题诊断</p>
+<p class="text-on-surface font-medium leading-relaxed">屏幕左下角碎裂，触控层在特定区域失灵。FaceID 传感器初步检查正常，未发现液体浸入迹象。</p>
+</div>
+<div>
+<p class="text-xs text-on-surface-variant font-bold uppercase mb-2">技师笔记</p>
+<div class="border-l-4 border-primary pl-4 py-1">
+<p class="text-sm font-medium italic">"已完成内部除尘，并更换了防水密封胶。新屏幕色彩校准已完成，触控反馈良好。"</p>
+<p class="text-xs text-on-surface-variant mt-2">— 技术员: 阿列克斯 (Alex), 14:20 PM</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Replaced Parts List -->
+<section class="bg-surface-container rounded-xl p-6 shadow-sm border border-outline/30">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-extrabold text-on-surface">更换配件清单</h3>
+<button class="text-primary font-bold text-sm flex items-center gap-1 hover:underline">
+<span class="material-symbols-outlined text-base">add_circle</span>
+                            添加配件
+                        </button>
+</div>
+<div class="overflow-hidden">
+<table class="w-full text-left">
+<thead class="border-b border-outline/50">
+<tr>
+<th class="pb-2 text-xs font-bold text-on-surface-variant uppercase">配件名称</th>
+<th class="pb-2 text-xs font-bold text-on-surface-variant uppercase text-right">数量</th>
+<th class="pb-2 text-xs font-bold text-on-surface-variant uppercase text-right">单价 (VUV)</th>
+<th class="pb-2 text-xs font-bold text-on-surface-variant uppercase text-right">小计</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline/30">
+<tr>
+<td class="py-3 font-bold">iPhone 14 Pro 原厂屏幕组件</td>
+<td class="py-3 text-right">1</td>
+<td class="py-3 text-right">32,500</td>
+<td class="py-3 text-right font-bold">32,500 VT</td>
+</tr>
+<tr>
+<td class="py-3 font-bold">高强度中框密封胶</td>
+<td class="py-3 text-right">1</td>
+<td class="py-3 text-right">1,200</td>
+<td class="py-3 text-right font-bold">1,200 VT</td>
+</tr>
+<tr>
+<td class="py-3 font-bold">清洁保养服务费</td>
+<td class="py-3 text-right">1</td>
+<td class="py-3 text-right">2,000</td>
+<td class="py-3 text-right font-bold">2,000 VT</td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<td class="pt-4 text-right font-bold text-on-surface-variant" colspan="3">总计额 (Total):</td>
+<td class="pt-4 text-right text-xl font-extrabold text-primary">35,700 VT</td>
+</tr>
+</tfoot>
+</table>
+</div>
+</section>
+</div>
+<!-- Right Column: Timeline & Actions -->
+<div class="space-y-6">
+<!-- Quick Actions -->
+<section class="bg-surface-container rounded-xl p-6 shadow-md border border-outline/30 space-y-3">
+<h3 class="text-sm font-bold text-on-surface-variant uppercase tracking-widest mb-2 text-center">快捷操作</h3>
+<button class="w-full h-12 bg-primary text-on-primary rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-primary/20 active:scale-95 transition-all">
+<span class="material-symbols-outlined">sync</span>
+                        更新维修状态
+                    </button>
+<button class="w-full h-12 bg-surface-variant text-on-surface-variant rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-outline/20 active:scale-95 transition-all">
+<span class="material-symbols-outlined">print</span>
+                        打印结算单
+                    </button>
+</section>
+<!-- Timeline -->
+<section class="bg-surface-container rounded-xl p-6 shadow-sm border border-outline/30">
+<h3 class="text-lg font-extrabold text-on-surface mb-6">维修进度时间轴</h3>
+<div class="relative space-y-8 before:absolute before:inset-0 before:ml-5 before:-translate-x-px before:h-full before:w-0.5 before:bg-gradient-to-b before:from-primary before:via-outline before:to-outline">
+<!-- Timeline Item 1 -->
+<div class="relative flex items-start gap-4">
+<div class="absolute left-0 mt-1 h-10 w-10 rounded-full border-4 border-white bg-primary flex items-center justify-center text-white z-10 shadow-sm">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="ml-12">
+<p class="text-sm font-bold text-on-surface">受理订单</p>
+<p class="text-xs text-on-surface-variant">2023年10月24日 09:15 AM</p>
+<p class="text-xs mt-1 text-on-surface-variant">客服已接单并录入系统</p>
+</div>
+</div>
+<!-- Timeline Item 2 -->
+<div class="relative flex items-start gap-4">
+<div class="absolute left-0 mt-1 h-10 w-10 rounded-full border-4 border-white bg-primary flex items-center justify-center text-white z-10 shadow-sm">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="ml-12">
+<p class="text-sm font-bold text-on-surface">技师检测</p>
+<p class="text-xs text-on-surface-variant">2023年10月24日 11:30 AM</p>
+<p class="text-xs mt-1 text-on-surface-variant">技师 阿列克斯 已完成初步评估</p>
+</div>
+</div>
+<!-- Timeline Item 3 (Current) -->
+<div class="relative flex items-start gap-4">
+<div class="absolute left-0 mt-1 h-10 w-10 rounded-full border-4 border-white bg-tertiary flex items-center justify-center text-white z-10 shadow-sm animate-pulse">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">engineering</span>
+</div>
+<div class="ml-12">
+<p class="text-sm font-bold text-on-surface">进行维修</p>
+<p class="text-xs text-on-surface-variant">正在进行中 (2小时已消耗)</p>
+<div class="mt-2 w-full bg-outline/30 h-1.5 rounded-full overflow-hidden">
+<div class="bg-tertiary h-full w-[65%] rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Timeline Item 4 (Upcoming) -->
+<div class="relative flex items-start gap-4 opacity-50">
+<div class="absolute left-0 mt-1 h-10 w-10 rounded-full border-4 border-white bg-outline flex items-center justify-center text-white z-10">
+<span class="material-symbols-outlined text-lg">flag</span>
+</div>
+<div class="ml-12">
+<p class="text-sm font-bold text-on-surface">质量检测 &amp; 交付</p>
+<p class="text-xs text-on-surface-variant">预计 16:30 PM 完成</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Media Section -->
+<section class="bg-surface-container rounded-xl p-6 shadow-sm border border-outline/30">
+<h3 class="text-sm font-bold text-on-surface-variant uppercase mb-4">设备实拍</h3>
+<div class="grid grid-cols-2 gap-2">
+<img class="rounded-lg h-24 w-full object-cover" data-alt="close up of a cracked smartphone screen under bright workbench lighting showing detail of the damage" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqSJbJdy3mlOpn3fiofyT6pb57lc09gxElGULEXjNEtt5YgPGwrY1MpUrLKKBZHjy2hv228EsW7R1tmV4-WzxYdELZ3fFvM8QjJkRsya7BqUmORCy3ZDsxZMYRMxa4uDjW0RXgQg-e7RrOhyWY2J9YF2wsGaxrfmTpnOhzcmpSGGfcfZt10NujVGDTVyClOfpMdvVVwa1iOxFvyW4DNxwJ8zH9xJDmJLu0x5tsyYcfqOVhj9cHLQOpC7eKx6IZCpzaT9CXwzXuzVE2"/>
+<div class="relative rounded-lg h-24 w-full overflow-hidden">
+<img class="h-full w-full object-cover opacity-60" data-alt="technician tools like tweezers and small screwdrivers laid out on an anti-static repair mat" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCa9cRlP-twv28iGUYp3IN1yuXryZzyFet_VWueXcudlSTs0tK2WEUqlvoNaAeuxLr4g4-qHkQ9fzqoOL3P7qHXszUAKMMdBJ2UhWuqLZMRvbSjY6CzXAVgzYGTcsq9jCKACeVmZIyw98lZHTalPwkRNIVnHCoSwIdSulIxrNoJOViMIyESL6CvCBtkz4yc4nM8Dac_C1OpU8kFPF8IZXZrarOdOrG1xGQWWVYJ-nVpkcPOxHlDRlIqDWP4DOws3jhyXg1PGj4TOtPf"/>
+<div class="absolute inset-0 flex items-center justify-center font-bold text-on-surface bg-white/20">+4 图</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+<!-- FAB for Primary Action (Print/Save) -->
+<button class="fixed right-6 bottom-24 w-14 h-14 rounded-full bg-primary text-white shadow-xl shadow-primary/40 flex items-center justify-center z-40 active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-2 py-3 pb-safe bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg z-50 border-t border-[#DAE6E7] dark:border-slate-800 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+<a class="flex flex-col items-center justify-center text-[#007E85] dark:text-[#00A3AD] bg-[#007E85]/10 dark:bg-[#007E85]/20 rounded-xl px-3 py-1 active:scale-95 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">handyman</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">工作台</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 px-3 py-1 hover:text-[#007E85] transition-all active:scale-95" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">库存</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 px-3 py-1 hover:text-[#007E85] transition-all active:scale-95" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">财务</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 px-3 py-1 hover:text-[#007E85] transition-all active:scale-95" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">客户</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 px-3 py-1 hover:text-[#007E85] transition-all active:scale-95" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider">设置</span>
+</a>
+</nav>
+</body></html>

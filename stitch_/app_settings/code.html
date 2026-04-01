@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-highest": "#dae6e7",
+              "inverse-surface": "#222a34",
+              "secondary-fixed": "#c6e9ec",
+              "tertiary-container": "#ffdbc8",
+              "secondary-fixed-dim": "#aacdd0",
+              "surface-tint": "#007e85",
+              "error": "#ef4444",
+              "outline-variant": "#bdc9c9",
+              "primary-fixed-dim": "#78d5dc",
+              "on-primary-container": "#002022",
+              "secondary-container": "#c3e6e9",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "on-error": "#ffffff",
+              "primary-container": "#e0f2f3",
+              "on-secondary": "#ffffff",
+              "on-surface-variant": "#5e8a8d",
+              "inverse-on-surface": "#f9fafa",
+              "surface-container-low": "#f6fafa",
+              "on-primary": "#ffffff",
+              "tertiary-fixed": "#ffdbc8",
+              "on-primary-fixed": "#002022",
+              "surface-container-high": "#ebefee",
+              "on-surface": "#101818",
+              "on-secondary-fixed": "#002022",
+              "tertiary": "#f7a072",
+              "on-tertiary-fixed-variant": "#71370c",
+              "on-tertiary-fixed": "#321200",
+              "secondary": "#436466",
+              "outline": "#dae6e7",
+              "surface-container": "#ffffff",
+              "primary-fixed": "#94f1f9",
+              "on-primary-fixed-variant": "#004f54",
+              "surface": "#f9fafa",
+              "surface-bright": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "surface-variant": "#f0f4f4",
+              "on-tertiary-container": "#321200",
+              "tertiary-fixed-dim": "#ffb68b",
+              "inverse-primary": "#78d5dc",
+              "surface-dim": "#d7dbdb",
+              "on-background": "#101818",
+              "primary": "#007e85",
+              "error-container": "#fee2e2",
+              "on-error-container": "#93000a",
+              "background": "#f9fafa",
+              "on-secondary-container": "#48686b",
+              "on-tertiary": "#ffffff"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; background-color: #f9fafa; color: #101818; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background min-h-screen pb-24">
+<header class="bg-white/90 backdrop-blur-md fixed top-0 w-full z-50 shadow-sm border-b border-outline">
+<div class="flex items-center justify-between px-4 h-14 w-full">
+<div class="flex items-center gap-3">
+<button class="active:opacity-70 transition-opacity">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<h1 class="font-headline font-extrabold text-xl tracking-tight text-primary">维修管理</h1>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+</div>
+</div>
+</header>
+<main class="pt-20 px-4 max-w-2xl mx-auto space-y-6">
+<section>
+<h2 class="font-headline font-extrabold text-xl mb-4 px-1 text-on-surface">店铺信息</h2>
+<div class="bg-surface-container rounded-xl shadow-sm overflow-hidden p-5 space-y-4">
+<div class="flex items-start gap-4">
+<div class="w-16 h-16 rounded-xl bg-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">storefront</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-bold text-lg text-on-surface">瓦努阿图蓝色维修中心</h3>
+<p class="text-on-surface-variant text-sm mt-1">Vila Port, Efate, Vanuatu</p>
+</div>
+<button class="text-primary text-sm font-bold bg-primary/10 px-3 py-1 rounded-full">编辑</button>
+</div>
+</div>
+</div>
+<div class="relative h-32 w-full rounded-xl overflow-hidden mt-2">
+<img class="w-full h-full object-cover" data-alt="top down view of a coastal tropical town with turquoise ocean water and lush palm trees in Vanuatu" data-location="Port Vila, Vanuatu" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOu0n-lkDpLphp_c8oRv47VhiBjFWBXPatjFVdtrLevcB80hnJzGYYA2pkuDRf8qb9w2_erWMTiajFoIG7-98ZR6eqbd4JMe2Y2n1GMP9HMxpVcQEmiVO6Zz4MSpk-5moHaMgCTM2CwmujP0WBQiQ9UbJYsxReRRFyhJARAUL_UyYRBfRahx_LZEsKv5wq3JM-Y_jPxXAd_rhDQ6biuZ0-o0pFZ6CPyNYd79Yc1Pocns264Ol2aOe2vwoIKbGW-08Vqqo1sNy1O7DC"/>
+<div class="absolute inset-0 bg-black/20 flex items-center justify-center">
+<div class="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-lg flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">location_on</span>
+<span class="text-xs font-bold text-on-surface">查看地图</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section>
+<h2 class="font-headline font-extrabold text-xl mb-4 px-1 text-on-surface">硬件连接</h2>
+<div class="bg-surface-container rounded-xl shadow-sm divide-y divide-outline">
+<div class="p-4 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+<span class="material-symbols-outlined text-blue-500">print</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">蓝牙打印机</p>
+<p class="text-on-surface-variant text-xs">未连接任何设备</p>
+</div>
+</div>
+<button class="bg-primary text-white text-sm font-bold px-4 py-2 rounded-xl active:scale-95 transition-transform">
+                        扫描连接
+                    </button>
+</div>
+<div class="p-4">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm font-medium text-on-surface-variant">已配对设备</span>
+</div>
+<div class="flex items-center justify-between p-3 bg-surface-variant rounded-lg border border-outline">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant">bluetooth</span>
+<span class="text-sm font-bold text-on-surface">POS-58-Thermal</span>
+</div>
+<span class="text-xs text-on-surface-variant bg-white px-2 py-1 rounded border border-outline">最后使用: 昨日</span>
+</div>
+</div>
+</div>
+</section>
+<section>
+<div class="flex items-center justify-between mb-4 px-1">
+<h2 class="font-headline font-extrabold text-xl text-on-surface">员工管理</h2>
+<button class="text-primary flex items-center gap-1 font-bold text-sm">
+<span class="material-symbols-outlined text-sm">person_add</span>
+                    添加成员
+                </button>
+</div>
+<div class="space-y-3">
+<div class="bg-surface-container p-4 rounded-xl shadow-sm flex items-center justify-between hover:bg-surface-variant transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="relative">
+<img class="w-12 h-12 rounded-full object-cover" data-alt="professional portrait of a male store manager smiling in a bright office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCObVutmppaABpxqgW6-wnvgi6PeSxSVFmzvpzJOzZjFMz4wqcw2JQhU2S2d3jzvIz5AmhyO92UlEdNWARcTketyQyE_HcoVg2V3vZQCGgAzly5GaiJvOVYKgiwkLbu_0lcaeTvDTSIsyKiVNMKT6u3nm-YGQ60UFo-bfPq89PorMzI8G6LMFJL-mx5WIRUBzVYfkohaJSpnDDKjXv9b4vGUVH6-GKzk4mVPcXXcsENIvchNTQRoa5nUVvtzCchlNjUQOfAODYwZATr"/>
+<div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
+</div>
+<div>
+<p class="font-bold text-on-surface">陈子豪</p>
+<p class="text-xs text-on-surface-variant">店长 / 系统管理员</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-bold uppercase tracking-widest text-primary bg-primary-container px-2 py-1 rounded">主控</span>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform">chevron_right</span>
+</div>
+</div>
+<div class="bg-surface-container p-4 rounded-xl shadow-sm flex items-center justify-between hover:bg-surface-variant transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="relative">
+<img class="w-12 h-12 rounded-full object-cover" data-alt="headshot of a female technical engineer with a professional and friendly expression" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-a5Kv7joPSXkCy_QtbS6SXrHQpBrFbMm25fwYPnbxu4cBSSmbeYQke-LEIFovjOsNkyCMYhnFFZuauF9LX4s3QhQNq_8nOQEEoD7hb_rSkwUcxwshDgYB_KqeNu5k6ila2rPWe8LXCPc7XaC-K7SU_GUDDMxFeDdIQs6wqRhKEe2iAD2S-NISqkVtXDHbfyjLK-vXvSp1-29frtHlcvDykKxK3Ec3DQUnMQhyDJAfJEUfnje-BWqsqczSaolLizOcgF4zgSIIyprT"/>
+<div class="absolute -bottom-1 -right-1 w-4 h-4 bg-slate-300 border-2 border-white rounded-full"></div>
+</div>
+<div>
+<p class="font-bold text-on-surface">李美玲</p>
+<p class="text-xs text-on-surface-variant">高级维修技师</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-bold uppercase tracking-widest text-secondary bg-secondary-container px-2 py-1 rounded">技师</span>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform">chevron_right</span>
+</div>
+</div>
+<div class="bg-surface-container p-4 rounded-xl shadow-sm flex items-center justify-between hover:bg-surface-variant transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-tertiary-container flex items-center justify-center font-bold text-on-tertiary-container">
+                            王
+                        </div>
+<div>
+<p class="font-bold text-on-surface">王伟</p>
+<p class="text-xs text-on-surface-variant">前台客服</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-tertiary-fixed-variant bg-tertiary-container px-2 py-1 rounded">收银</span>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform">chevron_right</span>
+</div>
+</div>
+</div>
+</section>
+<section class="pb-8">
+<h2 class="font-headline font-extrabold text-xl mb-4 px-1 text-on-surface">其他设置</h2>
+<div class="bg-surface-container rounded-xl shadow-sm overflow-hidden">
+<div class="p-4 flex items-center justify-between active:bg-surface-variant transition-colors">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant">language</span>
+<span class="font-medium text-on-surface">多语言设置</span>
+</div>
+<span class="text-sm text-primary font-bold">简体中文</span>
+</div>
+<div class="p-4 flex items-center justify-between border-t border-outline active:bg-surface-variant transition-colors">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant">security</span>
+<span class="font-medium text-on-surface">账户与安全</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</div>
+<div class="p-4 flex items-center justify-between border-t border-outline active:bg-surface-variant transition-colors">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-error">logout</span>
+<span class="font-medium text-error">退出登录</span>
+</div>
+</div>
+</div>
+<p class="text-center text-[10px] text-on-surface-variant mt-8 uppercase tracking-[0.2em]">Vila Port Cyan System v2.4.0</p>
+</section>
+</main>
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-2 py-3 pb-safe bg-white/95 backdrop-blur-lg z-50 border-t border-outline shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] px-3 py-1 hover:text-[#007E85] transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">handyman</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">工作台</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] px-3 py-1 hover:text-[#007E85] transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">库存</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] px-3 py-1 hover:text-[#007E85] transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">财务</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] px-3 py-1 hover:text-[#007E85] transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">客户</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#007E85] bg-[#007E85]/10 rounded-xl px-3 py-1 active:scale-95 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">设置</span>
+</a>
+</nav>
+</body></html>

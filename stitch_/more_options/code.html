@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-fixed": "#94f1f9",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "secondary-fixed-dim": "#aacdd0",
+              "primary-container": "#e0f2f3",
+              "outline": "#dae6e7",
+              "on-surface-variant": "#5e8a8d",
+              "tertiary-fixed": "#ffdbc8",
+              "primary-fixed-dim": "#78d5dc",
+              "secondary-container": "#c3e6e9",
+              "on-tertiary-container": "#321200",
+              "surface-container-high": "#ebefee",
+              "secondary-fixed": "#c6e9ec",
+              "primary": "#007e85",
+              "outline-variant": "#bdc9c9",
+              "on-primary": "#ffffff",
+              "on-tertiary": "#ffffff",
+              "error-container": "#fee2e2",
+              "surface-container-lowest": "#ffffff",
+              "on-surface": "#101818",
+              "on-tertiary-fixed-variant": "#71370c",
+              "on-error-container": "#93000a",
+              "on-secondary-fixed": "#002022",
+              "on-error": "#ffffff",
+              "error": "#ef4444",
+              "on-secondary": "#ffffff",
+              "on-primary-container": "#002022",
+              "secondary": "#436466",
+              "tertiary": "#f7a072",
+              "surface-dim": "#d7dbdb",
+              "background": "#f9fafa",
+              "on-primary-fixed-variant": "#004f54",
+              "inverse-primary": "#78d5dc",
+              "surface-tint": "#007e85",
+              "surface": "#f9fafa",
+              "surface-container": "#ffffff",
+              "on-tertiary-fixed": "#321200",
+              "on-background": "#101818",
+              "surface-container-highest": "#dae6e7",
+              "inverse-on-surface": "#f9fafa",
+              "tertiary-container": "#ffdbc8",
+              "on-secondary-container": "#48686b",
+              "tertiary-fixed-dim": "#ffb68b",
+              "surface-bright": "#ffffff",
+              "surface-variant": "#f0f4f4",
+              "surface-container-low": "#f6fafa",
+              "inverse-surface": "#222a34",
+              "on-primary-fixed": "#002022"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+        .bottom-sheet-shadow { box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.1), 0 -8px 10px -6px rgba(0, 0, 0, 0.1); }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen relative overflow-hidden">
+<!-- Background Content: Inventory Audit Screen (Dimmed) -->
+<header class="fixed top-0 w-full z-40 bg-white/90 backdrop-blur-md flex items-center justify-between px-6 h-16 border-b border-outline shadow-sm">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary">menu</span>
+<h1 class="font-headline font-extrabold tracking-tight text-xl text-primary">Repair Workshop</h1>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">more_vert</span>
+</header>
+<main class="pt-20 px-6 pb-24 opacity-40 grayscale-[20%] pointer-events-none">
+<div class="mb-8">
+<h2 class="text-2xl font-extrabold text-on-surface tracking-tight mb-2">Inventory Audit</h2>
+<p class="text-on-surface-variant text-sm">Port Vila Central Hub • Oct 24, 2023</p>
+</div>
+<!-- Metric Grid -->
+<div class="grid grid-cols-2 gap-4 mb-8">
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border border-outline">
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">Total Items</p>
+<p class="text-2xl font-extrabold text-primary">1,284</p>
+</div>
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border border-outline">
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">Low Stock</p>
+<div class="flex items-center justify-between">
+<p class="text-2xl font-extrabold text-tertiary">12</p>
+<span class="text-[10px] bg-tertiary-container text-on-tertiary-container px-2 py-0.5 rounded-full font-bold">CRITICAL</span>
+</div>
+</div>
+</div>
+<!-- Task List Placeholder -->
+<div class="space-y-4">
+<div class="bg-surface-container p-4 rounded-xl flex items-center gap-4 shadow-sm">
+<div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">inventory_2</span>
+</div>
+<div class="flex-1">
+<p class="font-bold text-on-surface">Main Engine Pistons</p>
+<p class="text-xs text-on-surface-variant">Last checked 2h ago</p>
+</div>
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</div>
+<div class="bg-surface-container p-4 rounded-xl flex items-center gap-4 shadow-sm">
+<div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">hardware</span>
+</div>
+<div class="flex-1">
+<p class="font-bold text-on-surface">Hydraulic Seals (XL)</p>
+<p class="text-xs text-on-surface-variant">Verified by M. Kalsakau</p>
+</div>
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</div>
+</div>
+</main>
+<!-- Overlay / Scrim -->
+<div class="fixed inset-0 bg-on-background/40 backdrop-blur-[2px] z-50"></div>
+<!-- Bottom Sheet Menu -->
+<div class="fixed bottom-0 left-0 w-full z-[60] flex flex-col items-center">
+<!-- Handlebar Area -->
+<div class="w-full flex justify-center mb-2">
+<div class="w-12 h-1.5 bg-white/40 rounded-full"></div>
+</div>
+<!-- Content Container -->
+<div class="w-full bg-surface-container-lowest rounded-t-[2.5rem] pt-6 pb-10 px-6 bottom-sheet-shadow max-w-2xl mx-auto">
+<!-- Header -->
+<div class="flex flex-col items-center mb-8 text-center">
+<div class="w-12 h-12 bg-primary-container rounded-full flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-primary font-bold">settings_suggest</span>
+</div>
+<h3 class="text-xl font-extrabold text-on-surface tracking-tight">Report Options</h3>
+<p class="text-on-surface-variant text-sm mt-1">Audit ID: #PV-2023-9912</p>
+</div>
+<!-- Menu Options -->
+<div class="space-y-2">
+<!-- Option 1 -->
+<button class="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-surface-variant active:scale-[0.98] transition-all duration-200">
+<div class="w-10 h-10 rounded-xl bg-secondary-container/50 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="print">print</span>
+</div>
+<span class="flex-1 text-left font-bold text-on-surface">Print Receipt</span>
+<span class="text-on-surface-variant/40 material-symbols-outlined">chevron_right</span>
+</button>
+<!-- Option 2 -->
+<button class="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-surface-variant active:scale-[0.98] transition-all duration-200">
+<div class="w-10 h-10 rounded-xl bg-secondary-container/50 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="picture_as_pdf">picture_as_pdf</span>
+</div>
+<span class="flex-1 text-left font-bold text-on-surface">Share PDF Report</span>
+<span class="text-on-surface-variant/40 material-symbols-outlined">chevron_right</span>
+</button>
+<!-- Option 3 -->
+<button class="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-surface-variant active:scale-[0.98] transition-all duration-200">
+<div class="w-10 h-10 rounded-xl bg-secondary-container/50 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="csv">csv</span>
+</div>
+<span class="flex-1 text-left font-bold text-on-surface">Export CSV Data</span>
+<span class="text-on-surface-variant/40 material-symbols-outlined">chevron_right</span>
+</button>
+<!-- Option 4 -->
+<button class="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-surface-variant active:scale-[0.98] transition-all duration-200">
+<div class="w-10 h-10 rounded-xl bg-error-container/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-error" data-icon="archive">archive</span>
+</div>
+<span class="flex-1 text-left font-bold text-error">Archive Record</span>
+<span class="text-error/40 material-symbols-outlined">chevron_right</span>
+</button>
+<!-- Separator -->
+<div class="h-px bg-outline-variant/30 my-4 mx-4"></div>
+<!-- Cancel Button -->
+<button class="w-full py-4 text-center font-extrabold text-on-surface-variant tracking-wider uppercase text-sm hover:text-on-surface transition-colors">
+                    Cancel
+                </button>
+</div>
+</div>
+</div>
+<!-- Navigation Shell (BottomNavBar) -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-3 pb-safe bg-white/95 backdrop-blur-lg border-t border-outline shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-[45]">
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1">
+<span class="material-symbols-outlined" data-icon="assignment">assignment</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Tasks</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-primary/10 text-primary rounded-xl px-3 py-1">
+<span class="material-symbols-outlined" data-icon="inventory_2" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Inventory</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Clients</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Settings</span>
+</div>
+</nav>
+</body></html>

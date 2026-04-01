@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+
+<html lang="zh"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Add Spare Parts - Vila Port Cyan</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-primary-container": "#002022",
+                        "surface-container-low": "#f6fafa",
+                        "primary": "#007e85",
+                        "tertiary-fixed-dim": "#ffb68b",
+                        "secondary": "#436466",
+                        "on-error": "#ffffff",
+                        "background": "#f9fafa",
+                        "tertiary-container": "#ffdbc8",
+                        "tertiary": "#f7a072",
+                        "error-container": "#fee2e2",
+                        "surface-bright": "#ffffff",
+                        "secondary-fixed": "#c6e9ec",
+                        "on-tertiary-fixed": "#321200",
+                        "on-error-container": "#93000a",
+                        "surface": "#f9fafa",
+                        "surface-variant": "#f0f4f4",
+                        "surface-container-lowest": "#ffffff",
+                        "outline": "#dae6e7",
+                        "inverse-primary": "#78d5dc",
+                        "on-tertiary-container": "#321200",
+                        "primary-fixed-dim": "#78d5dc",
+                        "on-secondary-container": "#48686b",
+                        "surface-container-highest": "#dae6e7",
+                        "on-tertiary-fixed-variant": "#71370c",
+                        "on-surface-variant": "#5e8a8d",
+                        "on-secondary-fixed": "#002022",
+                        "secondary-container": "#c3e6e9",
+                        "surface-tint": "#007e85",
+                        "on-primary-fixed-variant": "#004f54",
+                        "on-primary-fixed": "#002022",
+                        "tertiary-fixed": "#ffdbc8",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-high": "#ebefee",
+                        "secondary-fixed-dim": "#aacdd0",
+                        "surface-container": "#ffffff",
+                        "outline-variant": "#bdc9c9",
+                        "primary-fixed": "#94f1f9",
+                        "surface-dim": "#d7dbdb",
+                        "inverse-on-surface": "#f9fafa",
+                        "primary-container": "#e0f2f3",
+                        "on-primary": "#ffffff",
+                        "on-background": "#101818",
+                        "error": "#ef4444",
+                        "on-surface": "#101818",
+                        "on-secondary-fixed-variant": "#2b4c4f",
+                        "on-secondary": "#ffffff",
+                        "inverse-surface": "#222a34"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-40">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full flex items-center justify-between px-4 h-16 bg-white/90 backdrop-blur-md z-50 border-b border-[#DAE6E7] shadow-sm">
+<div class="flex items-center gap-3">
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-[#F9FAFA] active:scale-95 duration-200 text-[#007E85]">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<div class="flex flex-col">
+<h1 class="font-manrope font-extrabold text-xl tracking-tight text-[#007E85]">Add Spare Parts</h1>
+<span class="text-[10px] font-bold text-[#5E8A8D] uppercase tracking-wider">Order #RO-2023-8842</span>
+</div>
+</div>
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-[#F9FAFA] active:scale-95 duration-200 text-[#007E85]">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+</header>
+<main class="pt-20 px-4 space-y-6">
+<!-- Search Section -->
+<section class="space-y-4">
+<div class="relative group">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant material-symbols-outlined">search</span>
+<input class="w-full bg-surface-container border-none rounded-xl py-4 pl-12 pr-4 shadow-sm focus:ring-2 focus:ring-primary transition-all placeholder:text-on-surface-variant/50" placeholder="搜索 SKU 或零件名称..." type="text"/>
+</div>
+<!-- Categories Chips -->
+<div class="flex gap-2 overflow-x-auto hide-scrollbar -mx-4 px-4">
+<button class="whitespace-nowrap px-6 py-2 rounded-full bg-primary text-white font-bold text-xs transition-colors">全部 (All)</button>
+<button class="whitespace-nowrap px-6 py-2 rounded-full bg-surface-container text-on-surface-variant font-bold text-xs border border-outline hover:bg-surface-variant transition-colors">屏幕 (Screens)</button>
+<button class="whitespace-nowrap px-6 py-2 rounded-full bg-surface-container text-on-surface-variant font-bold text-xs border border-outline hover:bg-surface-variant transition-colors">电池 (Batteries)</button>
+<button class="whitespace-nowrap px-6 py-2 rounded-full bg-surface-container text-on-surface-variant font-bold text-xs border border-outline hover:bg-surface-variant transition-colors">充电口 (Charging Ports)</button>
+<button class="whitespace-nowrap px-6 py-2 rounded-full bg-surface-container text-on-surface-variant font-bold text-xs border border-outline hover:bg-surface-variant transition-colors">线材 (Cables)</button>
+</div>
+</section>
+<!-- Parts List Grid -->
+<section class="space-y-4">
+<h2 class="text-on-surface font-extrabold text-lg tracking-tight">可用备件</h2>
+<!-- Part Card 1 -->
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border border-transparent hover:border-primary/20 transition-all flex gap-4">
+<div class="w-20 h-20 rounded-lg bg-surface-variant overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="close-up of a high-quality smartphone replacement screen assembly on a white clean workspace with technical precision" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1ppw1qanUosgGNF5rNzwUdGXFUVA0nCK125ft2hHFXSsDWGG-Y7MHDARyuO2uTMNAC8M0T7phKC5P6DUgud_yM0qumKv8DdBqiAk0fMi7QTPm0qfhbezvAhMCAx3rzbfxlUIi_9nYPcuDVFd4CfgOiqfZ7xzAr9Z6Xb0BTPzMS_23Gv7qfdfyT6D6Rh3XfDnNHrwPP2cqaLkxdlt5D6G2JAI2noEK_BVNkLCIAEM1d-y0sQoGwTiU79l63yno4blZcMOQDMEgx0-Q"/>
+</div>
+<div class="flex-grow flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start">
+<h3 class="font-bold text-on-surface text-sm leading-tight">iPhone 14 Pro Screen Assembly</h3>
+<span class="text-[10px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded uppercase">In Stock</span>
+</div>
+<p class="text-xs text-on-surface-variant font-medium mt-1">SKU: VLP-SCR-14P</p>
+</div>
+<div class="flex justify-between items-end mt-2">
+<span class="text-primary font-extrabold text-base">32,500 VUV</span>
+<div class="flex items-center bg-surface-variant rounded-lg p-1">
+<button class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">remove</span>
+</button>
+<span class="w-8 text-center font-bold text-sm">2</span>
+<button class="w-8 h-8 flex items-center justify-center bg-primary text-white rounded-md shadow-sm active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-lg">add</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Part Card 2 -->
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border border-transparent hover:border-primary/20 transition-all flex gap-4">
+<div class="w-20 h-20 rounded-lg bg-surface-variant overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="close-up of professional lithium-ion phone battery with protective plastic wrap on a neutral technical background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbWzJ2bm424FsqhsE85Zk9vSmRSWGM5eO2H-HwBKQQPK0OuKx7IIxnij51E3CJj7w6XvEXASHrmIVHeYbZ0Wtq-4658EAgtzfsjFjOZPO4GxEY-R3ZMWUzSwS6DMOjk-Q2A31eiXD1zgPnZMfX_t0EjCoEoibtzTFXjRVvNjzdcCQkk5waST5GyPfZNyR8N9COzxZHKjwM0iophaqK0brasyQWakb9AqIewRW5-ApK2wBvouNCzyc6bJuONAnL3mbsfAxibACzAK8M"/>
+</div>
+<div class="flex-grow flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start">
+<h3 class="font-bold text-on-surface text-sm leading-tight">Samsung S23 Battery Pack</h3>
+<span class="text-[10px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded uppercase">12 pcs</span>
+</div>
+<p class="text-xs text-on-surface-variant font-medium mt-1">SKU: VLP-BAT-S23</p>
+</div>
+<div class="flex justify-between items-end mt-2">
+<span class="text-primary font-extrabold text-base">8,200 VUV</span>
+<div class="flex items-center bg-surface-variant rounded-lg p-1">
+<button class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">remove</span>
+</button>
+<span class="w-8 text-center font-bold text-sm">0</span>
+<button class="w-8 h-8 flex items-center justify-center bg-primary text-white rounded-md shadow-sm active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-lg">add</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Part Card 3 -->
+<div class="bg-surface-container p-4 rounded-xl shadow-sm border border-transparent hover:border-primary/20 transition-all flex gap-4">
+<div class="w-20 h-20 rounded-lg bg-surface-variant overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="macro view of specialized electronic internal charging port connector with copper pins on a dark industrial surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD82jsbdsD0lBA0-PiyyemBbm05uCuvdozrIF49jc0y9bNbZXxP_OlVQhrFCiJNIXTYpr00xsqUZdLVpX5L2pxG8YuarbdelDjhBV8sbQ3bMBs3wBe5THXeGVCxYWEyNEzywX7DVO0asIw-c1wUYbLhPizwe-sp_1bHoHxyv6x2qwBi9RZdkd5BAwaUf2z5mlKRLlru-hA3vQ6n-d1wA8yqqrXI4YV9eO_GPA_GCUfIPm8aiYyUEJT_9wi1KPvzJKcGvTIyunWLsFHt"/>
+</div>
+<div class="flex-grow flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start">
+<h3 class="font-bold text-on-surface text-sm leading-tight">Universal USB-C Port</h3>
+<span class="text-[10px] font-bold bg-tertiary/10 text-tertiary px-2 py-0.5 rounded uppercase">Low Stock</span>
+</div>
+<p class="text-xs text-on-surface-variant font-medium mt-1">SKU: VLP-CHG-UNI</p>
+</div>
+<div class="flex justify-between items-end mt-2">
+<span class="text-primary font-extrabold text-base">1,500 VUV</span>
+<div class="flex items-center bg-surface-variant rounded-lg p-1">
+<button class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">remove</span>
+</button>
+<span class="w-8 text-center font-bold text-sm">1</span>
+<button class="w-8 h-8 flex items-center justify-center bg-primary text-white rounded-md shadow-sm active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-lg">add</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Selected Summary & Action Bar -->
+<div class="fixed bottom-0 left-0 w-full z-50">
+<!-- Summary Bar -->
+<div class="mx-4 mb-4 p-4 bg-on-primary-container text-white rounded-2xl shadow-2xl flex justify-between items-center">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined">inventory_2</span>
+</div>
+<div>
+<p class="text-[10px] font-bold uppercase tracking-widest text-primary-fixed-dim">已选备件</p>
+<p class="text-sm font-extrabold">3 个项目 Selected</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-[10px] font-bold uppercase tracking-widest text-primary-fixed-dim">总计 Total</p>
+<p class="text-lg font-extrabold text-primary-fixed">66,500 VUV</p>
+</div>
+</div>
+<!-- Bottom Navigation Shell (From JSON Implementation) -->
+<nav class="w-full flex justify-around items-center px-2 py-3 pb-6 bg-white/95 backdrop-blur-lg border-t border-[#DAE6E7]">
+<a class="flex flex-col items-center justify-center text-[#007E85] bg-[#007E85]/10 rounded-xl px-4 py-2 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">Inventory</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] hover:text-[#007E85] transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="build_circle">build_circle</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">Orders</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] hover:text-[#007E85] transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">Analytics</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] hover:text-[#007E85] transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">Settings</span>
+</a>
+</nav>
+</div>
+<!-- Confirm Action Button (Primary FAB style) -->
+<button class="fixed bottom-32 right-6 w-16 h-16 rounded-full bg-primary text-white shadow-[0_8px_30px_rgb(0,126,133,0.4)] flex items-center justify-center active:scale-90 transition-transform z-[60]">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</button>
+</body></html>

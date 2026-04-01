@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Repair Completion - Vila Port Cyan</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Manrope Font -->
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-high": "#ebefee",
+              "on-secondary-container": "#48686b",
+              "inverse-primary": "#78d5dc",
+              "error": "#ef4444",
+              "on-surface-variant": "#5e8a8d",
+              "tertiary-container": "#ffdbc8",
+              "primary": "#007e85",
+              "tertiary-fixed": "#ffdbc8",
+              "surface-variant": "#f0f4f4",
+              "error-container": "#fee2e2",
+              "on-primary-container": "#002022",
+              "on-tertiary-container": "#321200",
+              "secondary": "#436466",
+              "primary-fixed-dim": "#78d5dc",
+              "inverse-surface": "#222a34",
+              "inverse-on-surface": "#f9fafa",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary-fixed": "#321200",
+              "on-error-container": "#93000a",
+              "on-secondary": "#ffffff",
+              "surface": "#f9fafa",
+              "on-tertiary": "#ffffff",
+              "on-background": "#101818",
+              "outline": "#dae6e7",
+              "on-error": "#ffffff",
+              "secondary-fixed": "#c6e9ec",
+              "on-surface": "#101818",
+              "on-secondary-fixed": "#002022",
+              "background": "#f9fafa",
+              "secondary-container": "#c3e6e9",
+              "surface-container": "#ffffff",
+              "on-tertiary-fixed-variant": "#71370c",
+              "surface-container-low": "#f6fafa",
+              "surface-tint": "#007e85",
+              "primary-fixed": "#94f1f9",
+              "surface-container-highest": "#dae6e7",
+              "on-primary": "#ffffff",
+              "on-primary-fixed": "#002022",
+              "surface-bright": "#ffffff",
+              "secondary-fixed-dim": "#aacdd0",
+              "primary-container": "#e0f2f3",
+              "outline-variant": "#bdc9c9",
+              "on-primary-fixed-variant": "#004f54",
+              "tertiary": "#f7a072",
+              "tertiary-fixed-dim": "#ffb68b",
+              "surface-dim": "#d7dbdb",
+              "on-secondary-fixed-variant": "#2b4c4f"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      body { font-family: 'Manrope', sans-serif; }
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-40">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm border-b border-slate-100 dark:border-slate-800 flex items-center justify-between px-4 h-16 w-full">
+<div class="flex items-center gap-4">
+<button class="active:opacity-70 transition-opacity p-2 rounded-full hover:bg-slate-50">
+<span class="material-symbols-outlined text-cyan-700 dark:text-cyan-400">arrow_back</span>
+</button>
+<h1 class="font-manrope font-extrabold tracking-tight text-lg text-slate-900 dark:text-slate-50">Repair Completion</h1>
+</div>
+<button class="active:opacity-70 transition-opacity p-2 rounded-full hover:bg-slate-50">
+<span class="material-symbols-outlined text-slate-500">more_vert</span>
+</button>
+</header>
+<main class="pt-20 px-4 max-w-2xl mx-auto space-y-6">
+<!-- Repair Summary Card -->
+<section class="bg-surface-container shadow-sm rounded-xl p-5 border border-outline/30">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="smartphone">smartphone</span>
+</div>
+<div>
+<h2 class="text-on-surface font-bold text-lg">iPhone 14 Pro</h2>
+<p class="text-on-surface-variant text-xs font-bold tracking-wider uppercase">#RO-2023-8892</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-on-surface-variant text-[10px] font-bold uppercase tracking-widest">Total Cost</p>
+<p class="text-primary font-extrabold text-xl">46,200 VUV</p>
+</div>
+</div>
+<div class="flex items-center gap-2 pt-4 border-t border-outline/20">
+<span class="material-symbols-outlined text-accent-green text-sm" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="text-on-surface-variant text-xs">Standard Warranty Applied</span>
+</div>
+</section>
+<!-- Quality Check Section -->
+<section class="space-y-3">
+<h3 class="font-manrope font-extrabold text-xl text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="fact_check">fact_check</span>
+                Quality Check
+            </h3>
+<div class="bg-surface-container rounded-xl shadow-sm overflow-hidden border border-outline/30">
+<div class="divide-y divide-outline/20">
+<!-- Item 1 -->
+<label class="flex items-center justify-between p-4 hover:bg-surface-variant transition-colors cursor-pointer">
+<span class="text-on-surface font-medium">Display &amp; Touch responsive</span>
+<div class="relative flex items-center">
+<input checked="" class="w-6 h-6 rounded-lg border-2 border-primary text-primary focus:ring-primary/20" type="checkbox"/>
+</div>
+</label>
+<!-- Item 2 -->
+<label class="flex items-center justify-between p-4 hover:bg-surface-variant transition-colors cursor-pointer">
+<span class="text-on-surface font-medium">Charging &amp; Battery stability</span>
+<div class="relative flex items-center">
+<input checked="" class="w-6 h-6 rounded-lg border-2 border-primary text-primary focus:ring-primary/20" type="checkbox"/>
+</div>
+</label>
+<!-- Item 3 -->
+<label class="flex items-center justify-between p-4 hover:bg-surface-variant transition-colors cursor-pointer">
+<span class="text-on-surface font-medium">Signal &amp; Wi-Fi connectivity</span>
+<div class="relative flex items-center">
+<input checked="" class="w-6 h-6 rounded-lg border-2 border-primary text-primary focus:ring-primary/20" type="checkbox"/>
+</div>
+</label>
+<!-- Item 4 -->
+<label class="flex items-center justify-between p-4 hover:bg-surface-variant transition-colors cursor-pointer">
+<span class="text-on-surface font-medium">Camera &amp; Audio functions</span>
+<div class="relative flex items-center">
+<input checked="" class="w-6 h-6 rounded-lg border-2 border-primary text-primary focus:ring-primary/20" type="checkbox"/>
+</div>
+</label>
+<!-- Item 5 -->
+<label class="flex items-center justify-between p-4 hover:bg-surface-variant transition-colors cursor-pointer">
+<span class="text-on-surface font-medium">Housing &amp; External cleaning</span>
+<div class="relative flex items-center">
+<input class="w-6 h-6 rounded-lg border-2 border-outline text-primary focus:ring-primary/20" type="checkbox"/>
+</div>
+</label>
+</div>
+</div>
+</section>
+<!-- Final Technician Notes -->
+<section class="space-y-3">
+<h3 class="font-manrope font-extrabold text-xl text-on-surface">Technician Notes</h3>
+<div class="bg-surface-container-low rounded-xl border border-outline/50 p-1">
+<textarea class="w-full bg-transparent border-none focus:ring-0 text-on-surface p-3 font-medium placeholder:text-on-surface-variant/50" placeholder="Enter final comments..." rows="3">Device cleaned and tested. Ready for customer pickup.</textarea>
+</div>
+</section>
+<!-- Photo Verification -->
+<section class="space-y-3">
+<div class="flex items-center justify-between">
+<h3 class="font-manrope font-extrabold text-xl text-on-surface">Photo Verification</h3>
+<button class="text-primary text-xs font-bold uppercase tracking-wider flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="add_a_photo">add_a_photo</span>
+                    Add More
+                </button>
+</div>
+<div class="grid grid-cols-3 gap-3">
+<div class="aspect-square rounded-xl bg-surface-container-high overflow-hidden shadow-sm relative group">
+<img class="w-full h-full object-cover" data-alt="close-up of a perfectly repaired iphone screen showing sharp resolution and clean edges in a bright workshop environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1juwx_eCimFpAOXBwGsUEDhBFT2rAT-7yjZNoNV-3-8UcxFeDFhi3M2H_Rq3UUAIJamb89AkbeUA_pC38ZLnurAf9ehRs0suNJSlj7x6Z_hDCFr5Si-YXSevGZ57OJYwdAQIbe4J95tAQHP5y12nHRaqeInsNT2Ngw7vJFvYfHifvUIRCFUgsugzdUmafCVDn9m3I7-sYmwVIlZEfRMRQY9xchSyQYKVrFDIGTsnTdLwGpM7gD5UOHEr_bhclIRE0qOgDbAK98b3r"/>
+<div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors"></div>
+</div>
+<div class="aspect-square rounded-xl bg-surface-container-high overflow-hidden shadow-sm relative group">
+<img class="w-full h-full object-cover" data-alt="back view of a sleek mobile phone resting on a clean metallic surface showing a polished finish after repair" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNqfprV4eG5jDsOnP_QmLhJ84PZ5sdZcZ2XOxvnQMgO9dPde-f01Q2GmlfUMQ2Sq7vZqf3m34CPLpuq8M-_0ieKAc7afjCRvLsGxd8gm6m-hq2D-1w9eOBIFwEtrxOdt0bkWF_7iQ5IiE6HQMdnFOUHjft0g0d_jlHlkQesLzv2VjOu-vZQnWdSD9L3N1yMBGXHdNafdxYpE-PgAIZObNcS9HfYha3hHYXoMYafw18Scjc82sh1ZukB7t-Ibj0B8j2I5ZBJOrDRqtv"/>
+<div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors"></div>
+</div>
+<div class="aspect-square rounded-xl bg-surface-container-high border-2 border-dashed border-outline flex flex-col items-center justify-center text-on-surface-variant/40 hover:text-primary/60 hover:border-primary/40 transition-all cursor-pointer">
+<span class="material-symbols-outlined text-3xl" data-icon="add_circle">add_circle</span>
+</div>
+</div>
+</section>
+<!-- Confirm Action -->
+<div class="pt-6 pb-4">
+<button class="w-full h-14 bg-primary text-white rounded-xl font-manrope font-extrabold text-lg shadow-xl shadow-primary/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+<span>Confirm &amp; Close Order</span>
+<span class="material-symbols-outlined" data-icon="task_alt">task_alt</span>
+</button>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-safe h-20 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-slate-100 dark:border-slate-800 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50">
+<!-- Tasks (Active) -->
+<a class="flex flex-col items-center justify-center bg-cyan-50 dark:bg-cyan-900/30 text-cyan-800 dark:text-cyan-200 rounded-xl px-3 py-1 active:scale-95 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="assignment_turned_in" style="font-variation-settings: 'FILL' 1;">assignment_turned_in</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider">Tasks</span>
+</a>
+<!-- Inventory -->
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-3 py-1 hover:text-cyan-600 dark:hover:text-cyan-300 active:scale-95 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider">Inventory</span>
+</a>
+<!-- History -->
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-3 py-1 hover:text-cyan-600 dark:hover:text-cyan-300 active:scale-95 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider">History</span>
+</a>
+<!-- Profile -->
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-3 py-1 hover:text-cyan-600 dark:hover:text-cyan-300 active:scale-95 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider">Profile</span>
+</a>
+</nav>
+</body></html>

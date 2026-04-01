@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Customer Reviews Management - Vila Port Repair</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface": "#f9fafa",
+              "on-tertiary-container": "#321200",
+              "on-tertiary": "#ffffff",
+              "secondary-fixed": "#c6e9ec",
+              "on-secondary": "#ffffff",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "surface-container": "#ffffff",
+              "secondary-fixed-dim": "#aacdd0",
+              "error": "#ef4444",
+              "surface-bright": "#ffffff",
+              "on-background": "#101818",
+              "surface-container-low": "#f6fafa",
+              "inverse-on-surface": "#f9fafa",
+              "primary-container": "#e0f2f3",
+              "outline": "#dae6e7",
+              "surface-container-highest": "#dae6e7",
+              "on-primary-fixed": "#002022",
+              "on-surface": "#101818",
+              "inverse-surface": "#222a34",
+              "surface-dim": "#d7dbdb",
+              "primary-fixed": "#94f1f9",
+              "error-container": "#fee2e2",
+              "secondary-container": "#c3e6e9",
+              "on-error": "#ffffff",
+              "tertiary-fixed-dim": "#ffb68b",
+              "surface-container-lowest": "#ffffff",
+              "on-surface-variant": "#5e8a8d",
+              "on-primary-fixed-variant": "#004f54",
+              "inverse-primary": "#78d5dc",
+              "tertiary-container": "#ffdbc8",
+              "on-error-container": "#93000a",
+              "surface-tint": "#007e85",
+              "primary": "#007e85",
+              "tertiary-fixed": "#ffdbc8",
+              "tertiary": "#f7a072",
+              "on-secondary-container": "#48686b",
+              "secondary": "#436466",
+              "on-tertiary-fixed": "#321200",
+              "background": "#f9fafa",
+              "outline-variant": "#bdc9c9",
+              "on-primary": "#ffffff",
+              "on-tertiary-fixed-variant": "#71370c",
+              "on-secondary-fixed": "#002022",
+              "on-primary-container": "#002022",
+              "primary-fixed-dim": "#78d5dc",
+              "surface-container-high": "#ebefee",
+              "surface-variant": "#f0f4f4"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface antialiased pb-24 md:pb-0">
+<!-- TopAppBar -->
+<header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md text-[#007E85] font-manrope font-extrabold tracking-tight text-xl docked full-width top-0 z-50 border-b border-[#DAE6E7] shadow-sm flex items-center justify-between w-full px-4 h-16 sticky">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="professional portrait of a technical service manager in a clean workshop setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANfFcJuFUaor1dnmcauKEXllP9Yq1l682UFbtUPPQhde_DZ9iiR-84uDDbtFwC8qn4-bpmx1GBtsUBvRt1hHTe14f4sNy9_1QgRoa3rWG9PHVX8DxobsOJP7IRLFI-fImhGOgDtK21wTnIJye29mo-WWBeFcOB1F70bY082sAVVEiZhjpaKM3EleVe6Tenk9vSd9yA29qW_k8lLzgiK25dCN72IR64PXBeJna9Fx7GGdG9UiSVNe80g9sCw_6IBGbFWlfhYe3fMp-P"/>
+</div>
+<span class="text-[#007E85] font-extrabold tracking-tighter">Vila Port Repair</span>
+</div>
+<button class="p-2 hover:bg-slate-100 transition-colors rounded-full active:scale-95 duration-150">
+<span class="material-symbols-outlined text-[#007E85]">notifications</span>
+</button>
+</header>
+<main class="max-w-7xl mx-auto px-4 py-8 flex flex-col gap-8">
+<!-- Metrics Bento Grid -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Overall Rating Card -->
+<div class="md:col-span-2 bg-surface-container p-8 rounded-xl shadow-sm border border-outline flex flex-col md:flex-row items-center justify-between gap-8">
+<div class="flex flex-col">
+<h2 class="text-on-surface-variant font-bold uppercase tracking-wider text-xs mb-2">Overall Satisfaction</h2>
+<div class="flex items-baseline gap-2">
+<span class="text-5xl font-extrabold tracking-tight text-on-surface">4.8</span>
+<span class="text-on-surface-variant font-medium">/ 5.0</span>
+</div>
+<div class="flex gap-1 mt-2 text-tertiary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0.5;">star_half</span>
+</div>
+<p class="text-on-surface-variant text-sm mt-4">Based on <span class="font-bold text-on-surface">1,248 verified reviews</span> from the last 12 months.</p>
+</div>
+<div class="flex-1 w-full flex flex-col gap-2 max-w-xs">
+<div class="flex items-center gap-3">
+<span class="text-xs font-bold w-4">5</span>
+<div class="flex-1 h-2 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 82%"></div>
+</div>
+<span class="text-xs text-on-surface-variant w-8 text-right">82%</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-xs font-bold w-4">4</span>
+<div class="flex-1 h-2 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 12%"></div>
+</div>
+<span class="text-xs text-on-surface-variant w-8 text-right">12%</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-xs font-bold w-4">3</span>
+<div class="flex-1 h-2 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 4%"></div>
+</div>
+<span class="text-xs text-on-surface-variant w-8 text-right">4%</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-xs font-bold w-4">2</span>
+<div class="flex-1 h-2 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 1%"></div>
+</div>
+<span class="text-xs text-on-surface-variant w-8 text-right">1%</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-xs font-bold w-4">1</span>
+<div class="flex-1 h-2 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 1%"></div>
+</div>
+<span class="text-xs text-on-surface-variant w-8 text-right">1%</span>
+</div>
+</div>
+</div>
+<!-- Response Rate Card -->
+<div class="bg-primary text-on-primary p-8 rounded-xl shadow-xl flex flex-col justify-between relative overflow-hidden">
+<div class="absolute -right-4 -top-4 opacity-10">
+<span class="material-symbols-outlined text-9xl">chat_bubble</span>
+</div>
+<div>
+<h2 class="font-bold uppercase tracking-wider text-xs opacity-80 mb-2">Response Strategy</h2>
+<p class="text-3xl font-extrabold tracking-tight">96% Rate</p>
+<p class="text-sm opacity-90 mt-2">Average response time: 4.2 hours</p>
+</div>
+<button class="mt-6 bg-white text-primary px-4 py-3 rounded-xl font-bold text-sm hover:bg-primary-container transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">auto_awesome</span>
+                    View Suggestions
+                </button>
+</div>
+</section>
+<!-- Filters & List Section -->
+<section class="flex flex-col gap-6">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<h3 class="text-xl font-extrabold tracking-tight text-on-surface">Recent Feedback</h3>
+<div class="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0">
+<button class="bg-primary text-on-primary px-4 py-2 rounded-full text-xs font-bold shadow-sm whitespace-nowrap">All Reviews</button>
+<button class="bg-surface-container-high text-on-surface-variant px-4 py-2 rounded-full text-xs font-bold hover:bg-primary-container transition-colors whitespace-nowrap">Pending Reply</button>
+<button class="bg-surface-container-high text-on-surface-variant px-4 py-2 rounded-full text-xs font-bold hover:bg-primary-container transition-colors whitespace-nowrap">Critical (1-2★)</button>
+<button class="bg-surface-container-high text-on-surface-variant px-4 py-2 rounded-full text-xs font-bold hover:bg-primary-container transition-colors whitespace-nowrap flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">filter_list</span>
+                        More Filters
+                    </button>
+</div>
+</div>
+<!-- Review Cards -->
+<div class="space-y-6">
+<!-- Card 1: Pending -->
+<div class="bg-surface-container rounded-xl shadow-sm border border-outline overflow-hidden">
+<div class="p-6">
+<div class="flex flex-col md:flex-row justify-between gap-4">
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-xl bg-tertiary-container flex items-center justify-center text-on-tertiary-container font-black text-lg">JS</div>
+<div>
+<h4 class="font-bold text-on-surface">James Smith</h4>
+<div class="flex items-center gap-2 text-xs text-on-surface-variant">
+<span>Order #VP-92841</span>
+<span>•</span>
+<span>Oct 24, 2023</span>
+</div>
+<div class="flex mt-1 text-tertiary">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+</div>
+<div>
+<span class="bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">Pending</span>
+</div>
+</div>
+<p class="mt-4 text-on-surface leading-relaxed italic">"The diagnostic was incredibly precise. They found a tiny hairline fracture in the port manifold that three other shops missed. Saved me a fortune in the long run. Professional service from start to finish."</p>
+<!-- Reply Area -->
+<div class="mt-6 pt-6 border-t border-outline">
+<div class="relative">
+<textarea class="w-full bg-surface-container-low border-outline-variant rounded-xl p-4 text-sm focus:ring-primary focus:border-primary min-h-[100px]" placeholder="Type your response to James..."></textarea>
+<div class="absolute bottom-3 right-3 flex gap-2">
+<button class="px-4 py-2 bg-primary text-on-primary rounded-lg text-xs font-bold hover:shadow-lg transition-all active:scale-95">Send Reply</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 2: Replied -->
+<div class="bg-surface-container rounded-xl shadow-sm border border-outline overflow-hidden">
+<div class="p-6">
+<div class="flex flex-col md:flex-row justify-between gap-4">
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-xl bg-primary-container flex items-center justify-center text-primary font-black text-lg">AM</div>
+<div>
+<h4 class="font-bold text-on-surface">Amara Mwangi</h4>
+<div class="flex items-center gap-2 text-xs text-on-surface-variant">
+<span>Order #VP-92755</span>
+<span>•</span>
+<span>Oct 22, 2023</span>
+</div>
+<div class="flex mt-1 text-tertiary">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 0;">star</span>
+</div>
+</div>
+</div>
+<div>
+<span class="bg-primary-container text-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">Replied</span>
+</div>
+</div>
+<p class="mt-4 text-on-surface leading-relaxed">"Great technical work but the turnaround time was a day later than estimated. Communicated well though."</p>
+<!-- Existing Response -->
+<div class="mt-6 p-4 bg-surface-variant rounded-xl border-l-4 border-primary">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-sm text-primary">reply</span>
+<span class="text-xs font-bold text-on-surface">Store Manager</span>
+<span class="text-[10px] text-on-surface-variant">Oct 22, 2023</span>
+</div>
+<p class="text-sm text-on-surface-variant italic">"Thank you for the feedback, Amara. We apologize for the delay. We had to source a specific O-ring from our central hub to ensure the repair met our safety standards. We're glad you appreciated the communication!"</p>
+<button class="mt-3 text-primary text-[10px] font-bold uppercase hover:underline">Edit Response</button>
+</div>
+</div>
+</div>
+<!-- Card 3: Pending Critical -->
+<div class="bg-surface-container rounded-xl shadow-sm border border-error/20 overflow-hidden">
+<div class="p-6">
+<div class="flex flex-col md:flex-row justify-between gap-4">
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-xl bg-error-container flex items-center justify-center text-error font-black text-lg">RK</div>
+<div>
+<h4 class="font-bold text-on-surface">Robert King</h4>
+<div class="flex items-center gap-2 text-xs text-on-surface-variant">
+<span>Order #VP-92610</span>
+<span>•</span>
+<span>Oct 20, 2023</span>
+</div>
+<div class="flex mt-1 text-tertiary">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 0;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 0;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 0;">star</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end gap-2">
+<span class="bg-error-container text-error px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">Critical Alert</span>
+<span class="bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">Pending</span>
+</div>
+</div>
+<p class="mt-4 text-on-surface leading-relaxed">"Still waiting for a follow-up on the leak issue after my service. I've called twice. Not the quality I expected from Vila Port."</p>
+<div class="mt-6 flex gap-3">
+<button class="flex-1 bg-error text-on-error py-3 rounded-xl font-bold text-sm hover:opacity-90 transition-opacity">Escalate to Service Manager</button>
+<button class="flex-1 bg-primary text-on-primary py-3 rounded-xl font-bold text-sm hover:shadow-lg transition-all">Reply with Priority</button>
+</div>
+</div>
+</div>
+</div>
+<button class="w-full py-4 text-primary font-bold hover:bg-primary-container transition-colors rounded-xl border-2 border-dashed border-outline mt-4">
+                Load 10 more reviews
+            </button>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-2 py-3 pb-safe bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-[#DAE6E7] shadow-xl md:hidden z-50">
+<a class="flex flex-col items-center justify-center text-[#5E8A8D]" href="#">
+<span class="material-symbols-outlined">build</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider">Workbench</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D]" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider">Parts</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D]" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider">Receipts</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#007E85] bg-[#007E85]/10 rounded-xl px-3 py-1" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">rate_review</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider">Reviews</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D]" href="#">
+<span class="material-symbols-outlined">menu</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider">More</span>
+</a>
+</nav>
+<!-- Desktop Sidebar (Mockup) -->
+<aside class="hidden md:flex fixed left-0 top-16 h-[calc(100vh-64px)] w-20 flex-col items-center py-8 gap-8 bg-white border-r border-outline">
+<div class="p-3 text-on-surface-variant hover:text-primary transition-colors cursor-pointer"><span class="material-symbols-outlined">build</span></div>
+<div class="p-3 text-on-surface-variant hover:text-primary transition-colors cursor-pointer"><span class="material-symbols-outlined">inventory_2</span></div>
+<div class="p-3 text-on-surface-variant hover:text-primary transition-colors cursor-pointer"><span class="material-symbols-outlined">receipt_long</span></div>
+<div class="p-3 text-primary bg-primary-container rounded-xl cursor-pointer"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">rate_review</span></div>
+<div class="mt-auto p-3 text-on-surface-variant hover:text-primary transition-colors cursor-pointer"><span class="material-symbols-outlined">settings</span></div>
+</aside>
+</body></html>

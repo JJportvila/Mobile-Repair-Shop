@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container": "#ffffff",
+              "inverse-primary": "#78d5dc",
+              "tertiary": "#f7a072",
+              "on-primary": "#ffffff",
+              "primary": "#007e85",
+              "on-secondary": "#ffffff",
+              "background": "#f9fafa",
+              "on-secondary-container": "#48686b",
+              "on-error": "#ffffff",
+              "surface-container-low": "#f6fafa",
+              "on-primary-container": "#002022",
+              "tertiary-fixed": "#ffdbc8",
+              "surface-bright": "#ffffff",
+              "secondary-container": "#c3e6e9",
+              "on-tertiary": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-high": "#ebefee",
+              "secondary-fixed-dim": "#aacdd0",
+              "surface-variant": "#f0f4f4",
+              "on-surface-variant": "#5e8a8d",
+              "on-primary-fixed-variant": "#004f54",
+              "error-container": "#fee2e2",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "outline-variant": "#bdc9c9",
+              "surface-tint": "#007e85",
+              "primary-fixed": "#94f1f9",
+              "primary-container": "#e0f2f3",
+              "on-error-container": "#93000a",
+              "secondary": "#436466",
+              "surface-dim": "#d7dbdb",
+              "inverse-on-surface": "#f9fafa",
+              "primary-fixed-dim": "#78d5dc",
+              "outline": "#dae6e7",
+              "tertiary-container": "#ffdbc8",
+              "on-tertiary-container": "#321200",
+              "on-surface": "#101818",
+              "on-tertiary-fixed": "#321200",
+              "on-secondary-fixed": "#002022",
+              "tertiary-fixed-dim": "#ffb68b",
+              "surface-container-highest": "#dae6e7",
+              "inverse-surface": "#222a34",
+              "secondary-fixed": "#c6e9ec",
+              "on-tertiary-fixed-variant": "#71370c",
+              "on-background": "#101818",
+              "error": "#ef4444",
+              "surface": "#f9fafa",
+              "on-primary-fixed": "#002022"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm border-b border-cyan-100/20 dark:border-cyan-900/30 flex items-center justify-between px-6 h-16 w-full">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-cyan-700 dark:text-cyan-400 active:scale-95 duration-200">settings</span>
+<h1 class="font-manrope font-extrabold tracking-tight text-xl text-on-surface">系统设置</h1>
+</div>
+<button class="material-symbols-outlined text-slate-500 dark:text-slate-400 hover:bg-cyan-50 dark:hover:bg-cyan-900/20 transition-colors p-2 rounded-full">help_outline</button>
+</header>
+<main class="pt-20 px-4 space-y-6">
+<!-- Store Management Bento -->
+<section>
+<h2 class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-3 px-2">门店管理</h2>
+<div class="grid grid-cols-1 gap-3">
+<div class="bg-surface-container rounded-xl p-4 shadow-sm flex items-center gap-4 hover:bg-surface-container-low transition-colors">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">storefront</span>
+</div>
+<div class="flex-1">
+<p class="text-on-surface font-bold text-sm">门店信息</p>
+<p class="text-on-surface-variant text-[12px]">维拉港中心店 (Vila Central)</p>
+</div>
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</div>
+<div class="bg-surface-container rounded-xl p-4 shadow-sm flex items-center gap-4 hover:bg-surface-container-low transition-colors">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">schedule</span>
+</div>
+<div class="flex-1">
+<p class="text-on-surface font-bold text-sm">营业时间</p>
+<p class="text-on-surface-variant text-[12px]">周一至周六 08:00 - 17:30</p>
+</div>
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</div>
+</div>
+</section>
+<!-- Staff & Permissions Card Group -->
+<section>
+<h2 class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-3 px-2">员工与权限</h2>
+<div class="bg-surface-container rounded-xl shadow-sm divide-y divide-outline/50">
+<div class="p-4 flex items-center gap-4 hover:bg-surface-container-low transition-colors rounded-t-xl">
+<span class="material-symbols-outlined text-secondary">badge</span>
+<span class="flex-1 text-on-surface font-medium text-sm">员工帐号管理</span>
+<div class="flex items-center gap-2">
+<span class="bg-primary-container text-on-primary-container text-[10px] font-bold px-2 py-0.5 rounded-full">12人</span>
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</div>
+</div>
+<div class="p-4 flex items-center gap-4 hover:bg-surface-container-low transition-colors rounded-b-xl">
+<span class="material-symbols-outlined text-secondary">admin_panel_settings</span>
+<span class="flex-1 text-on-surface font-medium text-sm">权限等级配置</span>
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</div>
+</div>
+</section>
+<!-- Hardware Settings Bento -->
+<section>
+<h2 class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-3 px-2">硬件配置</h2>
+<div class="grid grid-cols-2 gap-3">
+<div class="bg-surface-container rounded-xl p-4 shadow-sm border border-transparent active:border-primary transition-all">
+<span class="material-symbols-outlined text-tertiary mb-2">print</span>
+<p class="text-on-surface font-bold text-sm">打印机设置</p>
+<p class="text-on-surface-variant text-[11px] mt-1">蓝牙/热敏式</p>
+<div class="mt-3 flex items-center gap-1.5">
+<div class="w-1.5 h-1.5 rounded-full bg-accent-green bg-[#078832]"></div>
+<span class="text-[10px] font-bold text-[#078832]">已连接</span>
+</div>
+</div>
+<div class="bg-surface-container rounded-xl p-4 shadow-sm border border-transparent active:border-primary transition-all">
+<span class="material-symbols-outlined text-primary mb-2">barcode_reader</span>
+<p class="text-on-surface font-bold text-sm">扫描枪设置</p>
+<p class="text-on-surface-variant text-[11px] mt-1">自动对焦/感应</p>
+<div class="mt-3 flex items-center gap-1.5">
+<div class="w-1.5 h-1.5 rounded-full bg-tertiary"></div>
+<span class="text-[10px] font-bold text-tertiary">未配置</span>
+</div>
+</div>
+</div>
+</section>
+<!-- General Settings -->
+<section>
+<h2 class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-3 px-2">通用设置</h2>
+<div class="bg-surface-container rounded-xl shadow-sm">
+<div class="p-4 flex items-center gap-4 border-b border-outline/50">
+<span class="material-symbols-outlined text-secondary">language</span>
+<div class="flex-1">
+<p class="text-on-surface font-medium text-sm">系统语言</p>
+</div>
+<span class="text-on-surface-variant text-sm font-medium">简体中文</span>
+<span class="material-symbols-outlined text-outline-variant">expand_more</span>
+</div>
+<div class="p-4 flex items-center gap-4">
+<span class="material-symbols-outlined text-secondary">payments</span>
+<div class="flex-1">
+<p class="text-on-surface font-medium text-sm">货币显示</p>
+</div>
+<span class="text-on-surface-variant text-sm font-medium">VUV (瓦图)</span>
+<span class="material-symbols-outlined text-outline-variant">expand_more</span>
+</div>
+</div>
+</section>
+<!-- Security -->
+<section>
+<h2 class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-3 px-2">安全与账号</h2>
+<div class="bg-surface-container rounded-xl shadow-sm divide-y divide-outline/50">
+<div class="p-4 flex items-center gap-4">
+<span class="material-symbols-outlined text-secondary">lock_reset</span>
+<span class="flex-1 text-on-surface font-medium text-sm">修改登录密码</span>
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</div>
+<div class="p-4 flex items-center gap-4">
+<span class="material-symbols-outlined text-secondary">devices</span>
+<span class="flex-1 text-on-surface font-medium text-sm">在线会话管理</span>
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</div>
+</div>
+</section>
+<!-- About -->
+<section>
+<h2 class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-3 px-2">关于系统</h2>
+<div class="bg-surface-container rounded-xl shadow-sm overflow-hidden">
+<div class="p-6 text-center border-b border-outline/50 bg-surface-container-low">
+<div class="w-16 h-16 bg-primary rounded-2xl mx-auto flex items-center justify-center shadow-lg mb-3">
+<span class="material-symbols-outlined text-white text-3xl" style="font-variation-settings: 'FILL' 1;">build_circle</span>
+</div>
+<h3 class="font-bold text-on-surface">Vila Repair Pro</h3>
+<p class="text-on-surface-variant text-[12px] mt-1">版本 v2.4.0-Stable</p>
+</div>
+<div class="divide-y divide-outline/50">
+<div class="p-4 flex items-center justify-between text-sm">
+<span class="text-on-surface">服务条款</span>
+<span class="material-symbols-outlined text-outline-variant">open_in_new</span>
+</div>
+<div class="p-4 flex items-center justify-between text-sm">
+<span class="text-on-surface">隐私政策</span>
+<span class="material-symbols-outlined text-outline-variant">open_in_new</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Logout Button -->
+<button class="w-full h-14 bg-error-container text-error font-bold rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-all shadow-sm">
+<span class="material-symbols-outlined">logout</span>
+            退出登录
+        </button>
+<div class="text-center pb-8">
+<p class="text-[10px] text-on-surface-variant/60 font-medium">© 2024 Vila Port Systems. All Rights Reserved.</p>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full h-20 flex justify-around items-center px-4 pb-safe bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg z-50 rounded-t-xl border-t border-cyan-50 dark:border-cyan-900/50 shadow-[0_-4px_12px_rgba(0,126,133,0.1)]">
+<!-- Dashboard -->
+<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-all duration-300 ease-in-out">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">Dashboard</span>
+</div>
+<!-- Tickets -->
+<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-all duration-300 ease-in-out">
+<span class="material-symbols-outlined">build_circle</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">Tickets</span>
+</div>
+<!-- Inventory -->
+<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-all duration-300 ease-in-out">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">Inventory</span>
+</div>
+<!-- Settings (Active) -->
+<div class="flex flex-col items-center justify-center bg-cyan-50 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-300 rounded-xl px-3 py-1 transition-all duration-300 ease-in-out">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">Settings</span>
+</div>
+</nav>
+</body></html>

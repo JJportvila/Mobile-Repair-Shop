@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Inventory Audit - Vila Port Cyan</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "outline": "#dae6e7",
+              "on-primary": "#ffffff",
+              "secondary-container": "#c3e6e9",
+              "surface-tint": "#007e85",
+              "error-container": "#fee2e2",
+              "secondary": "#436466",
+              "tertiary": "#f7a072",
+              "surface-container-lowest": "#ffffff",
+              "on-primary-fixed": "#002022",
+              "on-secondary-fixed": "#002022",
+              "on-secondary-container": "#48686b",
+              "tertiary-fixed-dim": "#ffb68b",
+              "on-error-container": "#93000a",
+              "background": "#f9fafa",
+              "primary-container": "#e0f2f3",
+              "on-surface": "#101818",
+              "on-tertiary-fixed": "#321200",
+              "on-error": "#ffffff",
+              "on-surface-variant": "#5e8a8d",
+              "inverse-surface": "#222a34",
+              "error": "#ef4444",
+              "surface-container": "#ffffff",
+              "surface-dim": "#d7dbdb",
+              "tertiary-fixed": "#ffdbc8",
+              "primary-fixed-dim": "#78d5dc",
+              "on-secondary": "#ffffff",
+              "secondary-fixed": "#c6e9ec",
+              "on-tertiary-container": "#321200",
+              "on-primary-fixed-variant": "#004f54",
+              "surface-container-low": "#f6fafa",
+              "outline-variant": "#bdc9c9",
+              "tertiary-container": "#ffdbc8",
+              "inverse-primary": "#78d5dc",
+              "primary-fixed": "#94f1f9",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "surface-variant": "#f0f4f4",
+              "primary": "#007e85",
+              "on-background": "#101818",
+              "on-tertiary": "#ffffff",
+              "inverse-on-surface": "#f9fafa",
+              "on-tertiary-fixed-variant": "#71370c",
+              "secondary-fixed-dim": "#aacdd0",
+              "surface-bright": "#ffffff",
+              "on-primary-container": "#002022",
+              "surface-container-highest": "#dae6e7",
+              "surface-container-high": "#ebefee",
+              "surface": "#f9fafa"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .tap-highlight-transparent { -webkit-tap-highlight-color: transparent; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-[#DAE6E7] dark:border-slate-800 shadow-sm flex items-center justify-between px-4 h-16 w-full">
+<div class="flex items-center gap-3">
+<button class="transition-all duration-200 active:scale-95 p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full">
+<span class="material-symbols-outlined text-[#007E85] dark:text-cyan-400">arrow_back</span>
+</button>
+<h1 class="font-manrope font-bold text-lg tracking-tight text-[#101818] dark:text-white">库存盘点 (Inventory Audit)</h1>
+</div>
+<div class="flex items-center gap-1">
+<button class="transition-all duration-200 active:scale-95 p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full">
+<span class="material-symbols-outlined text-[#5E8A8D]">search</span>
+</button>
+<button class="transition-all duration-200 active:scale-95 p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full">
+<span class="material-symbols-outlined text-[#5E8A8D]">filter_list</span>
+</button>
+</div>
+</header>
+<main class="pt-20 px-4 space-y-6 max-w-2xl mx-auto">
+<!-- Audit Info Card -->
+<section class="bg-surface-container rounded-xl p-5 shadow-sm border border-outline/50 relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16"></div>
+<div class="relative z-10">
+<div class="flex items-center justify-between mb-4">
+<span class="text-[10px] font-bold uppercase tracking-widest text-primary bg-primary-container px-2.5 py-1 rounded-full">Active Session</span>
+<span class="text-[10px] font-bold text-on-surface-variant">May 20, 2024</span>
+</div>
+<h2 class="text-xl font-extrabold text-on-surface mb-1">Audit #AD-20240520</h2>
+<div class="flex items-center gap-2 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-base">person</span>
+<span>Technician: <span class="font-bold text-on-surface">Aiden</span></span>
+</div>
+</div>
+</section>
+<!-- Category Selector -->
+<nav class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+<button class="px-5 py-2.5 bg-primary text-on-primary rounded-xl font-bold text-sm shadow-md shadow-primary/20 whitespace-nowrap">All</button>
+<button class="px-5 py-2.5 bg-surface-container text-on-surface-variant border border-outline rounded-xl font-bold text-sm whitespace-nowrap hover:bg-surface-variant transition-colors">Screens</button>
+<button class="px-5 py-2.5 bg-surface-container text-on-surface-variant border border-outline rounded-xl font-bold text-sm whitespace-nowrap hover:bg-surface-variant transition-colors">Batteries</button>
+<button class="px-5 py-2.5 bg-surface-container text-on-surface-variant border border-outline rounded-xl font-bold text-sm whitespace-nowrap hover:bg-surface-variant transition-colors">Small Parts</button>
+</nav>
+<!-- Inventory List -->
+<div class="space-y-4">
+<h3 class="text-on-surface-variant font-bold text-[10px] uppercase tracking-widest px-1">Items in Zone B-42</h3>
+<!-- Item 1 -->
+<div class="bg-surface-container rounded-xl p-4 shadow-sm flex flex-col gap-4 border-l-4 border-primary">
+<div class="flex justify-between items-start">
+<div class="space-y-1">
+<p class="text-[10px] font-bold text-primary-fixed-dim uppercase tracking-tighter">Screens</p>
+<h4 class="font-bold text-on-surface leading-tight">iPhone 14 Pro Screen Assembly</h4>
+<div class="flex items-center gap-1.5 text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">location_on</span>
+<span>Zone B-42</span>
+</div>
+</div>
+<div class="text-right">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase">System</p>
+<p class="text-lg font-black text-on-surface">2 <span class="text-xs font-medium">PCS</span></p>
+</div>
+</div>
+<div class="flex items-center gap-3 pt-2 border-t border-outline/30">
+<div class="flex-grow">
+<label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1 ml-1">Actual Physical Stock</label>
+<input class="w-full bg-surface-variant border-none rounded-lg px-4 py-3 font-bold text-on-surface focus:ring-2 focus:ring-primary text-lg" placeholder="0" type="number"/>
+</div>
+<button class="h-12 w-12 flex items-center justify-center bg-secondary-container text-on-secondary-container rounded-lg active:scale-90 transition-transform">
+<span class="material-symbols-outlined">qr_code_scanner</span>
+</button>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="bg-surface-container rounded-xl p-4 shadow-sm flex flex-col gap-4">
+<div class="flex justify-between items-start">
+<div class="space-y-1">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter">Batteries</p>
+<h4 class="font-bold text-on-surface leading-tight">Universal 5000mAh Battery</h4>
+<div class="flex items-center gap-1.5 text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">location_on</span>
+<span>Zone B-42</span>
+</div>
+</div>
+<div class="text-right">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase">System</p>
+<p class="text-lg font-black text-on-surface">45 <span class="text-xs font-medium">PCS</span></p>
+</div>
+</div>
+<div class="flex items-center gap-3 pt-2 border-t border-outline/30">
+<div class="flex-grow">
+<label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1 ml-1">Actual Physical Stock</label>
+<input class="w-full bg-error-container/30 border-none rounded-lg px-4 py-3 font-bold text-error focus:ring-2 focus:ring-error text-lg" placeholder="45" type="number" value="44"/>
+</div>
+<button class="h-12 w-12 flex items-center justify-center bg-secondary-container text-on-secondary-container rounded-lg">
+<span class="material-symbols-outlined">qr_code_scanner</span>
+</button>
+</div>
+<p class="text-[10px] font-bold text-error flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">warning</span> DISCREPANCY DETECTED (-1)
+                </p>
+</div>
+<!-- Item 3 -->
+<div class="bg-surface-container rounded-xl p-4 shadow-sm flex flex-col gap-4">
+<div class="flex justify-between items-start">
+<div class="space-y-1">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter">Small Parts</p>
+<h4 class="font-bold text-on-surface leading-tight">Type-C Cable 2m</h4>
+<div class="flex items-center gap-1.5 text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">location_on</span>
+<span>Zone B-42</span>
+</div>
+</div>
+<div class="text-right">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase">System</p>
+<p class="text-lg font-black text-on-surface">8 <span class="text-xs font-medium">PCS</span></p>
+</div>
+</div>
+<div class="flex items-center gap-3 pt-2 border-t border-outline/30">
+<div class="flex-grow">
+<label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1 ml-1">Actual Physical Stock</label>
+<input class="w-full bg-surface-variant border-none rounded-lg px-4 py-3 font-bold text-on-surface focus:ring-2 focus:ring-primary text-lg" placeholder="0" type="number"/>
+</div>
+<button class="h-12 w-12 flex items-center justify-center bg-secondary-container text-on-secondary-container rounded-lg">
+<span class="material-symbols-outlined">qr_code_scanner</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Discrepancy Summary (Floating Bottom) -->
+<div class="fixed bottom-20 left-4 right-4 z-40">
+<div class="bg-[#101818] text-white rounded-2xl p-4 shadow-2xl flex items-center justify-between gap-4">
+<div class="flex-grow space-y-1">
+<div class="flex items-center justify-between">
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Progress</span>
+<span class="text-[10px] font-bold text-primary-fixed">3 / 15 Audited</span>
+</div>
+<div class="w-full bg-slate-700 h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[20%]"></div>
+</div>
+<div class="flex items-center gap-1.5 pt-1">
+<span class="text-[10px] font-bold text-tertiary uppercase">Discrepancies: 1</span>
+</div>
+</div>
+<button class="bg-primary hover:bg-surface-tint text-white h-14 px-6 rounded-xl font-extrabold flex items-center gap-2 shadow-lg shadow-primary/30 transition-all active:scale-95">
+                Submit
+                <span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</div>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-2 py-3 pb-safe bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-[#DAE6E7] dark:border-slate-800 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50">
+<button class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 tap-highlight-transparent active:scale-90 transition-transform">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider">Dashboard</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#007E85] dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-900/30 rounded-xl px-3 py-1 tap-highlight-transparent active:scale-90 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider">Inventory</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 tap-highlight-transparent active:scale-90 transition-transform">
+<span class="material-symbols-outlined">fact_check</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider">Audits</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 tap-highlight-transparent active:scale-90 transition-transform">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider">Settings</span>
+</button>
+</nav>
+</body></html>

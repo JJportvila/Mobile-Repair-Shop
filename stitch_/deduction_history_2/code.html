@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Deduction History - Vila Port Cyan</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary-container": "#c3e6e9",
+              "on-error": "#ffffff",
+              "on-secondary-container": "#48686b",
+              "inverse-primary": "#78d5dc",
+              "surface-container": "#ffffff",
+              "on-primary": "#ffffff",
+              "surface-container-low": "#f6fafa",
+              "on-secondary-fixed": "#002022",
+              "surface-tint": "#007e85",
+              "tertiary-fixed": "#ffdbc8",
+              "primary-container": "#e0f2f3",
+              "surface-container-high": "#ebefee",
+              "outline-variant": "#bdc9c9",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "on-primary-fixed": "#002022",
+              "tertiary-fixed-dim": "#ffb68b",
+              "tertiary-container": "#ffdbc8",
+              "surface-bright": "#ffffff",
+              "on-tertiary-fixed": "#321200",
+              "primary-fixed": "#94f1f9",
+              "on-background": "#101818",
+              "on-secondary": "#ffffff",
+              "on-primary-container": "#002022",
+              "background": "#f9fafa",
+              "error-container": "#fee2e2",
+              "tertiary": "#f7a072",
+              "on-surface-variant": "#5e8a8d",
+              "surface-dim": "#d7dbdb",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary": "#ffffff",
+              "primary-fixed-dim": "#78d5dc",
+              "outline": "#dae6e7",
+              "on-tertiary-fixed-variant": "#71370c",
+              "surface-variant": "#f0f4f4",
+              "secondary": "#436466",
+              "on-primary-fixed-variant": "#004f54",
+              "surface-container-highest": "#dae6e7",
+              "inverse-surface": "#222a34",
+              "error": "#ef4444",
+              "on-tertiary-container": "#321200",
+              "secondary-fixed-dim": "#aacdd0",
+              "inverse-on-surface": "#f9fafa",
+              "surface": "#f9fafa",
+              "primary": "#007e85",
+              "on-surface": "#101818",
+              "secondary-fixed": "#c6e9ec",
+              "on-error-container": "#93000a"
+            },
+            fontFamily: {
+              "headline": ["Manrope", "sans-serif"],
+              "body": ["Manrope", "sans-serif"],
+              "label": ["Manrope", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md fixed top-0 w-full z-50 border-b border-[#DAE6E7] dark:border-slate-800 shadow-sm">
+<div class="flex items-center justify-between px-4 h-16 w-full max-w-7xl mx-auto">
+<div class="flex items-center gap-4">
+<button class="text-[#007E85] active:scale-95 duration-200 hover:bg-[#F9FAFA] dark:hover:bg-slate-800 p-2 rounded-full">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-['Manrope'] font-extrabold text-[20px] tracking-tight text-[#101818] dark:text-white">Deduction History</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-[#5E8A8D] hover:bg-[#F9FAFA] dark:hover:bg-slate-800 rounded-full transition-colors">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+<button class="p-2 text-[#5E8A8D] hover:bg-[#F9FAFA] dark:hover:bg-slate-800 rounded-full transition-colors">
+<span class="material-symbols-outlined">search</span>
+</button>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto pt-24 px-4 sm:px-6">
+<!-- Dashboard Summary Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+<div class="bg-surface-container border border-outline rounded-xl p-5 shadow-sm">
+<div class="flex items-center justify-between mb-2">
+<span class="text-on-surface-variant font-bold text-xs uppercase tracking-wider">Total Deductions</span>
+<div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">trending_down</span>
+</div>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-extrabold tracking-tight">842</span>
+<span class="text-error text-xs font-bold">-12% vs last month</span>
+</div>
+</div>
+<div class="bg-surface-container border border-outline rounded-xl p-5 shadow-sm">
+<div class="flex items-center justify-between mb-2">
+<span class="text-on-surface-variant font-bold text-xs uppercase tracking-wider">Total Value (VUV)</span>
+<div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">payments</span>
+</div>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-extrabold tracking-tight">124,500</span>
+<span class="text-primary text-xs font-bold">VUV Total</span>
+</div>
+</div>
+<div class="bg-surface-container border border-outline rounded-xl p-5 shadow-sm">
+<div class="flex items-center justify-between mb-2">
+<span class="text-on-surface-variant font-bold text-xs uppercase tracking-wider">Active ROs</span>
+<div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">build_circle</span>
+</div>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-extrabold tracking-tight">18</span>
+<span class="text-on-surface-variant text-xs font-bold italic">Awaiting completion</span>
+</div>
+</div>
+</div>
+<!-- History List Header -->
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
+<h2 class="font-['Manrope'] font-extrabold text-[20px] tracking-tight">Inventory Journal</h2>
+<div class="flex items-center gap-3">
+<button class="bg-primary text-white px-4 py-2 rounded-xl font-bold text-sm shadow-lg shadow-primary/20 flex items-center gap-2 active:scale-95 duration-200">
+<span class="material-symbols-outlined text-sm">download</span>
+                    Export CSV
+                </button>
+</div>
+</div>
+<!-- High Density Data List -->
+<div class="bg-surface-container border border-outline rounded-xl overflow-hidden shadow-sm">
+<!-- Table Header (Hidden on Mobile) -->
+<div class="hidden md:grid grid-cols-12 bg-surface-variant/50 border-b border-outline px-6 py-4">
+<div class="col-span-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant">Part Details</div>
+<div class="col-span-2 text-xs font-bold uppercase tracking-wider text-on-surface-variant">Technician</div>
+<div class="col-span-2 text-xs font-bold uppercase tracking-wider text-on-surface-variant">Reference</div>
+<div class="col-span-1 text-xs font-bold uppercase tracking-wider text-on-surface-variant text-right">Qty</div>
+<div class="col-span-1 text-xs font-bold uppercase tracking-wider text-on-surface-variant text-right">Value</div>
+<div class="col-span-2 text-xs font-bold uppercase tracking-wider text-on-surface-variant text-right">Timestamp</div>
+</div>
+<!-- List Items -->
+<div class="divide-y divide-outline">
+<!-- Item 1 -->
+<div class="grid grid-cols-1 md:grid-cols-12 items-center px-6 py-4 hover:bg-[#F9FAFA] transition-colors gap-4">
+<div class="col-span-4 flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined">settings_input_component</span>
+</div>
+<div>
+<div class="font-bold text-on-surface text-sm">Turbocharger Gasket Set</div>
+<div class="text-[11px] text-on-surface-variant font-medium">SKU: TG-992-BX</div>
+</div>
+</div>
+<div class="col-span-2 flex flex-col md:block">
+<span class="md:hidden text-[10px] font-bold uppercase text-on-surface-variant mb-1">Tech</span>
+<div class="flex items-center gap-2">
+<img class="w-6 h-6 rounded-full object-cover" data-alt="portrait of a focused professional mechanic wearing a navy blue uniform in a clean workshop setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgbocwFQ9TJxf0EL13V9480odtOaS9nqkD14qZpyoRN8w7wZ7OdEWhomOqSVVhsZi-kIr3vozozFS7DGeT-oj0GZc3xb8o6kfczUmEGYVOwaq8Rz4exkxMj-DMUcgxPF-5U-zPTccTquNd8rP2SP4MpgaqZ4wC5JVXuAhj3pd1CLiZSNo5U3gPsQJPit5YXAT2-KZCPfwIZ7bzPHhEbxROWpVZNMz7Ti_wlza4ApPZR6pu3AnBliI6a6NIkY3py7VUhSRt4F-AN-ur"/>
+<span class="text-sm font-semibold">Robert Chen</span>
+</div>
+</div>
+<div class="col-span-2 flex flex-col md:block">
+<span class="md:hidden text-[10px] font-bold uppercase text-on-surface-variant mb-1">RO Number</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-md bg-secondary-container text-on-secondary-container text-[11px] font-extrabold">RO-88421</span>
+</div>
+<div class="col-span-1 text-right flex flex-col md:block">
+<span class="md:hidden text-[10px] font-bold uppercase text-on-surface-variant mb-1 text-right">Qty</span>
+<span class="text-error font-extrabold text-sm">-1 Unit</span>
+</div>
+<div class="col-span-1 text-right flex flex-col md:block">
+<span class="md:hidden text-[10px] font-bold uppercase text-on-surface-variant mb-1 text-right">Value</span>
+<span class="font-bold text-sm text-on-surface">1,250 VUV</span>
+</div>
+<div class="col-span-2 text-right flex flex-col md:block">
+<span class="md:hidden text-[10px] font-bold uppercase text-on-surface-variant mb-1 text-right">Date</span>
+<div class="text-[12px] font-medium text-on-surface">Oct 24, 2023</div>
+<div class="text-[10px] text-on-surface-variant">09:14 AM</div>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="grid grid-cols-1 md:grid-cols-12 items-center px-6 py-4 hover:bg-[#F9FAFA] transition-colors gap-4">
+<div class="col-span-4 flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined">oil_barrel</span>
+</div>
+<div>
+<div class="font-bold text-on-surface text-sm">Synthetic Engine Oil 5W-30</div>
+<div class="text-[11px] text-on-surface-variant font-medium">SKU: OIL-SYN-05</div>
+</div>
+</div>
+<div class="col-span-2 flex flex-col md:block">
+<span class="md:hidden text-[10px] font-bold uppercase text-on-surface-variant mb-1">Tech</span>
+<div class="flex items-center gap-2">
+<img class="w-6 h-6 rounded-full object-cover" data-alt="middle aged professional engineer with a friendly expression in a workshop environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHGPs2gXN_DXOHgTQl06CgMyi_hKDF0W83Dr0ffxT2K2kIHSFlGAnTEAvVmO1IWCLFVZmz84HQv2EKBjYSjeHxfKKLBL2AFfrxyUM-5h2xYy9v1vkAqnicnAtfoik17N2wzeZs0X_GSGqPu4LLibJmmpi5Yxw-DioP7nUcyO2GxErGKbXKcyCgON_cOGoPfyGvuEIJryY4epxExzPWc3GjSe9YmbbLfkWG3QNt5Vi85CmXvDO7YRtWOGbdxXQomAb4oJU6bSP4_CMF"/>
+<span class="text-sm font-semibold">Sarah Jenkins</span>
+</div>
+</div>
+<div class="col-span-2 flex flex-col md:block">
+<span class="md:hidden text-[10px] font-bold uppercase text-on-surface-variant mb-1">RO Number</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-md bg-secondary-container text-on-secondary-container text-[11px] font-extrabold">RO-88422</span>
+</div>
+<div class="col-span-1 text-right flex flex-col md:block">
+<span class="md:hidden text-[10px] font-bold uppercase text-on-surface-variant mb-1 text-right">Qty</span>
+<span class="text-error font-extrabold text-sm">-5 Unit</span>
+</div>
+<div class="col-span-1 text-right flex flex-col md:block">
+<span class="md:hidden text-[10px] font-bold uppercase text-on-surface-variant mb-1 text-right">Value</span>
+<span class="font-bold text-sm text-on-surface">4,750 VUV</span>
+</div>
+<div class="col-span-2 text-right flex flex-col md:block">
+<span class="md:hidden text-[10px] font-bold uppercase text-on-surface-variant mb-1 text-right">Date</span>
+<div class="text-[12px] font-medium text-on-surface">Oct 24, 2023</div>
+<div class="text-[10px] text-on-surface-variant">11:30 AM</div>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="grid grid-cols-1 md:grid-cols-12 items-center px-6 py-4 hover:bg-[#F9FAFA] transition-colors gap-4">
+<div class="col-span-4 flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined">minor_crash</span>
+</div>
+<div>
+<div class="font-bold text-on-surface text-sm">Brake Pad Set - Front</div>
+<div class="text-[11px] text-on-surface-variant font-medium">SKU: BP-F-550</div>
+</div>
+</div>
+<div class="col-span-2 flex flex-col md:block">
+<span class="md:hidden text-[10px] font-bold uppercase text-on-surface-variant mb-1">Tech</span>
+<div class="flex items-center gap-2">
+<img class="w-6 h-6 rounded-full object-cover" data-alt="professional male worker in modern industrial workspace wearing safety glasses" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDOsRgl3lK51Ml3lWKZrB1-AokOMVXclVJsJyjwUAxpIyaV8E_AwxncVQ6vgP83claM72XV9T9-UlTRIzmJUOfxpSGRukFfRVptJ5o4gnRGcMkxack3XvtGqaAw4KyiMurM-oMM0DeNnK2L6NV_thoVHZ2nqWDrC7eGAgimPIuqg3l_4UsKB0IC7b3VF9NLw8aP2LR1GtFz-bdHEHAwiZ0nR3W2bQZc_o5iFPcHtBzhYCvLN2nJGMGK8aAD8X-ejP8d6ZUsLIncYN2"/>
+<span class="text-sm font-semibold">Marc Vuv</span>
+</div>
+</div>
+<div class="col-span-2 flex flex-col md:block">
+<span class="md:hidden text-[10px] font-bold uppercase text-on-surface-variant mb-1">RO Number</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-md bg-secondary-container text-on-secondary-container text-[11px] font-extrabold">RO-88425</span>
+</div>
+<div class="col-span-1 text-right flex flex-col md:block">
+<span class="md:hidden text-[10px] font-bold uppercase text-on-surface-variant mb-1 text-right">Qty</span>
+<span class="text-error font-extrabold text-sm">-1 Unit</span>
+</div>
+<div class="col-span-1 text-right flex flex-col md:block">
+<span class="md:hidden text-[10px] font-bold uppercase text-on-surface-variant mb-1 text-right">Value</span>
+<span class="font-bold text-sm text-on-surface">8,900 VUV</span>
+</div>
+<div class="col-span-2 text-right flex flex-col md:block">
+<span class="md:hidden text-[10px] font-bold uppercase text-on-surface-variant mb-1 text-right">Date</span>
+<div class="text-[12px] font-medium text-on-surface">Oct 23, 2023</div>
+<div class="text-[10px] text-on-surface-variant">04:45 PM</div>
+</div>
+</div>
+<!-- Item 4 -->
+<div class="grid grid-cols-1 md:grid-cols-12 items-center px-6 py-4 hover:bg-[#F9FAFA] transition-colors gap-4">
+<div class="col-span-4 flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined">bolt</span>
+</div>
+<div>
+<div class="font-bold text-on-surface text-sm">Hex Bolt M12 x 1.5</div>
+<div class="text-[11px] text-on-surface-variant font-medium">SKU: FST-HEX-12</div>
+</div>
+</div>
+<div class="col-span-2 flex flex-col md:block">
+<span class="md:hidden text-[10px] font-bold uppercase text-on-surface-variant mb-1">Tech</span>
+<div class="flex items-center gap-2">
+<img class="w-6 h-6 rounded-full object-cover" data-alt="focused technician in work apparel" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvI3hfscqTMvvDor_QH5tsOhZ19Och_SttfjeLR89m8KYN9xSAoI28rhV5mgb-MTdf1cgde1_9gLSZImuE4O54MLz9efyDpCexvcIMVDGTerpMhk4eZ2EkqBWm6mCru7aY0yyEew0TBDRA3lbB70nnLPbsyl6lkVhLPaOhxYP0KMqsdutTspPZRH2YFdbj1gs71UYjZKg4axdRUIaT0nnJGQ_KApnQZMvGDDh7Dl0LFykCNoSMKLvNoECEyYezP4xN0s_lA9mNs8ZY"/>
+<span class="text-sm font-semibold">Robert Chen</span>
+</div>
+</div>
+<div class="col-span-2 flex flex-col md:block">
+<span class="md:hidden text-[10px] font-bold uppercase text-on-surface-variant mb-1">RO Number</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-md bg-secondary-container text-on-secondary-container text-[11px] font-extrabold">RO-88421</span>
+</div>
+<div class="col-span-1 text-right flex flex-col md:block">
+<span class="md:hidden text-[10px] font-bold uppercase text-on-surface-variant mb-1 text-right">Qty</span>
+<span class="text-error font-extrabold text-sm">-12 Unit</span>
+</div>
+<div class="col-span-1 text-right flex flex-col md:block">
+<span class="md:hidden text-[10px] font-bold uppercase text-on-surface-variant mb-1 text-right">Value</span>
+<span class="font-bold text-sm text-on-surface">600 VUV</span>
+</div>
+<div class="col-span-2 text-right flex flex-col md:block">
+<span class="md:hidden text-[10px] font-bold uppercase text-on-surface-variant mb-1 text-right">Date</span>
+<div class="text-[12px] font-medium text-on-surface">Oct 23, 2023</div>
+<div class="text-[10px] text-on-surface-variant">02:12 PM</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="flex items-center justify-between mt-6 px-2">
+<span class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Showing 1-25 of 842</span>
+<div class="flex gap-2">
+<button class="w-10 h-10 flex items-center justify-center border border-outline rounded-lg bg-surface hover:bg-surface-variant transition-colors disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center border border-outline rounded-lg bg-white text-primary font-bold shadow-sm">1</button>
+<button class="w-10 h-10 flex items-center justify-center border border-outline rounded-lg bg-surface hover:bg-surface-variant transition-colors">2</button>
+<button class="w-10 h-10 flex items-center justify-center border border-outline rounded-lg bg-surface hover:bg-surface-variant transition-colors">3</button>
+<button class="w-10 h-10 flex items-center justify-center border border-outline rounded-lg bg-surface hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</main>
+<!-- Floating Action Button -->
+<button class="fixed right-6 bottom-24 md:bottom-28 w-14 h-14 bg-primary text-white rounded-full flex items-center justify-center shadow-xl shadow-primary/40 active:scale-90 transition-all z-50">
+<span class="material-symbols-outlined text-[28px]">print</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg fixed bottom-0 w-full z-50 border-t border-[#DAE6E7] dark:border-slate-800 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+<div class="flex justify-around items-center h-20 px-2 pb-safe max-w-7xl mx-auto">
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] hover:text-[#007E85] transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-['Manrope'] font-bold text-[10px] uppercase tracking-wider mt-1">Inventory</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#007E85] bg-[#007E85]/10 rounded-xl px-3 py-1 active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">history</span>
+<span class="font-['Manrope'] font-bold text-[10px] uppercase tracking-wider mt-1">History</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] hover:text-[#007E85] transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">engineering</span>
+<span class="font-['Manrope'] font-bold text-[10px] uppercase tracking-wider mt-1">Technicians</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] hover:text-[#007E85] transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">build</span>
+<span class="font-['Manrope'] font-bold text-[10px] uppercase tracking-wider mt-1">Orders</span>
+</a>
+</div>
+</nav>
+</body></html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Auto-Reorder Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "secondary-container": "#c3e6e9",
+                        "on-error": "#ffffff",
+                        "on-secondary-container": "#48686b",
+                        "inverse-primary": "#78d5dc",
+                        "surface-container": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "surface-container-low": "#f6fafa",
+                        "on-secondary-fixed": "#002022",
+                        "surface-tint": "#007e85",
+                        "tertiary-fixed": "#ffdbc8",
+                        "primary-container": "#e0f2f3",
+                        "surface-container-high": "#ebefee",
+                        "outline-variant": "#bdc9c9",
+                        "on-secondary-fixed-variant": "#2b4c4f",
+                        "on-primary-fixed": "#002022",
+                        "tertiary-fixed-dim": "#ffb68b",
+                        "tertiary-container": "#ffdbc8",
+                        "surface-bright": "#ffffff",
+                        "on-tertiary-fixed": "#321200",
+                        "primary-fixed": "#94f1f9",
+                        "on-background": "#101818",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#002022",
+                        "background": "#f9fafa",
+                        "error-container": "#fee2e2",
+                        "tertiary": "#f7a072",
+                        "on-surface-variant": "#5e8a8d",
+                        "surface-dim": "#d7dbdb",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed-dim": "#78d5dc",
+                        "outline": "#dae6e7",
+                        "on-tertiary-fixed-variant": "#71370c",
+                        "surface-variant": "#f0f4f4",
+                        "secondary": "#436466",
+                        "on-primary-fixed-variant": "#004f54",
+                        "surface-container-highest": "#dae6e7",
+                        "inverse-surface": "#222a34",
+                        "error": "#ef4444",
+                        "on-tertiary-container": "#321200",
+                        "secondary-fixed-dim": "#aacdd0",
+                        "inverse-on-surface": "#f9fafa",
+                        "surface": "#f9fafa",
+                        "primary": "#007e85",
+                        "on-surface": "#101818",
+                        "secondary-fixed": "#c6e9ec",
+                        "on-error-container": "#93000a"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-[#DAE6E7] shadow-sm fixed top-0 w-full z-50 flex items-center justify-between px-4 h-16 w-full">
+<div class="flex items-center gap-4">
+<button class="text-[#007E85] active:scale-95 duration-200">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-manrope font-extrabold text-[20px] tracking-tight text-[#007E85]">Low Stock Alerts</h1>
+</div>
+<div class="flex items-center gap-3">
+<button class="text-[#5E8A8D] hover:bg-[#F9FAFA] p-2 rounded-full transition-colors">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="text-[#5E8A8D] hover:bg-[#F9FAFA] p-2 rounded-full transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</header>
+<main class="pt-20 px-4 max-w-2xl mx-auto space-y-6">
+<!-- Global Automation Toggle Card -->
+<section class="bg-white rounded-xl p-5 shadow-sm border border-outline/30">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">automation</span>
+</div>
+<div>
+<h2 class="text-on-surface font-bold text-lg">Auto-generate PO</h2>
+<p class="text-on-surface-variant text-sm">When stock levels hit threshold</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-dim peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</section>
+<!-- Threshold Settings Bento Grid -->
+<section>
+<h3 class="text-on-surface-variant font-bold text-[12px] uppercase tracking-widest mb-4 px-1">Category Thresholds</h3>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- Screens -->
+<div class="bg-white p-5 rounded-xl shadow-sm border border-outline/30 flex flex-col justify-between aspect-square">
+<div class="space-y-2">
+<span class="material-symbols-outlined text-primary">smartphone</span>
+<h4 class="font-bold text-on-surface">Screens</h4>
+</div>
+<div class="space-y-1">
+<input class="w-full bg-surface-container-low border-none rounded-lg font-extrabold text-2xl text-primary focus:ring-2 focus:ring-primary/20" type="number" value="15"/>
+<p class="text-[10px] text-on-surface-variant uppercase font-bold">Min Units</p>
+</div>
+</div>
+<!-- Batteries -->
+<div class="bg-white p-5 rounded-xl shadow-sm border border-outline/30 flex flex-col justify-between aspect-square">
+<div class="space-y-2">
+<span class="material-symbols-outlined text-primary">battery_charging_full</span>
+<h4 class="font-bold text-on-surface">Batteries</h4>
+</div>
+<div class="space-y-1">
+<input class="w-full bg-surface-container-low border-none rounded-lg font-extrabold text-2xl text-primary focus:ring-2 focus:ring-primary/20" type="number" value="50"/>
+<p class="text-[10px] text-on-surface-variant uppercase font-bold">Min Units</p>
+</div>
+</div>
+<!-- Small Parts -->
+<div class="bg-white p-5 rounded-xl shadow-sm border border-outline/30 flex flex-col justify-between aspect-square">
+<div class="space-y-2">
+<span class="material-symbols-outlined text-primary">settings_input_component</span>
+<h4 class="font-bold text-on-surface">Small Parts</h4>
+</div>
+<div class="space-y-1">
+<input class="w-full bg-surface-container-low border-none rounded-lg font-extrabold text-2xl text-primary focus:ring-2 focus:ring-primary/20" type="number" value="200"/>
+<p class="text-[10px] text-on-surface-variant uppercase font-bold">Min Units</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Preferred Supplier -->
+<section class="bg-white rounded-xl p-5 shadow-sm border border-outline/30">
+<h3 class="text-on-surface-variant font-bold text-[12px] uppercase tracking-widest mb-4">Preferred Supplier</h3>
+<div class="relative">
+<select class="w-full bg-surface-container-low border-none rounded-xl py-4 px-4 pr-10 appearance-none font-bold text-on-surface focus:ring-2 focus:ring-primary/20">
+<option>Global Tech Logistics</option>
+<option>Prime Parts Co.</option>
+<option>Shenzhen Direct Solutions</option>
+<option>Direct OEM Supply</option>
+</select>
+<div class="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-on-surface-variant">expand_more</span>
+</div>
+</div>
+<div class="mt-4 flex items-center gap-3 p-3 bg-secondary-container/20 rounded-lg">
+<span class="material-symbols-outlined text-primary">verified</span>
+<p class="text-xs text-on-secondary-container font-medium">Auto-ordering will prioritize vendors with &gt;98% fulfillment rate.</p>
+</div>
+</section>
+<!-- Preview of Flagged Items -->
+<section>
+<div class="flex items-center justify-between mb-4 px-1">
+<h3 class="text-on-surface-variant font-bold text-[12px] uppercase tracking-widest">Pending Reorder (3)</h3>
+<span class="text-primary text-[12px] font-bold">View History</span>
+</div>
+<div class="space-y-3">
+<!-- Item 1 -->
+<div class="bg-white p-4 rounded-xl shadow-sm border border-outline/20 flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-low overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="close up of premium smartphone screen component with glass reflection on neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8w1O3Jrim51UA5Aw4v_tyW4foAo6yEokLHi1ybMzvCpfyUUu_T97YUFoDfcpwQmEfyz43DQRLNdwwpAwSQTZNQ8Nc9z2c8DYGPm4r1fEzv0JZ5HObKVA5gcCpTaQyNV0s__T0jFJOgFLI89D-yt1fnMqw4bxTqQRsaouNazDfby5VdxD7GyJgYj7iSD-448zDdbeHEeNJBSjz_u0FLt9ZtfVRuo-bztJot03VwZDpSzn8edov7lxi_G68aNnkXJ5Janv3Wy52KYk6"/>
+</div>
+<div class="flex-1 min-w-0">
+<h4 class="text-on-surface font-bold text-sm truncate">iPhone 14 OLED Panel</h4>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-[10px] bg-error-container text-on-error-container px-2 py-0.5 rounded font-bold uppercase">Critical: 4 Left</span>
+<span class="text-[10px] text-on-surface-variant font-medium">Target: 25</span>
+</div>
+</div>
+<div class="text-right">
+<p class="text-on-surface font-black text-sm">+$420.00</p>
+<p class="text-[10px] text-on-surface-variant">Est. Cost</p>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="bg-white p-4 rounded-xl shadow-sm border border-outline/20 flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-low overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="professional internal laptop battery component with clean black casing and electrical contacts" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnBfwP2LkR9jrBPkQDKMYqjeLRy1GZ6mEri-IWS0a7imBZMr97M4JHtTSm0GvMdcs3TF51FjStu34pdGU1zoVPdYBwkcubBzNYvAmKfZBvCG07JhAs1pYajCbk_L9asNUM2yBGNtT4193gyupZR_Zf5DN6wjZ42L3mxHJXNsOSaWFZHwTB02foAdyGmwCnwnHrGvxb7OtVK6e8nlosnvhJJblaWjMnoLnTw6_nBD60Enk7t6Zct2TztUCSWu3Oo5GhLbWWfiN1QGbn"/>
+</div>
+<div class="flex-1 min-w-0">
+<h4 class="text-on-surface font-bold text-sm truncate">MacBook Pro M2 Battery</h4>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-[10px] bg-tertiary-container text-on-tertiary-container px-2 py-0.5 rounded font-bold uppercase">Warning: 12 Left</span>
+<span class="text-[10px] text-on-surface-variant font-medium">Target: 50</span>
+</div>
+</div>
+<div class="text-right">
+<p class="text-on-surface font-black text-sm">+$890.00</p>
+<p class="text-[10px] text-on-surface-variant">Est. Cost</p>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="bg-white p-4 rounded-xl shadow-sm border border-outline/20 flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-low overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="macro photo of gold plated connector pins and tiny electronic small parts for mobile repair" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCe4W1Te_HCF-oW_l4lnfMrUMXHAq0UmPm9Rj04pTk9WJN5NuIOo18lJYfq3wDWagVlS5RnC6t57isEvJx5ofoYpY_QeZ5QviM4g9zUOksFcDf_z3bT19UXoO0pTRZy5RIsDuJPaSPTmitgb7Y4JH6bhoV58Ieqr9gU8yH5ENi9QPLL1DoPE9jhKPBCD-MiK7GFynJ86x2k_BFLBci5AsuTzy5-hvxzSomG-Tiq3ujLOO-Tl2OWFYeo_VOayE7KAIQ90_vDYg7_yPUn"/>
+</div>
+<div class="flex-1 min-w-0">
+<h4 class="text-on-surface font-bold text-sm truncate">Charging Port Flex - S22</h4>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-[10px] bg-tertiary-container text-on-tertiary-container px-2 py-0.5 rounded font-bold uppercase">Warning: 180 Left</span>
+<span class="text-[10px] text-on-surface-variant font-medium">Target: 300</span>
+</div>
+</div>
+<div class="text-right">
+<p class="text-on-surface font-black text-sm">+$125.50</p>
+<p class="text-[10px] text-on-surface-variant">Est. Cost</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Action Button -->
+<button class="w-full bg-primary text-on-primary py-4 rounded-xl font-bold text-lg shadow-xl shadow-primary/30 active:scale-[0.98] transition-all flex items-center justify-center gap-3 mt-8">
+<span class="material-symbols-outlined">save</span>
+            Save Reorder Configuration
+        </button>
+</main>
+<!-- BottomNavBar -->
+<nav class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-[#DAE6E7] shadow-xl shadow-[#007E85]/10 fixed bottom-0 w-full z-50 rounded-t-xl flex justify-around items-center px-4 h-20 w-full pb-safe">
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] px-3 py-1 hover:text-[#007E85] transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Inventory</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-[#007E85]/10 text-[#007E85] rounded-xl px-3 py-1 hover:text-[#007E85] transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">notifications_active</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Alerts</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] px-3 py-1 hover:text-[#007E85] transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Orders</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] px-3 py-1 hover:text-[#007E85] transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Profile</span>
+</a>
+</nav>
+</body></html>

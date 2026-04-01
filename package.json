@@ -1,0 +1,20 @@
+{
+  "name": "stitch-repair-mvp",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
+    "build": "npm run build --prefix frontend",
+    "build:web": "npm run build --prefix frontend",
+    "start": "npm run start --prefix backend",
+    "start:web": "npm run start --prefix backend",
+    "serve:web": "npm run build:web && npm run start:web",
+    "preview": "npm run preview --prefix frontend",
+    "prod:test": "npm run build && npm run start --prefix backend",
+    "install:all": "npm install --prefix backend && npm install --prefix frontend",
+    "check:web": "npm run build:web"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

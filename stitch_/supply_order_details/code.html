@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Supply Order Details - Vila Port Cyan</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Manrope', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "secondary-container": "#c3e6e9",
+                "surface-container-low": "#f6fafa",
+                "surface-tint": "#007e85",
+                "surface-container": "#ffffff",
+                "on-tertiary-fixed-variant": "#71370c",
+                "secondary-fixed": "#c6e9ec",
+                "outline": "#dae6e7",
+                "on-error": "#ffffff",
+                "on-surface": "#101818",
+                "on-secondary-fixed": "#002022",
+                "background": "#f9fafa",
+                "on-primary-fixed-variant": "#004f54",
+                "tertiary": "#f7a072",
+                "primary-container": "#e0f2f3",
+                "outline-variant": "#bdc9c9",
+                "tertiary-fixed-dim": "#ffb68b",
+                "surface-dim": "#d7dbdb",
+                "on-secondary-fixed-variant": "#2b4c4f",
+                "primary-fixed": "#94f1f9",
+                "on-primary-fixed": "#002022",
+                "surface-bright": "#ffffff",
+                "secondary-fixed-dim": "#aacdd0",
+                "surface-container-highest": "#dae6e7",
+                "on-primary": "#ffffff",
+                "error-container": "#fee2e2",
+                "tertiary-container": "#ffdbc8",
+                "primary": "#007e85",
+                "tertiary-fixed": "#ffdbc8",
+                "surface-variant": "#f0f4f4",
+                "secondary": "#436466",
+                "on-primary-container": "#002022",
+                "on-tertiary-container": "#321200",
+                "surface-container-high": "#ebefee",
+                "on-secondary-container": "#48686b",
+                "inverse-primary": "#78d5dc",
+                "error": "#ef4444",
+                "on-surface-variant": "#5e8a8d",
+                "on-error-container": "#93000a",
+                "on-secondary": "#ffffff",
+                "on-background": "#101818",
+                "surface": "#f9fafa",
+                "on-tertiary": "#ffffff",
+                "inverse-surface": "#222a34",
+                "inverse-on-surface": "#f9fafa",
+                "primary-fixed-dim": "#78d5dc",
+                "surface-container-lowest": "#ffffff",
+                "on-tertiary-fixed": "#321200"
+              },
+              fontFamily: {
+                "headline": ["Manrope"],
+                "body": ["Manrope"],
+                "label": ["Manrope"]
+              },
+              borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            },
+          },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-[#DAE6E7] dark:border-slate-800 shadow-sm">
+<div class="flex items-center justify-between px-4 h-16 w-full max-w-7xl mx-auto">
+<div class="flex items-center gap-4">
+<button class="p-2 text-[#007E85] hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors active:scale-95 duration-200 rounded-full">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-['Manrope'] font-extrabold text-xl tracking-tight text-[#101818]">Supply Order Details</h1>
+</div>
+<button class="p-2 text-[#007E85] hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors active:scale-95 duration-200 rounded-full">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</header>
+<main class="pt-20 px-4 max-w-5xl mx-auto space-y-6">
+<!-- Section 1: Order Status & Summary -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="md:col-span-2 bg-surface-container rounded-xl shadow-sm p-6 relative overflow-hidden">
+<!-- Decorative background element -->
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16"></div>
+<div class="flex justify-between items-start mb-6">
+<div>
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">Order Status</p>
+<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary uppercase">
+                            Received / 已入库
+                        </span>
+</div>
+<div class="text-right">
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">Order ID</p>
+<p class="font-bold text-on-surface">PO-VLP-20231015</p>
+</div>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div>
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Supplier</p>
+<p class="font-semibold text-sm">PrecisionParts Ltd</p>
+</div>
+<div>
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Order Date</p>
+<p class="font-semibold text-sm">2023-10-15</p>
+</div>
+<div>
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Operator</p>
+<p class="font-semibold text-sm">李明 (Li Ming)</p>
+</div>
+<div>
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Currency</p>
+<p class="font-semibold text-sm">VUV (Vanuatu Vatu)</p>
+</div>
+</div>
+</div>
+<div class="bg-primary text-on-primary rounded-xl shadow-xl shadow-primary/20 p-6 flex flex-col justify-between">
+<div>
+<span class="material-symbols-outlined mb-2">account_balance_wallet</span>
+<p class="text-[10px] font-bold uppercase tracking-wider opacity-80">Total Amount</p>
+<p class="text-3xl font-extrabold tracking-tight mt-1">245,800 <span class="text-sm font-medium">VUV</span></p>
+</div>
+<div class="mt-4 pt-4 border-t border-white/20">
+<p class="text-[10px] font-bold uppercase tracking-wider opacity-80">Payment Method</p>
+<p class="text-sm font-semibold">Bank Wire Transfer</p>
+</div>
+</div>
+</div>
+<!-- Section 2: Items List (Bento-style items) -->
+<div class="space-y-4">
+<h2 class="text-lg font-extrabold tracking-tight text-on-surface px-1">Order Inventory Items</h2>
+<div class="bg-surface-container rounded-xl shadow-sm divide-y divide-outline">
+<!-- Item 1 -->
+<div class="p-4 flex flex-col sm:flex-row items-center gap-4 hover:bg-surface-container-low transition-colors">
+<div class="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-3xl">smartphone</span>
+</div>
+<div class="flex-grow text-center sm:text-left">
+<h3 class="font-bold text-on-surface">iPhone 14 Screens</h3>
+<p class="text-xs text-on-surface-variant">OEM Grade A++ Display Assembly</p>
+</div>
+<div class="grid grid-cols-3 gap-8 text-center">
+<div>
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Qty</p>
+<p class="font-bold">50</p>
+</div>
+<div>
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Unit</p>
+<p class="font-bold text-sm">2,500</p>
+</div>
+<div class="text-right">
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Total</p>
+<p class="font-extrabold text-primary">125,000</p>
+</div>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="p-4 flex flex-col sm:flex-row items-center gap-4 hover:bg-surface-container-low transition-colors">
+<div class="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-3xl">battery_charging_full</span>
+</div>
+<div class="flex-grow text-center sm:text-left">
+<h3 class="font-bold text-on-surface">Battery Packs (High Cap)</h3>
+<p class="text-xs text-on-surface-variant">Lithium-Ion 3200mAh for Model X</p>
+</div>
+<div class="grid grid-cols-3 gap-8 text-center">
+<div>
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Qty</p>
+<p class="font-bold">120</p>
+</div>
+<div>
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Unit</p>
+<p class="font-bold text-sm">840</p>
+</div>
+<div class="text-right">
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Total</p>
+<p class="font-extrabold text-primary">100,800</p>
+</div>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="p-4 flex flex-col sm:flex-row items-center gap-4 hover:bg-surface-container-low transition-colors">
+<div class="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-3xl">charging_station</span>
+</div>
+<div class="flex-grow text-center sm:text-left">
+<h3 class="font-bold text-on-surface">USB-C Flex Cables</h3>
+<p class="text-xs text-on-surface-variant">Premium Port Component</p>
+</div>
+<div class="grid grid-cols-3 gap-8 text-center">
+<div>
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Qty</p>
+<p class="font-bold">100</p>
+</div>
+<div>
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Unit</p>
+<p class="font-bold text-sm">200</p>
+</div>
+<div class="text-right">
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Total</p>
+<p class="font-extrabold text-primary">20,000</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 3: Delivery Info -->
+<div class="bg-surface-container rounded-xl shadow-sm p-6">
+<h2 class="text-sm font-extrabold tracking-tight text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">local_shipping</span>
+                Delivery Information
+            </h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="p-4 rounded-lg bg-surface-variant/50 border border-outline">
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Courier</p>
+<p class="font-bold mt-1">Pacific Logistics</p>
+</div>
+<div class="p-4 rounded-lg bg-surface-variant/50 border border-outline">
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Tracking Number</p>
+<p class="font-bold mt-1 text-[#007E85]">PL-VLP-992104</p>
+</div>
+<div class="p-4 rounded-lg bg-surface-variant/50 border border-outline">
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Delivery Time</p>
+<p class="font-bold mt-1">2023-10-18 14:30</p>
+</div>
+</div>
+<div class="mt-6 h-32 rounded-xl bg-slate-100 flex items-center justify-center overflow-hidden border border-outline">
+<img class="w-full h-full object-cover grayscale opacity-50" data-alt="simple minimal map interface showing a delivery route with a teal pin on a light grey background" data-location="Port Vila" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAU1RQhLHLzRwC0hMR-OrpB-XCFzhJtq349lsAMeKIIMauA_pU1N6s_LN8k5bZ6iJYhyn3e-rIMPlvEsWGW9FQYwOXplOFPO4-lUBjqqLffLDhfEfCGv0hJPexzOqY2DQAk_h_IUUIM-kCZ5rCgpfBKHjemQF3j5dSKQrK4AzREnlhj2XEY44oxbwRF8NQfYGAM8oC7iKlUtvLY7RtnovC1RebJcjaIH5TuCkrWGJ3PiYUVDKngHWWyJUPPYuFAubqIerdHzWfxAHl9"/>
+<div class="absolute flex items-center gap-2 bg-white/90 px-4 py-2 rounded-full shadow-lg border border-primary/20">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">location_on</span>
+<span class="text-xs font-bold">In-Transit: Port Vila Warehouse</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Action Buttons / NavBar -->
+<div class="fixed bottom-0 left-0 w-full flex flex-col z-50">
+<!-- Main Actions -->
+<div class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-[#DAE6E7] p-4 shadow-[0_-4px_12px_rgba(0,0,0,0.05)]">
+<div class="max-w-5xl mx-auto grid grid-cols-2 gap-4">
+<button class="flex items-center justify-center gap-2 bg-surface-container-high text-on-surface-variant h-12 rounded-xl font-bold transition-all active:scale-95 border border-outline">
+<span class="material-symbols-outlined">share</span>
+                    Share Report
+                </button>
+<button class="flex items-center justify-center gap-2 bg-primary text-on-primary h-12 rounded-xl font-bold shadow-lg shadow-primary/30 transition-all active:scale-95">
+<span class="material-symbols-outlined">print</span>
+                    Print Receipt
+                </button>
+</div>
+</div>
+<!-- BottomNavBar Navigation -->
+<nav class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg flex justify-around items-center h-20 pb-safe px-6 border-t border-[#DAE6E7] dark:border-slate-800">
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] hover:text-[#007E85] active:scale-90 transition-transform">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-['Manrope'] font-bold text-[10px] uppercase tracking-wider mt-1">Inventory</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#007E85] bg-[#007E85]/10 rounded-xl px-3 py-1 active:scale-90 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">local_shipping</span>
+<span class="font-['Manrope'] font-bold text-[10px] uppercase tracking-wider mt-1">Orders</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] hover:text-[#007E85] active:scale-90 transition-transform">
+<span class="material-symbols-outlined">description</span>
+<span class="font-['Manrope'] font-bold text-[10px] uppercase tracking-wider mt-1">Reports</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5E8A8D] hover:text-[#007E85] active:scale-90 transition-transform">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-['Manrope'] font-bold text-[10px] uppercase tracking-wider mt-1">Settings</span>
+</div>
+</nav>
+</div>
+</body></html>

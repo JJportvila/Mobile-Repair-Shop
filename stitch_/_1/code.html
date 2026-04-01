@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+
+<html class="light" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>综合维修管理工作台 - 瓦努阿图</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#007e85",
+                        "background-light": "#f9fafa",
+                        "background-dark": "#222a34",
+                        "accent-orange": "#f7a072",
+                        "accent-green": "#078832",
+                        "accent-blue": "#3b82f6",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-[#101818] dark:text-white transition-colors duration-200">
+<div class="relative flex min-h-screen w-full flex-col max-w-md mx-auto shadow-2xl bg-background-light dark:bg-background-dark overflow-x-hidden">
+<header class="sticky top-0 z-50 flex items-center bg-white/80 dark:bg-background-dark/80 backdrop-blur-md p-4 pb-2 justify-between border-b border-[#dae6e7] dark:border-gray-700">
+<div class="text-primary flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
+<span class="material-symbols-outlined text-2xl">account_circle</span>
+</div>
+<div class="flex flex-col flex-1 px-3">
+<h2 class="text-[#101818] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">综合维修管理工作台</h2>
+<p class="text-xs text-[#5e8a8d] dark:text-gray-400">早安, 维拉港分店</p>
+</div>
+<div class="flex items-center gap-1">
+<button class="flex size-10 items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+<span class="material-symbols-outlined text-[22px] text-[#5e8a8d]">language</span>
+</button>
+<button class="relative flex size-10 items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+<span class="material-symbols-outlined text-[22px]">notifications</span>
+<span class="absolute top-2.5 right-2.5 size-2 bg-red-500 rounded-full border-2 border-white dark:border-background-dark"></span>
+</button>
+</div>
+</header>
+<div class="p-4">
+<div class="grid grid-cols-2 gap-3">
+<div class="flex flex-col gap-2 rounded-xl p-4 bg-white dark:bg-gray-800 border border-[#dae6e7] dark:border-gray-700 shadow-sm">
+<div class="flex items-center justify-between">
+<p class="text-[#5e8a8d] dark:text-gray-400 text-sm font-medium">今日订单</p>
+<span class="material-symbols-outlined text-primary text-xl">assignment</span>
+</div>
+<p class="text-[#101818] dark:text-white tracking-tight text-3xl font-bold leading-tight">12</p>
+<p class="text-xs text-accent-green font-medium">+2 较昨日</p>
+</div>
+<div class="flex flex-col gap-2 rounded-xl p-4 bg-white dark:bg-gray-800 border border-[#dae6e7] dark:border-gray-700 shadow-sm">
+<div class="flex items-center justify-between">
+<p class="text-[#5e8a8d] dark:text-gray-400 text-sm font-medium">待维修</p>
+<span class="material-symbols-outlined text-accent-orange text-xl">build</span>
+</div>
+<p class="text-[#101818] dark:text-white tracking-tight text-3xl font-bold leading-tight">5</p>
+<p class="text-xs text-[#5e8a8d] dark:text-gray-400">3件为加急</p>
+</div>
+<div class="flex flex-col gap-2 rounded-xl p-4 bg-white dark:bg-gray-800 border border-[#dae6e7] dark:border-gray-700 shadow-sm">
+<div class="flex items-center justify-between">
+<p class="text-[#5e8a8d] dark:text-gray-400 text-sm font-medium">当日收银 (VUV)</p>
+<span class="material-symbols-outlined text-accent-green text-xl">payments</span>
+</div>
+<p class="text-[#101818] dark:text-white tracking-tight text-2xl font-bold leading-tight">48,250</p>
+<p class="text-xs text-accent-green font-medium">10笔交易</p>
+</div>
+<div class="flex flex-col gap-2 rounded-xl p-4 bg-white dark:bg-gray-800 border border-[#dae6e7] dark:border-gray-700 shadow-sm">
+<div class="flex items-center justify-between">
+<p class="text-[#5e8a8d] dark:text-gray-400 text-sm font-medium">采购订货</p>
+<span class="material-symbols-outlined text-accent-blue text-xl">shopping_cart</span>
+</div>
+<p class="text-[#101818] dark:text-white tracking-tight text-2xl font-bold leading-tight">3</p>
+<p class="text-xs text-[#5e8a8d] dark:text-gray-400">2个待入库</p>
+</div>
+<div class="flex flex-col gap-2 rounded-xl p-4 bg-white dark:bg-gray-800 border border-[#dae6e7] dark:border-gray-700 shadow-sm col-span-2">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-[#5e8a8d] dark:text-gray-400 text-sm font-medium">待取机/送还</p>
+<p class="text-[#101818] dark:text-white tracking-tight text-3xl font-bold leading-tight">8</p>
+</div>
+<div class="h-12 w-12 rounded-full bg-primary/5 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-3xl">done_all</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="px-4 grid grid-cols-2 gap-3 mb-4">
+<button class="flex items-center justify-center gap-2 bg-white dark:bg-gray-800 border border-[#dae6e7] dark:border-gray-700 h-12 rounded-xl font-bold text-sm text-[#101818] dark:text-white active:bg-gray-50 transition-colors">
+<span class="material-symbols-outlined text-primary text-xl">print</span>
+                打印票据
+            </button>
+<button class="flex items-center justify-center gap-2 bg-white dark:bg-gray-800 border border-[#dae6e7] dark:border-gray-700 h-12 rounded-xl font-bold text-sm text-[#101818] dark:text-white active:bg-gray-50 transition-colors">
+<span class="material-symbols-outlined text-primary text-xl">qr_code_scanner</span>
+                扫码登记
+            </button>
+</div>
+<div class="flex items-center justify-between px-4 pt-2 pb-2">
+<h2 class="text-[#101818] dark:text-white text-xl font-extrabold leading-tight tracking-tight">进行中任务</h2>
+<button class="text-primary text-sm font-bold">查看全部</button>
+</div>
+<div class="px-4 space-y-3 pb-24">
+<div class="group flex items-center gap-4 bg-white dark:bg-gray-800 p-4 rounded-xl border border-[#dae6e7] dark:border-gray-700 shadow-sm hover:border-primary/50 transition-colors">
+<div class="text-primary flex items-center justify-center rounded-lg bg-primary/10 shrink-0 size-12">
+<span class="material-symbols-outlined text-2xl">smartphone</span>
+</div>
+<div class="flex flex-1 flex-col justify-center min-w-0">
+<div class="flex items-center justify-between gap-2">
+<p class="text-[#101818] dark:text-white text-base font-bold truncate">智能手机 - 屏幕更换</p>
+<span class="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary">工作中</span>
+</div>
+<div class="flex items-center justify-between mt-0.5">
+<p class="text-[#5e8a8d] dark:text-gray-400 text-xs">王先生 • 尾号 8892</p>
+<p class="text-primary text-xs font-bold">12,500 VUV</p>
+</div>
+</div>
+<div class="shrink-0 pl-2">
+<span class="material-symbols-outlined text-gray-300">chevron_right</span>
+</div>
+</div>
+<div class="group flex items-center gap-4 bg-white dark:bg-gray-800 p-4 rounded-xl border border-[#dae6e7] dark:border-gray-700 shadow-sm hover:border-primary/50 transition-colors">
+<div class="text-accent-blue flex items-center justify-center rounded-lg bg-accent-blue/10 shrink-0 size-12">
+<span class="material-symbols-outlined text-2xl">air_purifier_gen</span>
+</div>
+<div class="flex flex-1 flex-col justify-center min-w-0">
+<div class="flex items-center justify-between gap-2">
+<p class="text-[#101818] dark:text-white text-base font-bold truncate">空气净化器 - 电机故障</p>
+<span class="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-accent-orange/10 text-accent-orange">待备件</span>
+</div>
+<div class="flex items-center justify-between mt-0.5">
+<p class="text-[#5e8a8d] dark:text-gray-400 text-xs">李女士 • 尾号 0341</p>
+<p class="text-accent-orange text-xs font-bold">待报价</p>
+</div>
+</div>
+<div class="shrink-0 pl-2">
+<span class="material-symbols-outlined text-gray-300">chevron_right</span>
+</div>
+</div>
+<div class="group flex items-center gap-4 bg-white dark:bg-gray-800 p-4 rounded-xl border border-[#dae6e7] dark:border-gray-700 shadow-sm hover:border-primary/50 transition-colors">
+<div class="text-gray-500 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 shrink-0 size-12">
+<span class="material-symbols-outlined text-2xl">coffee_maker</span>
+</div>
+<div class="flex flex-1 flex-col justify-center min-w-0">
+<div class="flex items-center justify-between gap-2">
+<p class="text-[#101818] dark:text-white text-base font-bold truncate">咖啡机 - 加热模组损坏</p>
+<span class="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-gray-100 dark:bg-gray-700 text-gray-500">待检视</span>
+</div>
+<div class="flex items-center justify-between mt-1">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm text-accent-orange">priority_high</span>
+<p class="text-accent-orange text-xs font-bold">加急处理</p>
+</div>
+<p class="text-gray-500 text-xs font-bold">8,200 VUV</p>
+</div>
+</div>
+<div class="shrink-0 pl-2">
+<span class="material-symbols-outlined text-gray-300">chevron_right</span>
+</div>
+</div>
+</div>
+<button class="fixed bottom-24 right-6 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white shadow-xl shadow-primary/40 active:scale-95 transition-transform z-40 border-2 border-white dark:border-gray-700">
+<span class="material-symbols-outlined text-2xl">print</span>
+</button>
+<nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white/95 dark:bg-background-dark/95 backdrop-blur-lg border-t border-[#dae6e7] dark:border-gray-700 flex justify-around items-center py-3 px-4 pb-6">
+<div class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-[24px]">dashboard</span>
+<span class="text-[10px] font-bold">工作台</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-gray-400">
+<span class="material-symbols-outlined text-[24px]">inventory_2</span>
+<span class="text-[10px] font-medium">仓储</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-gray-400">
+<span class="material-symbols-outlined text-[24px]">account_balance_wallet</span>
+<span class="text-[10px] font-medium">财务</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-gray-400">
+<span class="material-symbols-outlined text-[24px]">group</span>
+<span class="text-[10px] font-medium">客户</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-gray-400">
+<span class="material-symbols-outlined text-[24px]">settings</span>
+<span class="text-[10px] font-medium">设置</span>
+</div>
+</nav>
+</div>
+</body></html>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "outline-variant": "#bdc9c9",
+              "on-primary-fixed": "#002022",
+              "inverse-surface": "#222a34",
+              "on-tertiary-fixed": "#321200",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "tertiary-fixed-dim": "#ffb68b",
+              "secondary-fixed": "#c6e9ec",
+              "primary-container": "#e0f2f3",
+              "outline": "#dae6e7",
+              "on-secondary": "#ffffff",
+              "on-error": "#ffffff",
+              "on-tertiary-container": "#321200",
+              "on-surface": "#101818",
+              "surface-tint": "#007e85",
+              "surface-container-lowest": "#ffffff",
+              "inverse-primary": "#78d5dc",
+              "surface-variant": "#f0f4f4",
+              "on-secondary-container": "#48686b",
+              "error": "#ef4444",
+              "background": "#f9fafa",
+              "on-tertiary-fixed-variant": "#71370c",
+              "surface-container-high": "#ebefee",
+              "surface": "#f9fafa",
+              "on-tertiary": "#ffffff",
+              "tertiary-container": "#ffdbc8",
+              "primary-fixed": "#94f1f9",
+              "error-container": "#fee2e2",
+              "secondary-container": "#c3e6e9",
+              "surface-container-highest": "#dae6e7",
+              "on-primary": "#ffffff",
+              "inverse-on-surface": "#f9fafa",
+              "primary": "#007e85",
+              "on-surface-variant": "#5e8a8d",
+              "surface-dim": "#d7dbdb",
+              "secondary-fixed-dim": "#aacdd0",
+              "on-error-container": "#93000a",
+              "surface-container": "#ffffff",
+              "surface-container-low": "#f6fafa",
+              "primary-fixed-dim": "#78d5dc",
+              "tertiary-fixed": "#ffdbc8",
+              "surface-bright": "#ffffff",
+              "tertiary": "#f7a072",
+              "on-primary-fixed-variant": "#004f54",
+              "on-background": "#101818",
+              "on-secondary-fixed": "#002022",
+              "on-primary-container": "#002022",
+              "secondary": "#436466"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-[#DAE6E7] dark:border-slate-800 shadow-sm flex items-center justify-between px-4 h-16 w-full">
+<div class="flex items-center gap-3">
+<button class="p-2 text-[#007E85] active:scale-95 duration-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors rounded-full">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-manrope font-extrabold text-xl tracking-tight text-[#101818]">Revenue Analysis</h1>
+</div>
+<button class="p-2 text-[#007E85] active:scale-95 duration-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors rounded-full">
+<span class="material-symbols-outlined">calendar_today</span>
+</button>
+</header>
+<main class="pt-20 px-4 space-y-6 max-w-md mx-auto">
+<!-- Summary Card -->
+<section class="bg-surface-container rounded-xl p-6 shadow-sm border border-outline">
+<div class="flex justify-between items-start mb-2">
+<span class="text-on-surface-variant text-sm font-bold uppercase tracking-wider">本月总收入</span>
+<span class="flex items-center text-[#078832] bg-[#078832]/10 px-2 py-0.5 rounded-full text-xs font-bold">
+<span class="material-symbols-outlined text-sm mr-1">trending_up</span>
+                    +12.5%
+                </span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-extrabold tracking-tight text-on-surface">142,500</span>
+<span class="text-on-surface-variant font-bold">VUV</span>
+</div>
+<p class="text-on-surface-variant text-xs mt-4 leading-relaxed">
+                对比上月增加 15,830 VUV。目前已达到本月目标的 85%。
+            </p>
+</section>
+<!-- Daily Trend Chart (Asymmetric Bento Style) -->
+<section class="space-y-4">
+<h2 class="text-xl font-extrabold text-on-surface tracking-tight">每日营收趋势</h2>
+<div class="bg-surface-container rounded-xl p-5 shadow-sm border border-outline">
+<div class="flex items-end justify-between h-32 gap-2 mb-4">
+<div class="w-full bg-secondary-container rounded-t-lg transition-all hover:bg-primary" style="height: 40%"></div>
+<div class="w-full bg-secondary-container rounded-t-lg transition-all hover:bg-primary" style="height: 65%"></div>
+<div class="w-full bg-secondary-container rounded-t-lg transition-all hover:bg-primary" style="height: 45%"></div>
+<div class="w-full bg-secondary-container rounded-t-lg transition-all hover:bg-primary" style="height: 80%"></div>
+<div class="w-full bg-secondary-container rounded-t-lg transition-all hover:bg-primary" style="height: 55%"></div>
+<div class="w-full bg-primary rounded-t-lg" style="height: 95%"></div>
+<div class="w-full bg-secondary-container rounded-t-lg transition-all hover:bg-primary" style="height: 70%"></div>
+</div>
+<div class="flex justify-between text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">
+<span>周一</span><span>周二</span><span>周三</span><span>周四</span><span>周五</span><span>周六</span><span>周日</span>
+</div>
+</div>
+</section>
+<!-- Payment Methods & Top Services (Bento Layout) -->
+<div class="grid grid-cols-2 gap-4">
+<!-- Payment Methods -->
+<section class="col-span-1 bg-surface-container rounded-xl p-4 shadow-sm border border-outline">
+<h3 class="text-sm font-extrabold text-on-surface mb-4">支付方式</h3>
+<div class="space-y-3">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<span class="text-xs font-bold text-on-surface-variant">现金 (60%)</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-tertiary"></div>
+<span class="text-xs font-bold text-on-surface-variant">银行转账 (30%)</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-secondary"></div>
+<span class="text-xs font-bold text-on-surface-variant">支票 (10%)</span>
+</div>
+</div>
+</section>
+<!-- Image/Mood Tile -->
+<div class="col-span-1 relative rounded-xl overflow-hidden shadow-sm border border-outline h-full min-h-[140px]">
+<img alt="repair tools" class="absolute inset-0 w-full h-full object-cover" data-alt="Close-up of professional repair tools on a clean workbench with technical parts and blue ambient lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuClFuEcrGLDUQ_NV2Pi_7HDwOoHebAS45iHa5U1GrFIzUgR8Jt2aadJG-O9-HDeawUON_NcRvKcpc2KQsKTLE3sNcNGj8nYASRJT0vDd-e73rE8tD9RmJQ_4nlN2PZY890_A6p4tJBnvv4dLiVyqY6in9bcbs91keJtqdrNqpygJfWJRar7uFX4MC7pY1Ewma7fKM638XxZLZvLrECmnvniIQ8dbE3M-Vr398UyPnTINQ72Wr9FmbWfG8drQEkNJzJMaaVC4ehH8y46"/>
+<div class="absolute inset-0 bg-primary/20 backdrop-blur-[2px]"></div>
+<div class="absolute bottom-3 left-3 text-white">
+<p class="text-[10px] font-bold uppercase tracking-tighter opacity-80">工作效率</p>
+<p class="text-lg font-extrabold leading-none">卓越运作</p>
+</div>
+</div>
+</div>
+<!-- Top Performing Services -->
+<section class="space-y-4">
+<h2 class="text-xl font-extrabold text-on-surface tracking-tight">热门维修服务</h2>
+<div class="space-y-3">
+<div class="bg-surface-container rounded-xl p-4 flex items-center justify-between shadow-sm border border-outline">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">smartphone</span>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">屏幕更换</p>
+<p class="text-[10px] text-on-surface-variant font-bold uppercase tracking-wider">42 次服务</p>
+</div>
+</div>
+<p class="text-sm font-extrabold text-primary">54,600 VUV</p>
+</div>
+<div class="bg-surface-container rounded-xl p-4 flex items-center justify-between shadow-sm border border-outline">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">battery_charging_full</span>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">电池更换</p>
+<p class="text-[10px] text-on-surface-variant font-bold uppercase tracking-wider">28 次服务</p>
+</div>
+</div>
+<p class="text-sm font-extrabold text-primary">32,200 VUV</p>
+</div>
+</div>
+</section>
+<!-- Recent Transactions -->
+<section class="space-y-4">
+<div class="flex justify-between items-center">
+<h2 class="text-xl font-extrabold text-on-surface tracking-tight">最近交易</h2>
+<button class="text-xs font-bold text-primary uppercase tracking-widest">查看全部</button>
+</div>
+<div class="bg-surface-container rounded-xl overflow-hidden shadow-sm border border-outline divide-y divide-outline">
+<div class="p-4 flex items-center justify-between hover:bg-surface-variant transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-sm text-secondary">payments</span>
+</div>
+<div>
+<p class="text-xs font-bold text-on-surface">客户 #8291 - 屏幕维修</p>
+<p class="text-[10px] text-on-surface-variant font-medium">今天, 14:30 · 现金</p>
+</div>
+</div>
+<p class="text-xs font-extrabold text-on-surface">+6,500 VUV</p>
+</div>
+<div class="p-4 flex items-center justify-between hover:bg-surface-variant transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-sm text-secondary">account_balance</span>
+</div>
+<div>
+<p class="text-xs font-bold text-on-surface">客户 #8289 - 进水清理</p>
+<p class="text-[10px] text-on-surface-variant font-medium">今天, 11:15 · 转账</p>
+</div>
+</div>
+<p class="text-xs font-extrabold text-on-surface">+12,000 VUV</p>
+</div>
+<div class="p-4 flex items-center justify-between hover:bg-surface-variant transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-sm text-secondary">payments</span>
+</div>
+<div>
+<p class="text-xs font-bold text-on-surface">客户 #8285 - 充电口更换</p>
+<p class="text-[10px] text-on-surface-variant font-medium">昨天, 17:45 · 现金</p>
+</div>
+</div>
+<p class="text-xs font-extrabold text-on-surface">+4,500 VUV</p>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-6 py-3 pb-safe bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-[#DAE6E7] dark:border-slate-800 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50 rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] px-3 py-1 hover:text-[#007E85] transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] px-3 py-1 hover:text-[#007E85] transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">build</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">Workshops</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-[#007E85]/10 text-[#007E85] rounded-xl px-3 py-1 active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">Revenue</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] px-3 py-1 hover:text-[#007E85] transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-manrope font-bold text-[10px] uppercase tracking-wider mt-1">Profile</span>
+</a>
+</nav>
+<!-- Floating Action Button (FAB) - Suppression on Revenue detailed screen as per logic if needed, but keeping for workflow trigger as per DESIGN SYSTEM -->
+<button class="fixed bottom-24 right-6 w-14 h-14 bg-[#007E85] text-white rounded-full shadow-xl shadow-[#007E85]/40 flex items-center justify-center active:scale-95 transition-transform z-40">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">print</span>
+</button>
+</body></html>

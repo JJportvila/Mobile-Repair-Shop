@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Parts Requisition - Vila Port Repair</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface": "#f9fafa",
+              "on-tertiary-container": "#321200",
+              "on-tertiary": "#ffffff",
+              "secondary-fixed": "#c6e9ec",
+              "on-secondary": "#ffffff",
+              "on-secondary-fixed-variant": "#2b4c4f",
+              "surface-container": "#ffffff",
+              "secondary-fixed-dim": "#aacdd0",
+              "error": "#ef4444",
+              "surface-bright": "#ffffff",
+              "on-background": "#101818",
+              "surface-container-low": "#f6fafa",
+              "inverse-on-surface": "#f9fafa",
+              "primary-container": "#e0f2f3",
+              "outline": "#dae6e7",
+              "surface-container-highest": "#dae6e7",
+              "on-primary-fixed": "#002022",
+              "on-surface": "#101818",
+              "inverse-surface": "#222a34",
+              "surface-dim": "#d7dbdb",
+              "primary-fixed": "#94f1f9",
+              "error-container": "#fee2e2",
+              "secondary-container": "#c3e6e9",
+              "on-error": "#ffffff",
+              "tertiary-fixed-dim": "#ffb68b",
+              "surface-container-lowest": "#ffffff",
+              "on-surface-variant": "#5e8a8d",
+              "on-primary-fixed-variant": "#004f54",
+              "inverse-primary": "#78d5dc",
+              "tertiary-container": "#ffdbc8",
+              "on-error-container": "#93000a",
+              "surface-tint": "#007e85",
+              "primary": "#007e85",
+              "tertiary-fixed": "#ffdbc8",
+              "tertiary": "#f7a072",
+              "on-secondary-container": "#48686b",
+              "secondary": "#436466",
+              "on-tertiary-fixed": "#321200",
+              "background": "#f9fafa",
+              "outline-variant": "#bdc9c9",
+              "on-primary": "#ffffff",
+              "on-tertiary-fixed-variant": "#71370c",
+              "on-secondary-fixed": "#002022",
+              "on-primary-container": "#002022",
+              "primary-fixed-dim": "#78d5dc",
+              "surface-container-high": "#ebefee",
+              "surface-variant": "#f0f4f4"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface antialiased min-h-screen pb-24">
+<!-- TopAppBar Component -->
+<header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md fixed top-0 z-50 w-full px-4 h-16 border-b border-outline shadow-sm flex items-center justify-between">
+<div class="flex items-center gap-3">
+<button class="material-symbols-outlined text-on-surface-variant p-2 hover:bg-slate-100 rounded-full transition-colors active:scale-95">arrow_back</button>
+<h1 class="font-manrope font-extrabold tracking-tight text-xl text-[#007E85]">Vila Port Repair</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="text-on-surface-variant font-medium text-sm hidden md:block">RO-2023-8892</span>
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="professional male technician avatar with short dark hair and a friendly expression wearing work uniform" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcZZrcBmmOTzXIMKUN0iloIk6qBYqD3Puv469nlHbtjStd1YlmeBsTgAbcDh5Eh5QjkeMjVHXyFzmZpbaeVUMBw-egDFRUR_9yy5k9laJpOHkcC38wzTIoHauHUbVecnIBiAmwH9wLfY5Wn9z3WIkmvVSjdiZTNxpl6J6Y5ZZ05HOzEPYbNzIyUSP2aITpITek7keFT0Cr6-mbeG1Kd5zpZu_ZL8gaW1v2lZ8vytFtxovEE4DbEuKgmfBCAdXH_hiU7XGdrmmQ6sYy"/>
+</div>
+<span class="material-symbols-outlined text-[#007E85] cursor-pointer active:scale-95 duration-150">notifications</span>
+</div>
+</header>
+<main class="pt-24 px-4 max-w-4xl mx-auto space-y-6">
+<!-- Context Header -->
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-bold uppercase tracking-wider bg-tertiary-container text-on-tertiary-container px-2 py-0.5 rounded">Requisition</span>
+<span class="text-on-surface-variant text-sm font-medium">Order Reference: RO-2023-8892</span>
+</div>
+<h2 class="text-3xl font-extrabold tracking-tight text-on-surface">Parts Deduction</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Form Section -->
+<section class="md:col-span-2 space-y-6">
+<!-- Part Selector Card -->
+<div class="bg-surface-container rounded-xl shadow-sm p-6 border border-outline">
+<label class="block text-sm font-bold text-on-surface mb-3">Search Inventory</label>
+<div class="relative mb-6">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full pl-10 pr-4 py-3 rounded-xl border-outline focus:border-primary focus:ring-1 focus:ring-primary bg-surface-container-low placeholder:text-on-surface-variant/50 transition-all" placeholder="Search for 'iPhone 14 Screen'..." type="text"/>
+</div>
+<!-- Search Result / Active Selection -->
+<div class="flex items-start gap-4 p-4 rounded-xl bg-primary-container/30 border border-primary/10">
+<div class="w-16 h-16 rounded-lg bg-white flex items-center justify-center shadow-sm overflow-hidden">
+<img alt="iPhone 14 Screen" class="w-full h-full object-cover" data-alt="close-up high resolution photo of an iPhone 14 replacement screen assembly in professional packaging" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhHCOkb8Hct_CzOw1YWj7k05KcS5DYkz4RXPNHyWdqdRERGR723jYCHj5_2Cg-c8kbFfxaz6u7-khSq3kqPzXIfpp6witsY87a8DdZLSjq5ylfwuJXxFQdmmflWroAKRjw9OAH-DOtYICGtNSbQW1WXTmUhbamD0FCxfzxp0RQ8LzaNjDNhEy1GdOg7wP0_GBx0Z0IBjO4Fy3WFtwXII_dC1nuK5FxOAe7YCwk5uZ4p6PvtSFvThQ3ZRc_Yc7cwrX7jyCbgcEInYCI"/>
+</div>
+<div class="flex-1">
+<h3 class="font-bold text-on-primary-container">iPhone 14 Pro OLED Display Assembly</h3>
+<p class="text-xs text-on-surface-variant mb-2">SKU: DISP-IP14P-BLK</p>
+<div class="flex items-center gap-4">
+<div class="flex flex-col">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter">Current Stock</span>
+<span class="text-lg font-extrabold text-[#007E85]">14 Units</span>
+</div>
+<div class="h-8 w-px bg-outline"></div>
+<div class="flex flex-col">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter">Unit Price</span>
+<span class="text-lg font-extrabold text-on-surface">42,500 VUV</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Transaction Details Card -->
+<div class="bg-surface-container rounded-xl shadow-sm p-6 border border-outline space-y-5">
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-2">
+<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">Quantity to Deduct</label>
+<div class="flex items-center gap-1">
+<button class="w-10 h-10 rounded-lg bg-surface-container-high border border-outline flex items-center justify-center active:scale-95 transition-transform">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<input class="w-full text-center py-2 font-bold text-lg border-none focus:ring-0 bg-transparent" type="number" value="1"/>
+<button class="w-10 h-10 rounded-lg bg-surface-container-high border border-outline flex items-center justify-center active:scale-95 transition-transform">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+<div class="space-y-2">
+<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">Reason for Deduction</label>
+<select class="w-full rounded-xl border-outline bg-surface-container-low py-2.5 font-medium text-on-surface focus:border-primary focus:ring-primary">
+<option>Customer Repair</option>
+<option>Internal Use</option>
+<option>Scrap / Damaged</option>
+<option>Warranty Replacement</option>
+</select>
+</div>
+</div>
+<div class="space-y-2">
+<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">Authorized Personnel</label>
+<div class="relative">
+<select class="w-full pl-10 pr-4 rounded-xl border-outline bg-surface-container-low py-2.5 font-medium text-on-surface focus:border-primary focus:ring-primary appearance-none">
+<option>Select Authorized Supervisor</option>
+<option>Robert Kalmet (Workshop Manager)</option>
+<option>Sera Tanna (Senior Lead)</option>
+<option>Jean-Luc Pierre (Inventory Control)</option>
+</select>
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">verified_user</span>
+</div>
+</div>
+<div class="space-y-2">
+<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">Notes (Optional)</label>
+<textarea class="w-full rounded-xl border-outline bg-surface-container-low p-3 placeholder:text-on-surface-variant/50 focus:border-primary focus:ring-primary" placeholder="Additional details about the requisition..." rows="3"></textarea>
+</div>
+</div>
+</section>
+<!-- Summary Sidebar -->
+<aside class="space-y-6">
+<!-- Cost Impact Card -->
+<div class="bg-[#007E85] text-white rounded-xl shadow-xl p-6 relative overflow-hidden">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+<h3 class="text-[10px] font-bold uppercase tracking-widest opacity-80 mb-4">Cost Summary</h3>
+<div class="space-y-4">
+<div class="flex justify-between items-end border-b border-white/10 pb-4">
+<span class="text-sm">Total Deduction</span>
+<div class="text-right">
+<span class="text-2xl font-black">42,500</span>
+<span class="text-xs font-bold ml-1">VUV</span>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-xs opacity-70">
+<span>Part Subtotal</span>
+<span>42,500 VUV</span>
+</div>
+<div class="flex justify-between text-xs opacity-70">
+<span>Handling Fee</span>
+<span>0 VUV</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Inventory Snapshot -->
+<div class="bg-surface-container rounded-xl p-5 border border-outline">
+<h4 class="text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">inventory</span>
+                        Warehouse 1A Status
+                    </h4>
+<div class="space-y-3">
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-container-low">
+<span class="text-sm font-medium">Bin Location</span>
+<span class="text-sm font-bold text-primary">ROW-B4-S2</span>
+</div>
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-container-low">
+<span class="text-sm font-medium">Reorder Level</span>
+<span class="text-sm font-bold">5 Units</span>
+</div>
+<div class="flex items-center justify-between p-3 rounded-lg bg-error-container/20">
+<span class="text-sm font-medium text-error">Est. Post-Deduction</span>
+<span class="text-sm font-bold text-error">13 Units</span>
+</div>
+</div>
+</div>
+<!-- Primary Action -->
+<button class="w-full bg-[#007E85] hover:bg-[#005F65] text-white py-4 rounded-xl font-bold shadow-lg shadow-[#007E85]/30 flex items-center justify-center gap-3 transition-all active:scale-95 group">
+<span>Confirm Deduction</span>
+<span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">send</span>
+</button>
+<p class="text-[10px] text-center text-on-surface-variant leading-relaxed">
+                    By clicking confirm, you authorize the immediate deduction of stock from the central inventory and link the cost to RO-2023-8892.
+                </p>
+</aside>
+</div>
+</main>
+<!-- BottomNavBar Component -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-2 py-3 pb-safe bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg z-50 border-t border-outline shadow-xl dark:shadow-none">
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 hover:text-[#007E85] active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">build</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Workbench</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#007E85] dark:text-[#00A3AD] bg-[#007E85]/10 rounded-xl px-3 py-1 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Parts</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 hover:text-[#007E85] active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Receipts</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 hover:text-[#007E85] active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">rate_review</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">Reviews</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E8A8D] dark:text-slate-500 hover:text-[#007E85] active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">menu</span>
+<span class="font-manrope text-[10px] font-bold uppercase tracking-wider mt-1">More</span>
+</a>
+</nav>
+</body></html>
