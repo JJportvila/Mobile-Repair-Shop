@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
+import nodemailer from "nodemailer";
 import pg from "pg";
 import selfsigned from "selfsigned";
 import {
@@ -48,12 +49,14 @@ import {
   pgDeleteStaffPermission,
   pgGetBusinessHoursSettings,
   pgGetLanguageSettings,
+  pgGetMailServerSettings,
   pgGetOrderFormOptionsInternal,
   pgGetPrintSettings,
   pgGetStaffPermissionSettings,
   pgGetStoreSettings,
   pgUpdateBusinessHoursSettings,
   pgUpdateLanguageSettings,
+  pgUpdateMailServerSettings,
   pgUpdateOrderFormOption,
   pgUpdatePrintSettings,
   pgUpdateReorderSettings,
@@ -126,6 +129,414 @@ async function pgWithTransaction(callback) {
   } finally {
     client.release();
   }
+}
+
+async function ensurePostgresSchema() {
+  await pgQuery(`
+    ALTER TABLE order_intake
+    ADD COLUMN IF NOT EXISTS battery_health TEXT
+  `);
+
+  await pgQuery(`
+    ALTER TABLE order_intake
+    ADD COLUMN IF NOT EXISTS storage_capacity TEXT
+  `);
+
+  await pgQuery(`
+    CREATE TABLE IF NOT EXISTS settings_mail_server (
+      id INTEGER PRIMARY KEY,
+      smtp_host TEXT NOT NULL DEFAULT '',
+      smtp_port INTEGER NOT NULL DEFAULT 587,
+      smtp_secure INTEGER NOT NULL DEFAULT 0,
+      smtp_user TEXT NOT NULL DEFAULT '',
+      smtp_password TEXT NOT NULL DEFAULT '',
+      smtp_from_name TEXT NOT NULL DEFAULT 'Vila Port Repair Team',
+      smtp_from_email TEXT NOT NULL DEFAULT '',
+      pop_host TEXT NOT NULL DEFAULT '',
+      pop_port INTEGER NOT NULL DEFAULT 110,
+      pop_user TEXT NOT NULL DEFAULT '',
+      pop_password TEXT NOT NULL DEFAULT '',
+      updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  await pgQuery(`
+    INSERT INTO settings_mail_server (
+      id, smtp_host, smtp_port, smtp_secure, smtp_user, smtp_password, smtp_from_name, smtp_from_email,
+      pop_host, pop_port, pop_user, pop_password
+    )
+    VALUES (1, '', 587, 0, '', '', 'Vila Port Repair Team', '', '', 110, '', '')
+    ON CONFLICT (id) DO NOTHING
+  `);
+
+  await pgQuery(`
+    CREATE TABLE IF NOT EXISTS quotes (
+      id SERIAL PRIMARY KEY,
+      quote_no TEXT NOT NULL UNIQUE,
+      customer_id INTEGER REFERENCES customers(id) ON DELETE SET NULL,
+      customer_name TEXT NOT NULL DEFAULT '',
+      customer_phone TEXT NOT NULL DEFAULT '',
+      customer_email TEXT NOT NULL DEFAULT '',
+      device_name TEXT NOT NULL DEFAULT '',
+      service_type TEXT NOT NULL DEFAULT '',
+      valid_until DATE,
+      notes TEXT NOT NULL DEFAULT '',
+      subtotal INTEGER NOT NULL DEFAULT 0,
+      vat_amount INTEGER NOT NULL DEFAULT 0,
+      total_amount INTEGER NOT NULL DEFAULT 0,
+      status TEXT NOT NULL DEFAULT 'draft',
+      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  await pgQuery(`
+    CREATE TABLE IF NOT EXISTS quote_items (
+      id SERIAL PRIMARY KEY,
+      quote_id INTEGER NOT NULL REFERENCES quotes(id) ON DELETE CASCADE,
+      item_type TEXT NOT NULL DEFAULT 'part',
+      part_id INTEGER REFERENCES parts(id) ON DELETE SET NULL,
+      name TEXT NOT NULL,
+      description TEXT NOT NULL DEFAULT '',
+      quantity NUMERIC NOT NULL DEFAULT 1,
+      unit_price INTEGER NOT NULL DEFAULT 0,
+      total_price INTEGER NOT NULL DEFAULT 0,
+      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  await pgQuery(`
+    CREATE TABLE IF NOT EXISTS pos_sales (
+      id SERIAL PRIMARY KEY,
+      sale_no TEXT NOT NULL UNIQUE,
+      customer_id INTEGER REFERENCES customers(id) ON DELETE SET NULL,
+      customer_name TEXT NOT NULL DEFAULT '',
+      customer_phone TEXT NOT NULL DEFAULT '',
+      subtotal INTEGER NOT NULL DEFAULT 0,
+      vat_amount INTEGER NOT NULL DEFAULT 0,
+      total_amount INTEGER NOT NULL DEFAULT 0,
+      payment_method TEXT NOT NULL DEFAULT 'Cash',
+      note TEXT NOT NULL DEFAULT '',
+      status TEXT NOT NULL DEFAULT 'paid',
+      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  await pgQuery(`
+    CREATE TABLE IF NOT EXISTS pos_sale_items (
+      id SERIAL PRIMARY KEY,
+      sale_id INTEGER NOT NULL REFERENCES pos_sales(id) ON DELETE CASCADE,
+      part_id INTEGER REFERENCES parts(id) ON DELETE SET NULL,
+      category TEXT NOT NULL DEFAULT '',
+      name TEXT NOT NULL,
+      description TEXT NOT NULL DEFAULT '',
+      quantity NUMERIC NOT NULL DEFAULT 1,
+      unit_price INTEGER NOT NULL DEFAULT 0,
+      total_price INTEGER NOT NULL DEFAULT 0,
+      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  const quoteCount = Number((await pgOne(`SELECT COUNT(*)::int AS count FROM quotes`))?.count ?? 0);
+  if (!quoteCount) {
+    const seedOrder = await pgOne(`
+      SELECT o.*, c.name AS customer_name, c.phone AS customer_phone, c.email AS customer_email
+      FROM orders o
+      LEFT JOIN customers c ON c.id = o.customer_id
+      ORDER BY o.id ASC
+      LIMIT 1
+    `);
+
+    if (seedOrder) {
+      const insertedQuote = await pgOne(`
+        INSERT INTO quotes (
+          quote_no, customer_id, customer_name, customer_phone, customer_email, device_name,
+          service_type, valid_until, notes, subtotal, vat_amount, total_amount, status
+        )
+        VALUES (
+          'QT-1001',
+          $1,
+          $2,
+          $3,
+          $4,
+          $5,
+          $6,
+          CURRENT_DATE + INTERVAL '7 days',
+          $7,
+          $8,
+          0,
+          $8,
+          'draft'
+        )
+        RETURNING id
+      `, [
+        seedOrder.customer_id,
+        seedOrder.customer_name ?? "",
+        seedOrder.customer_phone ?? "",
+        seedOrder.customer_email ?? "",
+        seedOrder.device_name ?? "",
+        seedOrder.issue_summary ?? "综合维修",
+        seedOrder.notes ?? "",
+        Number(seedOrder.amount ?? 0),
+      ]);
+
+      if (insertedQuote?.id) {
+        const orderParts = await pgQuery(`
+          SELECT op.part_id, op.quantity, op.unit_price, p.name
+          FROM order_parts op
+          LEFT JOIN parts p ON p.id = op.part_id
+          WHERE op.order_id = $1
+        `, [seedOrder.id]);
+
+        if (orderParts.length) {
+          for (const item of orderParts) {
+            await pgQuery(`
+              INSERT INTO quote_items (
+                quote_id, item_type, part_id, name, description, quantity, unit_price, total_price
+              )
+              VALUES ($1, 'part', $2, $3, '报价配件', $4, $5, $6)
+            `, [
+              insertedQuote.id,
+              item.part_id,
+              item.name ?? "配件",
+              Number(item.quantity ?? 1),
+              Number(item.unit_price ?? 0),
+              Math.round(Number(item.quantity ?? 1) * Number(item.unit_price ?? 0)),
+            ]);
+          }
+        } else {
+          await pgQuery(`
+            INSERT INTO quote_items (
+              quote_id, item_type, name, description, quantity, unit_price, total_price
+            )
+            VALUES ($1, 'labor', '维修工费', '基础检测与安装服务', 1, $2, $2)
+          `, [insertedQuote.id, Number(seedOrder.amount ?? 0)]);
+        }
+      }
+    }
+  }
+
+  const posCount = Number((await pgOne(`SELECT COUNT(*)::int AS count FROM pos_sales`))?.count ?? 0);
+  if (!posCount) {
+    const seedCustomer = await pgOne(`SELECT * FROM customers ORDER BY id ASC LIMIT 1`);
+    const seedParts = await pgQuery(`SELECT * FROM parts ORDER BY id ASC LIMIT 2`);
+    const subtotal = seedParts.reduce((sum, item) => sum + Number(item.unit_price ?? 0), 0);
+    const vatAmount = 0;
+    const totalAmount = subtotal + vatAmount;
+    const insertedSale = await pgOne(`
+      INSERT INTO pos_sales (
+        sale_no, customer_id, customer_name, customer_phone, subtotal, vat_amount, total_amount, payment_method, note, status
+      )
+      VALUES ('POS-1001', $1, $2, $3, $4, $5, $6, 'Cash', '门店收银首单', 'paid')
+      RETURNING id
+    `, [
+      seedCustomer?.id ?? null,
+      seedCustomer?.name ?? "门店散客",
+      seedCustomer?.phone ?? "",
+      subtotal,
+      vatAmount,
+      totalAmount,
+    ]);
+
+    if (insertedSale?.id) {
+      for (const part of seedParts) {
+        await pgQuery(`
+          INSERT INTO pos_sale_items (
+            sale_id, part_id, category, name, description, quantity, unit_price, total_price
+          )
+          VALUES ($1, $2, $3, $4, 'POS 收银商品', 1, $5, $5)
+        `, [
+          insertedSale.id,
+          part.id,
+          part.category ?? "Parts",
+          part.name,
+          Number(part.unit_price ?? 0),
+        ]);
+      }
+    }
+  }
+}
+
+async function getNextSequenceCode(tableName, columnName, prefix, digits = 4) {
+  const row = await pgOne(`
+    SELECT ${columnName} AS code
+    FROM ${tableName}
+    WHERE ${columnName} LIKE $1
+    ORDER BY created_at DESC, id DESC
+    LIMIT 1
+  `, [`${prefix}-%`]);
+  const current = Number(String(row?.code ?? "").split("-")[1] ?? 0);
+  return `${prefix}-${String(current + 1).padStart(digits, "0")}`;
+}
+
+async function getQuoteByIdentifier(identifier) {
+  const quote = await pgOne(`
+    SELECT *
+    FROM quotes
+    WHERE quote_no = $1 OR id::text = $1
+    LIMIT 1
+  `, [String(identifier)]);
+  if (!quote) return null;
+  const items = await pgQuery(`
+    SELECT *
+    FROM quote_items
+    WHERE quote_id = $1
+    ORDER BY id ASC
+  `, [quote.id]);
+  return {
+    id: quote.id,
+    quoteNo: quote.quote_no,
+    customerId: quote.customer_id,
+    customerName: quote.customer_name,
+    customerPhone: quote.customer_phone,
+    customerEmail: quote.customer_email,
+    deviceName: quote.device_name,
+    serviceType: quote.service_type,
+    validUntil: String(quote.valid_until ?? "").slice(0, 10),
+    notes: quote.notes,
+    subtotal: Number(quote.subtotal ?? 0),
+    subtotalFormatted: formatMoney(quote.subtotal ?? 0),
+    vatAmount: Number(quote.vat_amount ?? 0),
+    vatAmountFormatted: formatMoney(quote.vat_amount ?? 0),
+    totalAmount: Number(quote.total_amount ?? 0),
+    totalAmountFormatted: formatMoney(quote.total_amount ?? 0),
+    createdAt: quote.created_at,
+    status: quote.status,
+    items: items.map((item) => ({
+      id: item.id,
+      itemType: item.item_type,
+      partId: item.part_id,
+      name: item.name,
+      description: item.description,
+      quantity: Number(item.quantity ?? 0),
+      unitPrice: Number(item.unit_price ?? 0),
+      unitPriceFormatted: formatMoney(item.unit_price ?? 0),
+      totalPrice: Number(item.total_price ?? 0),
+      totalPriceFormatted: formatMoney(item.total_price ?? 0),
+    })),
+  };
+}
+
+async function getPosSaleByIdentifier(identifier) {
+  const sale = await pgOne(`
+    SELECT *
+    FROM pos_sales
+    WHERE sale_no = $1 OR id::text = $1
+    LIMIT 1
+  `, [String(identifier)]);
+  if (!sale) return null;
+  const items = await pgQuery(`
+    SELECT *
+    FROM pos_sale_items
+    WHERE sale_id = $1
+    ORDER BY id ASC
+  `, [sale.id]);
+  return {
+    id: sale.id,
+    saleNo: sale.sale_no,
+    customerId: sale.customer_id,
+    customerName: sale.customer_name,
+    customerPhone: sale.customer_phone,
+    subtotal: Number(sale.subtotal ?? 0),
+    subtotalFormatted: formatMoney(sale.subtotal ?? 0),
+    vatAmount: Number(sale.vat_amount ?? 0),
+    vatAmountFormatted: formatMoney(sale.vat_amount ?? 0),
+    totalAmount: Number(sale.total_amount ?? 0),
+    totalAmountFormatted: formatMoney(sale.total_amount ?? 0),
+    paymentMethod: sale.payment_method,
+    status: sale.status,
+    note: sale.note,
+    createdAt: sale.created_at,
+    items: items.map((item) => ({
+      id: item.id,
+      partId: item.part_id,
+      category: item.category,
+      name: item.name,
+      description: item.description,
+      quantity: Number(item.quantity ?? 0),
+      unitPrice: Number(item.unit_price ?? 0),
+      unitPriceFormatted: formatMoney(item.unit_price ?? 0),
+      totalPrice: Number(item.total_price ?? 0),
+      totalPriceFormatted: formatMoney(item.total_price ?? 0),
+    })),
+  };
+}
+
+async function buildReceiptPayload(order) {
+  const parts = await readModels.pgGetOrderParts(order.id);
+  const receiptMeta = await readModels.pgGetReceiptMeta(order.id);
+  const partsTotal = parts.reduce((sum, item) => sum + Number(item.subtotal || 0), 0);
+  const laborTotal = Math.max(0, Number(order.amount || 0) - partsTotal);
+  const total = Number(order.amount || 0);
+
+  const items = [
+    ...parts.map((item) => ({
+      name: item.name,
+      quantity: Number(item.quantity || 0),
+      unitPriceFormatted: formatMoney(item.unitPrice),
+      subtotalFormatted: formatMoney(item.subtotal),
+      amountFormatted: formatMoney(item.subtotal),
+      detail: `数量 ${item.quantity} · 单价 ${formatMoney(item.unitPrice)}`,
+      type: "part",
+    })),
+  ];
+
+  if (laborTotal > 0 || !items.length) {
+    items.push({
+      name: "维修工费",
+      quantity: 1,
+      unitPriceFormatted: formatMoney(laborTotal),
+      subtotalFormatted: formatMoney(laborTotal),
+      amountFormatted: formatMoney(laborTotal),
+      detail: "人工维修服务",
+      type: "labor",
+    });
+  }
+
+  return {
+    orderId: order.id,
+    orderNo: order.orderNo,
+    date: `${order.scheduledDate} 14:30`,
+    customerName: order.customerName,
+    customerPhoneMasked: `${order.customerPhone.slice(0, 4)}****${order.customerPhone.slice(-2)}`,
+    totalFormatted: formatMoney(total),
+    partsTotal,
+    partsTotalFormatted: formatMoney(partsTotal),
+    laborTotal,
+    laborTotalFormatted: formatMoney(laborTotal),
+    printed: Boolean(receiptMeta?.printedAt),
+    printedAt: receiptMeta?.printedAt ?? null,
+    pickedUp: Boolean(receiptMeta?.pickedUpAt) || order.status === "picked_up",
+    pickedUpAt: receiptMeta?.pickedUpAt ?? null,
+    paymentMethod: total > 10000 ? "银行转账" : "现金",
+    items,
+  };
+}
+
+function buildReceiptPdfBuffer(receipt) {
+  const lines = [
+    "VILA PORT 维修中心",
+    "80mm 维修结算小票",
+    "------------------------------",
+    `订单号: ${receipt.orderNo}`,
+    `日期: ${receipt.date}`,
+    `客户: ${receipt.customerName}`,
+    `电话: ${receipt.customerPhoneMasked}`,
+    "------------------------------",
+    ...receipt.items.flatMap((item) => ([
+      item.name,
+      item.detail,
+      `金额: ${item.amountFormatted}`,
+      "------------------------------",
+    ])),
+    `备件费合计: ${receipt.partsTotalFormatted}`,
+    `工费合计: ${receipt.laborTotalFormatted}`,
+    `总计: ${receipt.totalFormatted}`,
+    `支付方式: ${receipt.paymentMethod}`,
+  ];
+
+  return buildSimplePdf(lines);
 }
 
 function getLocalHostnames() {
@@ -315,6 +726,20 @@ app.patch("/api/settings/print", async (req, res) => {
   res.json(result.data);
 });
 
+app.get("/api/settings/mail-server", async (_req, res) => {
+  res.json(await pgGetMailServerSettings(pgOne));
+});
+
+app.patch("/api/settings/mail-server", async (req, res) => {
+  const result = await pgUpdateMailServerSettings(pgQuery, req.body);
+  if (result.error) {
+    res.status(result.status).json({ message: result.error });
+    return;
+  }
+  appendAuditLog({ actor: "System Admin", type: "Mail Settings", message: "Updated mail server settings", meta: result.data.smtpHost || "SMTP" });
+  res.json(result.data);
+});
+
 app.put("/api/settings/business-hours", async (req, res) => {
   const result = await pgUpdateBusinessHoursSettings(pgWithTransaction, pgQuery, req.body);
   if (result.error) {
@@ -449,11 +874,17 @@ app.get("/api/dashboard", async (_req, res) => {
   const urgentOrders = (await readModels.pgGetRepairQueue("all", "")).metrics.urgent;
 
   const lowStockParts = await pgQuery(`
-    SELECT id, name, sku, stock, reorder_level AS "reorderLevel", unit_price AS "unitPrice", supplier
+    SELECT
+      id,
+      name,
+      sku,
+      stock,
+      CASE WHEN COALESCE(reorder_level, 0) > 0 THEN reorder_level ELSE 3 END AS "reorderLevel",
+      unit_price AS "unitPrice",
+      supplier
     FROM parts
-    WHERE stock <= reorder_level
+    WHERE stock <= CASE WHEN COALESCE(reorder_level, 0) > 0 THEN reorder_level ELSE 3 END
     ORDER BY stock ASC, name ASC
-    LIMIT 4
   `);
 
   res.json({
@@ -481,7 +912,8 @@ app.get("/api/orders", async (req, res) => {
 app.get("/api/repair-queue", async (req, res) => {
   const status = String(req.query.status ?? "all");
   const search = String(req.query.search ?? "");
-  res.json(await readModels.pgGetRepairQueue(status, search));
+  const priority = String(req.query.priority ?? "");
+  res.json(await readModels.pgGetRepairQueue(status, search, { priority }));
 });
 
 app.post("/api/repair-queue/:id/action", async (req, res) => {
@@ -555,7 +987,7 @@ app.get("/api/orders/:id", async (req, res) => {
   }
 
   const parts = await readModels.pgGetOrderParts(order.id);
-  const partsTotal = parts.reduce((sum, item) => sum + item.subtotal, 0);
+  const partsTotal = parts.reduce((sum, item) => sum + Number(item.subtotal || 0), 0);
   const laborTotal = Math.max(0, order.amount - partsTotal);
   const balanceDue = Math.max(0, order.amount - Number(order.deposit ?? 0));
   const storedPhotos = await readModels.pgGetStoredPhotos(order.id);
@@ -563,8 +995,6 @@ app.get("/api/orders/:id", async (req, res) => {
   const intake = await readModels.pgGetOrderIntake(order.id);
 
   const deviceSerial = intake?.imeiSerial || `SN-${String(order.id).padStart(4, "0")}-${order.deviceName.replace(/[^A-Za-z0-9]/g, "").slice(0, 6).toUpperCase()}`;
-  const batteryHealth = order.deviceName.toLowerCase().includes("iphone") ? "92%" : order.deviceName.toLowerCase().includes("macbook") ? "86%" : "89%";
-  const storage = order.deviceName.toLowerCase().includes("iphone") ? "256 GB" : order.deviceName.toLowerCase().includes("macbook") ? "512 GB" : "128 GB";
   const execution = await readModels.pgGetOrderExecutionRecord(order.id);
   const timeline = getOrderTimeline(order, execution?.phase ?? "repair");
 
@@ -573,12 +1003,14 @@ app.get("/api/orders/:id", async (req, res) => {
     deviceMeta: {
       model: order.deviceName,
       serialNumber: deviceSerial,
-      batteryHealth,
-      storage,
+      batteryHealth: intake?.batteryHealth?.trim() || "-",
+      storage: intake?.storageCapacity?.trim() || "-",
     },
     intakeMeta: intake ? {
       intakeCode: intake.intakeCode,
       imeiSerial: intake.imeiSerial,
+      batteryHealth: intake.batteryHealth,
+      storageCapacity: intake.storageCapacity,
       customerSignature: intake.customerSignature,
       createdAt: formatChatTimestamp(intake.createdAt),
     } : null,
@@ -596,6 +1028,12 @@ app.get("/api/orders/:id", async (req, res) => {
     balanceDueFormatted: formatMoney(balanceDue),
     grandTotalFormatted: formatMoney(order.amount),
     intakePhotos: intakePhotos.map((photo) => ({
+      stage: photo.stage,
+      image: photo.image,
+      note: photo.note,
+      time: formatChatTimestamp(photo.createdAt),
+    })),
+    devicePhotos: storedPhotos.map((photo) => ({
       stage: photo.stage,
       image: photo.image,
       note: photo.note,
@@ -844,39 +1282,7 @@ app.get("/api/orders/:id/receipt", async (req, res) => {
     return;
   }
 
-  const parts = await readModels.pgGetOrderParts(order.id);
-  const receiptMeta = await readModels.pgGetReceiptMeta(order.id);
-
-  const partsTotal = parts.reduce((sum, item) => sum + item.subtotal, 0);
-  const laborTotal = Math.max(0, order.amount - partsTotal);
-
-  res.json({
-    orderId: order.id,
-    orderNo: order.orderNo,
-    date: `${order.scheduledDate} 14:30`,
-    customerName: order.customerName,
-    customerPhoneMasked: `${order.customerPhone.slice(0, 4)}****${order.customerPhone.slice(-2)}`,
-    totalFormatted: formatMoney(order.amount),
-    partsTotalFormatted: formatMoney(partsTotal),
-    laborTotalFormatted: formatMoney(laborTotal),
-    printed: Boolean(receiptMeta?.printedAt),
-    printedAt: receiptMeta?.printedAt ?? null,
-    pickedUp: Boolean(receiptMeta?.pickedUpAt) || order.status === "picked_up",
-    pickedUpAt: receiptMeta?.pickedUpAt ?? null,
-    paymentMethod: order.amount > 10000 ? "银行转账" : "现金",
-    items: [
-      ...parts.map((item) => ({
-        name: item.name,
-        amountFormatted: formatMoney(item.subtotal),
-        detail: `备件费 ${formatMoney(item.subtotal)} | 工费 0 VUV`,
-      })),
-      {
-        name: "精细维修服务",
-        amountFormatted: formatMoney(laborTotal),
-        detail: `备件费 0 VUV | 工费 ${formatMoney(laborTotal)}`,
-      },
-    ],
-  });
+  res.json(await buildReceiptPayload(order));
 });
 
 app.get("/api/receipts", async (_req, res) => {
@@ -1009,17 +1415,32 @@ app.get("/api/orders/:id/share-report", async (req, res) => {
     return;
   }
 
+  const parts = await readModels.pgGetOrderParts(order.id);
+  const partsTotal = parts.reduce((sum, item) => sum + toNumber(item.subtotal), 0);
+  const laborTotal = Math.max(0, toNumber(order.amount) - partsTotal);
+  const previewItems = [
+    ...parts.map((item) => ({
+      label: item.name,
+      amountFormatted: formatMoney(item.subtotal),
+    })),
+  ];
+
+  if (laborTotal > 0 || !previewItems.length) {
+    previewItems.push({
+      label: "工费",
+      amountFormatted: formatMoney(laborTotal),
+    });
+  }
+
   res.json({
     orderNo: order.orderNo,
     customerName: order.customerName,
     createdDate: order.scheduledDate,
     fileName: `Repair_Report_${order.orderNo}.pdf`,
     fileSize: "1.2 MB",
-    previewItems: [
-      { label: order.title, amountFormatted: formatMoney(Math.round(order.amount * 0.83)) },
-      { label: "Labor Charges", amountFormatted: formatMoney(Math.round(order.amount * 0.17)) },
-      { label: "Tempered Glass (Gift)", amountFormatted: "0 VUV", tag: "Gift" },
-    ],
+    previewItems,
+    partsTotalFormatted: formatMoney(partsTotal),
+    laborTotalFormatted: formatMoney(laborTotal),
     totalFormatted: formatMoney(order.amount),
   });
 });
@@ -1032,13 +1453,15 @@ app.get("/api/orders/:id/email-report", async (req, res) => {
     return;
   }
 
+  const mailServer = await pgGetMailServerSettings(pgOne);
   res.json({
     orderNo: order.orderNo,
     recipient: order.customerEmail,
-    subject: `Your Repair Report for ${order.orderNo}`,
+    subject: `Your Repair Receipt for ${order.orderNo}`,
     message: `你好 / Hello,\n\n您的设备 (${order.orderNo}) 已维修完成，可以前来领取。\nYour device (${order.orderNo}) is now ready for pickup.\n\n附件中包含详细的维修报告。\nAttached is the detailed repair report for your records.\n\n如有任何疑问，请随时与我们联系。\nIf you have any questions, please feel free to contact us.\n\nBest regards,\nVila Port Repair Team`,
-    attachmentName: `Repair_Report_${order.orderNo}.pdf`,
+    attachmentName: `Receipt_${order.orderNo}.pdf`,
     attachmentSize: "1.2 MB",
+    mailServerConfigured: Boolean(mailServer.smtpHost && mailServer.smtpUser && mailServer.smtpPassword && mailServer.smtpFromEmail),
   });
 });
 
@@ -1050,13 +1473,48 @@ app.post("/api/orders/:id/email-report/send", async (req, res) => {
     return;
   }
 
+  const mailServer = await pgGetMailServerSettings(pgOne);
+  if (!mailServer.smtpHost || !mailServer.smtpUser || !mailServer.smtpPassword || !mailServer.smtpFromEmail) {
+    res.status(400).json({ message: "请先在打印设置中完成 SMTP 邮件服务器配置" });
+    return;
+  }
+
+  const receipt = await buildReceiptPayload(order);
+  const transporter = nodemailer.createTransport({
+    host: mailServer.smtpHost,
+    port: Number(mailServer.smtpPort || 587),
+    secure: Boolean(mailServer.smtpSecure),
+    auth: {
+      user: mailServer.smtpUser,
+      pass: mailServer.smtpPassword,
+    },
+  });
+
+  const pdf = buildReceiptPdfBuffer(receipt);
+  const attachmentName = `Receipt_${order.orderNo}.pdf`;
+
+  await transporter.sendMail({
+    from: `"${mailServer.smtpFromName || "Vila Port Repair Team"}" <${mailServer.smtpFromEmail}>`,
+    to: order.customerEmail,
+    subject: `Your Repair Receipt for ${order.orderNo}`,
+    text: `Hello,\n\nYour device (${order.orderNo}) is ready for pickup.\nPlease find the attached repair receipt.\n\nBest regards,\n${mailServer.smtpFromName || "Vila Port Repair Team"}`,
+    attachments: [
+      {
+        filename: attachmentName,
+        content: pdf,
+        contentType: "application/pdf",
+      },
+    ],
+  });
+
   res.json({
     ok: true,
     orderNo: order.orderNo,
     recipient: order.customerEmail,
-    status: "queued",
+    status: "sent",
     queuedAt: new Date().toISOString(),
-    message: `邮件已排队发送到 ${order.customerEmail}`,
+    message: `邮件已发送到 ${order.customerEmail}`,
+    attachmentName,
   });
 });
 
@@ -1068,19 +1526,9 @@ app.get("/api/orders/:id/report.pdf", async (req, res) => {
     return;
   }
 
-  const lines = [
-    `Repair Report ${order.orderNo}`,
-    `Customer: ${order.customerName}`,
-    `Device: ${order.deviceName}`,
-    `Technician: ${order.technician}`,
-    `Scheduled Date: ${order.scheduledDate}`,
-      `Status: ${readModels.statusMeta[order.status]?.label ?? order.status}`,
-    `Amount: ${formatMoney(order.amount)}`,
-    `Issue: ${order.issueSummary}`,
-  ];
-
-  const pdf = buildSimplePdf(lines);
-  const filename = `Repair_Report_${order.orderNo}.pdf`;
+  const receipt = await buildReceiptPayload(order);
+  const pdf = buildReceiptPdfBuffer(receipt);
+  const filename = `Receipt_${order.orderNo}.pdf`;
 
   res.setHeader("Content-Type", "application/pdf");
   res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
@@ -1786,6 +2234,8 @@ app.patch("/api/orders/:id", async (req, res) => {
   const customerEmail = String(req.body?.customerEmail ?? order.customerEmail).trim();
   const intake = await readModels.pgGetOrderIntake(order.id);
   const imeiSerial = String(req.body?.imeiSerial ?? intake?.imeiSerial ?? "").trim();
+  const batteryHealth = String(req.body?.batteryHealth ?? intake?.batteryHealth ?? "").trim();
+  const storageCapacity = String(req.body?.storageCapacity ?? intake?.storageCapacity ?? "").trim();
   const customerSignature = String(req.body?.customerSignature ?? intake?.customerSignature ?? order.customerName).trim();
   const intakeCode = intake?.intakeCode ?? (await pgGetNextIntakeCode());
 
@@ -1822,12 +2272,14 @@ app.patch("/api/orders/:id", async (req, res) => {
   `, [customerName, customerPhone, customerEmail, order.customerId]);
 
   await pgQuery(`
-    INSERT INTO order_intake (order_id, intake_code, imei_serial, customer_signature)
-    VALUES ($1, $2, $3, $4)
+    INSERT INTO order_intake (order_id, intake_code, imei_serial, battery_health, storage_capacity, customer_signature)
+    VALUES ($1, $2, $3, $4, $5, $6)
     ON CONFLICT (order_id) DO UPDATE SET
       imei_serial = EXCLUDED.imei_serial,
+      battery_health = EXCLUDED.battery_health,
+      storage_capacity = EXCLUDED.storage_capacity,
       customer_signature = EXCLUDED.customer_signature
-  `, [order.id, intakeCode, imeiSerial, customerSignature]);
+  `, [order.id, intakeCode, imeiSerial, batteryHealth, storageCapacity, customerSignature]);
 
   const updated = await readModels.pgGetOrderById(order.id);
   appendAuditLog({
@@ -2121,8 +2573,13 @@ app.get("/api/search", async (req, res) => {
   res.json({ orders, parts, customers });
 });
 
-app.get("/api/parts", async (_req, res) => {
-  res.json(await readModels.pgGetParts());
+app.get("/api/parts", async (req, res) => {
+  const { category = "", lowStock = "", search = "" } = req.query;
+  res.json(await readModels.pgGetParts({
+    category: String(category),
+    lowStock: String(lowStock),
+    search: String(search),
+  }));
 });
 
 app.get("/api/parts/:id", async (req, res) => {
@@ -2724,6 +3181,296 @@ app.post("/api/inventory/inbound-batch", async (req, res) => {
   res.status(201).json(responsePayload);
 });
 
+app.get("/api/quotes", async (_req, res) => {
+  const rows = await pgQuery(`
+    SELECT id, quote_no, customer_name, device_name, service_type, total_amount, valid_until, status, created_at
+    FROM quotes
+    ORDER BY created_at DESC, id DESC
+  `);
+  res.json(rows.map((row) => ({
+    id: row.id,
+    quoteNo: row.quote_no,
+    customerName: row.customer_name,
+    deviceName: row.device_name,
+    serviceType: row.service_type,
+    totalAmount: Number(row.total_amount ?? 0),
+    totalAmountFormatted: formatMoney(row.total_amount ?? 0),
+    validUntil: String(row.valid_until ?? "").slice(0, 10),
+    status: row.status,
+    createdAt: row.created_at,
+  })));
+});
+
+app.post("/api/quotes", async (req, res) => {
+  const {
+    customerId = null,
+    customerName = "",
+    customerPhone = "",
+    customerEmail = "",
+    deviceName = "",
+    serviceType = "",
+    validUntil = "",
+    notes = "",
+    items = [],
+  } = req.body ?? {};
+
+  if (!customerName || !deviceName || !items.length) {
+    res.status(400).json({ message: "客户、设备和报价项目不能为空" });
+    return;
+  }
+
+  const normalizedItems = items
+    .map((item) => ({
+      itemType: item.itemType || "part",
+      partId: item.partId ? Number(item.partId) : null,
+      name: String(item.name ?? "").trim(),
+      description: String(item.description ?? "").trim(),
+      quantity: Number(item.quantity ?? 1),
+      unitPrice: Math.round(Number(item.unitPrice ?? 0)),
+    }))
+    .filter((item) => item.name && item.quantity > 0);
+
+  if (!normalizedItems.length) {
+    res.status(400).json({ message: "至少添加一项报价内容" });
+    return;
+  }
+
+  const subtotal = normalizedItems.reduce((sum, item) => sum + Math.round(item.quantity * item.unitPrice), 0);
+  const vatAmount = 0;
+  const totalAmount = subtotal + vatAmount;
+  const quoteNo = await getNextSequenceCode("quotes", "quote_no", "QT");
+
+  const payload = await pgWithTransaction(async (client) => {
+    const inserted = await client.query(`
+      INSERT INTO quotes (
+        quote_no, customer_id, customer_name, customer_phone, customer_email,
+        device_name, service_type, valid_until, notes, subtotal, vat_amount, total_amount, status, updated_at
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, NULLIF($8, '')::date, $9, $10, $11, $12, 'draft', CURRENT_TIMESTAMP)
+      RETURNING id
+    `, [
+      quoteNo,
+      customerId ? Number(customerId) : null,
+      customerName,
+      customerPhone,
+      customerEmail,
+      deviceName,
+      serviceType,
+      validUntil,
+      notes,
+      subtotal,
+      vatAmount,
+      totalAmount,
+    ]);
+
+    const quoteId = inserted.rows[0]?.id;
+    for (const item of normalizedItems) {
+      const totalPrice = Math.round(item.quantity * item.unitPrice);
+      await client.query(`
+        INSERT INTO quote_items (
+          quote_id, item_type, part_id, name, description, quantity, unit_price, total_price
+        )
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      `, [quoteId, item.itemType, item.partId, item.name, item.description, item.quantity, item.unitPrice, totalPrice]);
+    }
+    return quoteId;
+  });
+
+  appendAuditLog({
+    actor: "Front Desk",
+    type: "Quote",
+    tone: "info",
+    message: `Created quote ${quoteNo}`,
+    meta: `${normalizedItems.length} 项 · ${formatMoney(totalAmount)}`,
+  });
+
+  res.status(201).json(await getQuoteByIdentifier(String(payload)));
+});
+
+app.get("/api/quotes/:id", async (req, res) => {
+  const quote = await getQuoteByIdentifier(req.params.id);
+  if (!quote) {
+    res.status(404).json({ message: "Quote not found" });
+    return;
+  }
+  res.json(quote);
+});
+
+app.get("/api/pos/sales", async (_req, res) => {
+  const rows = await pgQuery(`
+    SELECT id, sale_no, customer_name, total_amount, payment_method, status, created_at
+    FROM pos_sales
+    ORDER BY created_at DESC, id DESC
+  `);
+  res.json(rows.map((row) => ({
+    id: row.id,
+    saleNo: row.sale_no,
+    customerName: row.customer_name,
+    totalAmount: Number(row.total_amount ?? 0),
+    totalAmountFormatted: formatMoney(row.total_amount ?? 0),
+    paymentMethod: row.payment_method,
+    status: row.status,
+    createdAt: row.created_at,
+  })));
+});
+
+app.post("/api/pos/sales", async (req, res) => {
+  const {
+    customerId = null,
+    customerName = "",
+    customerPhone = "",
+    paymentMethod = "Cash",
+    note = "",
+    items = [],
+  } = req.body ?? {};
+
+  const normalizedItems = items
+    .map((item) => ({
+      partId: item.partId ? Number(item.partId) : null,
+      category: String(item.category ?? "").trim(),
+      name: String(item.name ?? "").trim(),
+      description: String(item.description ?? "").trim(),
+      quantity: Number(item.quantity ?? 1),
+      unitPrice: Math.round(Number(item.unitPrice ?? 0)),
+    }))
+    .filter((item) => item.name && item.quantity > 0);
+
+  if (!normalizedItems.length) {
+    res.status(400).json({ message: "POS 收银至少要有一项商品" });
+    return;
+  }
+
+  const subtotal = normalizedItems.reduce((sum, item) => sum + Math.round(item.quantity * item.unitPrice), 0);
+  const vatAmount = 0;
+  const totalAmount = subtotal + vatAmount;
+  const saleNo = await getNextSequenceCode("pos_sales", "sale_no", "POS");
+
+  const saleId = await pgWithTransaction(async (client) => {
+    const inserted = await client.query(`
+      INSERT INTO pos_sales (
+        sale_no, customer_id, customer_name, customer_phone, subtotal, vat_amount,
+        total_amount, payment_method, note, status, updated_at
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'paid', CURRENT_TIMESTAMP)
+      RETURNING id
+    `, [
+      saleNo,
+      customerId ? Number(customerId) : null,
+      customerName || "门店散客",
+      customerPhone,
+      subtotal,
+      vatAmount,
+      totalAmount,
+      paymentMethod,
+      note,
+    ]);
+
+    const insertedId = inserted.rows[0]?.id;
+    for (const item of normalizedItems) {
+      const totalPrice = Math.round(item.quantity * item.unitPrice);
+      await client.query(`
+        INSERT INTO pos_sale_items (
+          sale_id, part_id, category, name, description, quantity, unit_price, total_price
+        )
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      `, [insertedId, item.partId, item.category, item.name, item.description, item.quantity, item.unitPrice, totalPrice]);
+    }
+    return insertedId;
+  });
+
+  appendAuditLog({
+    actor: "POS Cashier",
+    type: "POS",
+    tone: "success",
+    message: `Completed POS sale ${saleNo}`,
+    meta: `${normalizedItems.length} 项 · ${formatMoney(totalAmount)}`,
+  });
+
+  res.status(201).json(await getPosSaleByIdentifier(String(saleId)));
+});
+
+app.get("/api/pos/sales/:id", async (req, res) => {
+  const sale = await getPosSaleByIdentifier(req.params.id);
+  if (!sale) {
+    res.status(404).json({ message: "POS sale not found" });
+    return;
+  }
+  res.json(sale);
+});
+
+app.get("/api/invoices/:id", async (req, res) => {
+  const sale = await getPosSaleByIdentifier(req.params.id);
+  if (!sale) {
+    res.status(404).json({ message: "Invoice not found" });
+    return;
+  }
+
+  res.json({
+    invoiceNo: `INV-${String(sale.saleNo).replace(/^POS-/, "")}`,
+    issueDate: String(sale.createdAt ?? "").slice(0, 10),
+    customerName: sale.customerName || "门店散客",
+    customerPhone: sale.customerPhone,
+    paymentMethod: sale.paymentMethod,
+    subtotal: sale.subtotal,
+    subtotalFormatted: sale.subtotalFormatted,
+    vatAmount: sale.vatAmount,
+    vatAmountFormatted: sale.vatAmountFormatted,
+    totalAmount: sale.totalAmount,
+    totalAmountFormatted: sale.totalAmountFormatted,
+    status: sale.status,
+    saleNo: sale.saleNo,
+    items: sale.items,
+  });
+});
+
+app.get("/api/documents", async (req, res) => {
+  const type = String(req.query.type ?? "all");
+  const query = String(req.query.search ?? "").trim().toLowerCase();
+  const quotes = await pgQuery(`
+    SELECT quote_no AS code, customer_name, created_at, total_amount, status, 'quote' AS type
+    FROM quotes
+    ORDER BY created_at DESC
+  `);
+  const invoices = await pgQuery(`
+    SELECT sale_no AS code, customer_name, created_at, total_amount, status, 'invoice' AS type
+    FROM pos_sales
+    ORDER BY created_at DESC
+  `);
+
+  const rows = [...quotes, ...invoices]
+    .map((row) => ({
+      code: row.code,
+      customerName: row.customer_name,
+      createdAt: row.created_at,
+      amount: Number(row.total_amount ?? 0),
+      amountFormatted: formatMoney(row.total_amount ?? 0),
+      status: row.status,
+      type: row.type,
+      typeLabel: row.type === "quote" ? "报价单" : "发票",
+      route: row.type === "quote" ? `/quotes/${row.code}` : `/invoices/${row.code}`,
+    }))
+    .filter((row) => {
+      const typeMatched = type === "all" || row.type === type;
+      const searchMatched = !query || row.code.toLowerCase().includes(query) || row.customerName.toLowerCase().includes(query);
+      return typeMatched && searchMatched;
+    })
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+  const totalPending = rows.filter((row) => row.type === "quote").reduce((sum, row) => sum + row.amount, 0);
+  const invoicesPaid = rows.filter((row) => row.type === "invoice" && row.status === "paid").length;
+  const overdue = rows.filter((row) => row.status === "overdue").length;
+
+  res.json({
+    summary: {
+      totalPending,
+      totalPendingFormatted: formatMoney(totalPending),
+      invoicesPaid,
+      overdue,
+    },
+    rows,
+  });
+});
+
 app.get("/api/staff/performance", async (_req, res) => {
   const rows = await readModels.pgGetStaffPerformanceRows();
   res.json({
@@ -2746,6 +3493,94 @@ app.get("/api/finance/report", async (req, res) => {
     ...base,
     selectedType: type,
     rows,
+  });
+});
+
+app.get("/api/finance/closing-report", async (req, res) => {
+  const scope = String(req.query.scope ?? "daily");
+  const date = String(req.query.date ?? getTodayDateKey());
+  const month = String(req.query.month ?? date.slice(0, 7));
+  const base = await readModels.pgGetFinanceReport();
+
+  const scopedRows = base.rows.filter((row) => {
+    const createdDate = String(row.createdAt ?? "").slice(0, 10);
+    if (!createdDate) return false;
+    return scope === "monthly" ? createdDate.startsWith(month) : createdDate === date;
+  });
+
+  const income = scopedRows.filter((row) => row.amount >= 0);
+  const expense = scopedRows.filter((row) => row.amount < 0);
+  const incomeTotal = income.reduce((sum, row) => sum + row.amount, 0);
+  const expenseTotal = expense.reduce((sum, row) => sum + Math.abs(row.amount), 0);
+  const netTotal = incomeTotal - expenseTotal;
+  const orderCount = income.filter((row) => row.orderNo).length;
+  const procurementCount = scopedRows.filter((row) => row.procurementNo).length;
+  const refundCount = scopedRows.filter((row) => row.channel === "refund_expense").length;
+  const lossCount = scopedRows.filter((row) => row.channel === "loss_expense").length;
+
+  const breakdownMap = new Map();
+  scopedRows.forEach((row) => {
+    const current = breakdownMap.get(row.channel) ?? {
+      channel: row.channel,
+      label: row.channelLabel ?? row.channel,
+      amount: 0,
+      count: 0,
+    };
+    current.amount += row.amount;
+    current.count += 1;
+    breakdownMap.set(row.channel, current);
+  });
+
+  const dailyBuckets = new Map();
+  scopedRows.forEach((row) => {
+    const createdDate = String(row.createdAt ?? "").slice(0, 10);
+    if (!createdDate) return;
+    const bucket = dailyBuckets.get(createdDate) ?? {
+      date: createdDate,
+      income: 0,
+      expense: 0,
+      net: 0,
+      count: 0,
+    };
+    if (row.amount >= 0) bucket.income += row.amount;
+    else bucket.expense += Math.abs(row.amount);
+    bucket.net = bucket.income - bucket.expense;
+    bucket.count += 1;
+    dailyBuckets.set(createdDate, bucket);
+  });
+
+  res.json({
+    scope,
+    date,
+    month,
+    title: scope === "monthly" ? "月结报表" : "日结报表",
+    summary: {
+      incomeTotal,
+      incomeTotalFormatted: formatMoney(incomeTotal),
+      expenseTotal,
+      expenseTotalFormatted: formatMoney(expenseTotal),
+      netTotal,
+      netTotalFormatted: formatMoney(netTotal),
+      orderCount,
+      procurementCount,
+      refundCount,
+      lossCount,
+    },
+    breakdown: Array.from(breakdownMap.values())
+      .map((item) => ({
+        ...item,
+        amountFormatted: formatMoney(item.amount),
+      }))
+      .sort((a, b) => Math.abs(b.amount) - Math.abs(a.amount)),
+    periods: Array.from(dailyBuckets.values())
+      .sort((a, b) => a.date < b.date ? 1 : -1)
+      .map((item) => ({
+        ...item,
+        incomeFormatted: formatMoney(item.income),
+        expenseFormatted: formatMoney(item.expense),
+        netFormatted: formatMoney(item.net),
+      })),
+    rows: scopedRows,
   });
 });
 
@@ -2799,6 +3634,8 @@ function startStandaloneServer() {
     });
   }
 }
+
+await ensurePostgresSchema();
 
 if (!isVercelRuntime) {
   startStandaloneServer();

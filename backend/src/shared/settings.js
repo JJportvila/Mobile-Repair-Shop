@@ -95,6 +95,41 @@ export async function pgGetPrintSettings(pgOne) {
   };
 }
 
+export async function pgGetMailServerSettings(pgOne) {
+  const row = await pgOne(`
+    SELECT
+      smtp_host AS "smtpHost",
+      smtp_port AS "smtpPort",
+      smtp_secure AS "smtpSecure",
+      smtp_user AS "smtpUser",
+      smtp_password AS "smtpPassword",
+      smtp_from_name AS "smtpFromName",
+      smtp_from_email AS "smtpFromEmail",
+      pop_host AS "popHost",
+      pop_port AS "popPort",
+      pop_user AS "popUser",
+      pop_password AS "popPassword",
+      updated_at AS "updatedAt"
+    FROM settings_mail_server
+    WHERE id = 1
+  `);
+
+  return {
+    smtpHost: row?.smtpHost ?? "",
+    smtpPort: Number(row?.smtpPort ?? 587),
+    smtpSecure: Boolean(row?.smtpSecure),
+    smtpUser: row?.smtpUser ?? "",
+    smtpPassword: row?.smtpPassword ?? "",
+    smtpFromName: row?.smtpFromName ?? "Vila Port Repair Team",
+    smtpFromEmail: row?.smtpFromEmail ?? "",
+    popHost: row?.popHost ?? "",
+    popPort: Number(row?.popPort ?? 110),
+    popUser: row?.popUser ?? "",
+    popPassword: row?.popPassword ?? "",
+    updatedAt: row?.updatedAt ?? null,
+  };
+}
+
 export async function pgGetBusinessHoursSettings(pgQuery, pgOne) {
   const rows = await pgQuery(`
     SELECT
@@ -211,6 +246,49 @@ export async function pgUpdatePrintSettings(pgQuery, payload) {
   return {
     data: await pgGetPrintSettings((text, params) => pgQuery(text, params).then((rows) => rows[0] ?? null)),
     paperSize,
+  };
+}
+
+export async function pgUpdateMailServerSettings(pgQuery, payload) {
+  const smtpHost = String(payload?.smtpHost ?? "").trim();
+  const smtpPort = Number(payload?.smtpPort ?? 587);
+  const smtpSecure = payload?.smtpSecure ? 1 : 0;
+  const smtpUser = String(payload?.smtpUser ?? "").trim();
+  const smtpPassword = String(payload?.smtpPassword ?? "").trim();
+  const smtpFromName = String(payload?.smtpFromName ?? "").trim();
+  const smtpFromEmail = String(payload?.smtpFromEmail ?? "").trim();
+  const popHost = String(payload?.popHost ?? "").trim();
+  const popPort = Number(payload?.popPort ?? 110);
+  const popUser = String(payload?.popUser ?? "").trim();
+  const popPassword = String(payload?.popPassword ?? "").trim();
+
+  if (!smtpHost || !smtpPort || !smtpUser || !smtpPassword || !smtpFromEmail) {
+    return { error: "SMTP host, port, user, password and from email are required", status: 400 };
+  }
+
+  await pgQuery(`
+    INSERT INTO settings_mail_server (
+      id, smtp_host, smtp_port, smtp_secure, smtp_user, smtp_password, smtp_from_name, smtp_from_email,
+      pop_host, pop_port, pop_user, pop_password, updated_at
+    )
+    VALUES (1, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, CURRENT_TIMESTAMP)
+    ON CONFLICT (id) DO UPDATE SET
+      smtp_host = EXCLUDED.smtp_host,
+      smtp_port = EXCLUDED.smtp_port,
+      smtp_secure = EXCLUDED.smtp_secure,
+      smtp_user = EXCLUDED.smtp_user,
+      smtp_password = EXCLUDED.smtp_password,
+      smtp_from_name = EXCLUDED.smtp_from_name,
+      smtp_from_email = EXCLUDED.smtp_from_email,
+      pop_host = EXCLUDED.pop_host,
+      pop_port = EXCLUDED.pop_port,
+      pop_user = EXCLUDED.pop_user,
+      pop_password = EXCLUDED.pop_password,
+      updated_at = CURRENT_TIMESTAMP
+  `, [smtpHost, smtpPort, smtpSecure, smtpUser, smtpPassword, smtpFromName, smtpFromEmail, popHost, popPort || 110, popUser, popPassword]);
+
+  return {
+    data: await pgGetMailServerSettings((text, params) => pgQuery(text, params).then((rows) => rows[0] ?? null)),
   };
 }
 

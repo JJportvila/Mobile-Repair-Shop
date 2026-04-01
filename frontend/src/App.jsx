@@ -23,6 +23,56 @@ function formatCurrency(value) {
   return `${Math.round(Number(value) || 0).toLocaleString("en-US")} VUV`;
 }
 
+function formatDateLabel(value) {
+  if (!value) return "-";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+}
+
+function createQuoteDraft(customers = [], parts = []) {
+  return {
+    customerId: String(customers[0]?.id ?? ""),
+    customerName: customers[0]?.name ?? "",
+    customerPhone: customers[0]?.phone ?? "",
+    customerEmail: customers[0]?.email ?? "",
+    deviceName: "",
+    serviceType: "",
+    validUntil: getTodayInputDate(),
+    notes: "",
+    items: [
+      parts[0]
+        ? {
+          itemType: "part",
+          partId: String(parts[0].id),
+          name: parts[0].name,
+          description: "报价配件",
+          quantity: 1,
+          unitPrice: Number(parts[0].unitPrice ?? 0),
+        }
+        : {
+          itemType: "labor",
+          partId: "",
+          name: "维修工费",
+          description: "人工服务",
+          quantity: 1,
+          unitPrice: 0,
+        },
+    ],
+  };
+}
+
+function createPosDraft(customers = []) {
+  return {
+    customerId: String(customers[0]?.id ?? ""),
+    customerName: customers[0]?.name ?? "",
+    customerPhone: customers[0]?.phone ?? "",
+    paymentMethod: "Cash",
+    note: "",
+    items: [],
+  };
+}
+
 function normalizeImportKey(value) {
   return String(value ?? "").trim().toLowerCase().replace(/\s+/g, "");
 }
@@ -247,6 +297,11 @@ function normalizeIdentifier(value) {
   return raw.toUpperCase();
 }
 
+function buildWhatsAppLink(phone = "") {
+  const digits = String(phone ?? "").replace(/\D/g, "");
+  return digits ? `https://wa.me/${digits}` : "";
+}
+
 function getOrderRouteId(orderLike, fallback = "1") {
   if (orderLike == null) return fallback;
   if (typeof orderLike === "string" || typeof orderLike === "number") return String(orderLike);
@@ -344,6 +399,12 @@ function App() {
 
   const currentSectionTitle = location.pathname.startsWith("/inventory")
     ? "库存"
+    : location.pathname.startsWith("/quotes") || location.pathname.startsWith("/create_quote") || location.pathname.startsWith("/quote_")
+      ? "报价"
+      : location.pathname.startsWith("/pos/")
+        ? "收银"
+        : location.pathname.startsWith("/invoices") || location.pathname.includes("invoice")
+          ? "发票"
     : location.pathname.startsWith("/scanner") || location.pathname.startsWith("/parts-scanner")
       ? "扫码"
     : location.pathname.startsWith("/more-options") || location.pathname.startsWith("/more_options")
@@ -597,6 +658,8 @@ function App() {
           <Route path="/technician_performance" element={<Navigate to="/technician-performance" replace />} />
           <Route path="/financial-reports" element={<FinancialReportsPage {...shared} />} />
           <Route path="/financial_reports" element={<Navigate to="/financial-reports" replace />} />
+          <Route path="/financial-reports/daily" element={<ClosingReportPage scope="daily" />} />
+          <Route path="/financial-reports/monthly" element={<ClosingReportPage scope="monthly" />} />
           <Route path="/financial-reports/drill-down" element={<FinanceDrillDownPage {...shared} />} />
           <Route path="/finance_drill_down" element={<Navigate to="/financial-reports/drill-down" replace />} />
           <Route path="/reports" element={<ReportsOverviewPage {...shared} />} />
@@ -684,6 +747,28 @@ function App() {
           <Route path="/orders/:id/receipt" element={<ReceiptPage {...shared} />} />
           <Route path="/receipt" element={<Navigate to="/orders/1/receipt" replace />} />
           <Route path="/receipts" element={<ReceiptCenterPage {...shared} />} />
+          <Route path="/quotes/new" element={<CreateQuotePage {...shared} />} />
+          <Route path="/create_quote" element={<Navigate to="/quotes/new" replace />} />
+          <Route path="/quotes/:id" element={<QuotePreviewPage {...shared} />} />
+          <Route path="/quote_preview" element={<Navigate to="/quotes/QT-1001" replace />} />
+          <Route path="/quote_template" element={<Navigate to="/quotes/QT-1001" replace />} />
+          <Route path="/pos/register" element={<PosRegisterPage {...shared} />} />
+          <Route path="/pos_pos_register" element={<Navigate to="/pos/register" replace />} />
+          <Route path="/pos_refined_register" element={<Navigate to="/pos/register" replace />} />
+          <Route path="/pos/checkout" element={<PosCheckoutPage {...shared} />} />
+          <Route path="/pos_checkout" element={<Navigate to="/pos/checkout" replace />} />
+          <Route path="/pos/sales/:id/receipt" element={<PosReceipt80mmPage {...shared} />} />
+          <Route path="/80mm_pos" element={<Navigate to="/pos/sales/POS-1001/receipt" replace />} />
+          <Route path="/invoices/:id" element={<OfficialInvoicePage {...shared} />} />
+          <Route path="/official_invoice" element={<Navigate to="/invoices/POS-1001" replace />} />
+          <Route path="/minimal_invoice" element={<Navigate to="/invoices/POS-1001" replace />} />
+          <Route path="/modern_invoice" element={<Navigate to="/invoices/POS-1001" replace />} />
+          <Route path="/invoice_template" element={<Navigate to="/invoices/POS-1001" replace />} />
+          <Route path="/invoice_distribution" element={<Navigate to="/invoices/POS-1001" replace />} />
+          <Route path="/pdf_invoice_pdf_setup" element={<Navigate to="/invoices/POS-1001" replace />} />
+          <Route path="/documents" element={<DocumentManagementPage />} />
+          <Route path="/document_management" element={<Navigate to="/documents" replace />} />
+          <Route path="/doc_management" element={<Navigate to="/documents" replace />} />
           <Route path="/receipt_center_1" element={<Navigate to="/receipt-center-1" replace />} />
           <Route path="/receipt_center_2" element={<Navigate to="/receipt-center-2" replace />} />
           <Route path="/receipt-center-1" element={<ReceiptCenterCompactPage {...shared} />} />
@@ -694,7 +779,7 @@ function App() {
           <Route path="/pdf_share_pdf_report_2" element={<Navigate to="/orders/1/pdf-report-2" replace />} />
           <Route path="/orders/:id/pdf-report-2" element={<PdfReportDeliveryPage {...shared} />} />
           <Route path="/orders/:id/pdf-share" element={<ShareReportPage {...shared} />} />
-          <Route path="/orders/:id/whatsapp-share" element={<ShareReportPage {...shared} />} />
+          <Route path="/orders/:id/whatsapp-share" element={<WhatsAppSharePage {...shared} />} />
           <Route path="/whatsapp_whatsapp_share" element={<Navigate to="/orders/1/whatsapp-share" replace />} />
           <Route path="/orders/:id/send-email" element={<SendEmailReportPage {...shared} />} />
           <Route path="/send_email_report" element={<Navigate to="/orders/1/send-email" replace />} />
@@ -820,7 +905,7 @@ function App() {
                     </div>
                   </div>
                 ) : null}
-                <input type="url" placeholder="或粘贴图片链接 https://..." value={orderForm.deviceFrontPhoto.startsWith("data:") ? "" : orderForm.deviceFrontPhoto} onChange={(e) => setOrderForm({ ...orderForm, deviceFrontPhoto: e.target.value })} required={!orderForm.deviceFrontPhoto} />
+                <span className="micro-label">请直接拍照或从相册选择</span>
               </>
             </Field>
             <Field label="手机背面照片" full>
@@ -835,7 +920,7 @@ function App() {
                     </div>
                   </div>
                 ) : null}
-                <input type="url" placeholder="或粘贴图片链接 https://..." value={orderForm.deviceBackPhoto.startsWith("data:") ? "" : orderForm.deviceBackPhoto} onChange={(e) => setOrderForm({ ...orderForm, deviceBackPhoto: e.target.value })} required={!orderForm.deviceBackPhoto} />
+                <span className="micro-label">请直接拍照或从相册选择</span>
               </>
             </Field>
             <Field label="客户照片" full>
@@ -850,7 +935,7 @@ function App() {
                     </div>
                   </div>
                 ) : null}
-                <input type="url" placeholder="或粘贴图片链接 https://..." value={orderForm.customerPhoto.startsWith("data:") ? "" : orderForm.customerPhoto} onChange={(e) => setOrderForm({ ...orderForm, customerPhoto: e.target.value })} required={!orderForm.customerPhoto} />
+                <span className="micro-label">请直接拍照或从相册选择</span>
               </>
             </Field>
             <div className="sheet-field full">
@@ -978,6 +1063,8 @@ function LegacyWorkbenchPage({ dashboard, orders, financeReport }) {
       <div className="legacy-workbench-actions">
         <button className="wide-action secondary" onClick={() => navigate("/orders/1/receipt")} type="button"><span className="material-symbols-outlined">print</span><span>打印票据</span></button>
         <button className="wide-action secondary" onClick={() => navigate("/scanner")} type="button"><span className="material-symbols-outlined">qr_code_scanner</span><span>扫码登记</span></button>
+        <button className="wide-action secondary" onClick={() => navigate("/quotes/new")} type="button"><span className="material-symbols-outlined">request_quote</span><span>新增报价</span></button>
+        <button className="wide-action secondary" onClick={() => navigate("/documents")} type="button"><span className="material-symbols-outlined">receipt_long</span><span>报价与发票</span></button>
       </div>
 
       <section className="page-section">
@@ -1017,6 +1104,12 @@ function RepairsHubPage({ orders, dashboard, financeReport, loading, selectedSta
   const visibleUrgent = orders.filter((order) => String(order.priorityLabel ?? "").includes("加急") || order.status === "pending").length;
   const visibleReady = orders.filter((order) => order.status === "completed" || order.status === "picked_up").length;
   const activeOrders = orders.slice(0, 4);
+
+  function openWorkbenchFilter(nextStatus, options = {}) {
+    setSelectedStatus(nextStatus);
+    refresh(nextStatus, search);
+    navigate("/repair-queue", { state: { presetStatus: nextStatus, presetPriority: options.priority ?? "" } });
+  }
 
   return (
     <div className="workbench-template-page">
@@ -1059,22 +1152,22 @@ function RepairsHubPage({ orders, dashboard, financeReport, loading, selectedSta
 
       <section className="workbench-template-metrics">
         <div className="workbench-template-metric-item metric-orders">
-          <div className="workbench-template-metric-card">
+          <button className="workbench-template-metric-card" onClick={() => openWorkbenchFilter(selectedStatus === "all" ? "pending" : selectedStatus)} type="button">
             <div className="workbench-template-metric-body">
               <p className="metric-label metric-label-inline">{selectedStatus === "all" ? "今日订单" : `${selectedStatusLabel}工单`}</p>
               <strong>{selectedStatus === "all" ? todayOrders : visibleCount}</strong>
               <span>{selectedStatus === "all" ? "今日受理工单" : "当前筛选结果"}</span>
             </div>
-          </div>
+          </button>
         </div>
         <div className="workbench-template-metric-item metric-pending">
-          <div className="workbench-template-metric-card warning">
+          <button className="workbench-template-metric-card warning" onClick={() => openWorkbenchFilter(selectedStatus === "all" ? "in_progress" : "all", selectedStatus === "all" ? {} : { priority: "urgent" })} type="button">
             <div className="workbench-template-metric-body">
               <p className="metric-label metric-label-inline">{selectedStatus === "all" ? "待维修" : "加急关注"}</p>
               <strong>{selectedStatus === "all" ? pendingCount : visibleUrgent}</strong>
               <span>{selectedStatus === "all" ? `${inProgressCount} 单维修中` : "当前列表中的重点工单"}</span>
             </div>
-          </div>
+          </button>
         </div>
         <div className="workbench-template-metric-item metric-revenue">
           <div className="workbench-template-metric-card success">
@@ -1089,21 +1182,21 @@ function RepairsHubPage({ orders, dashboard, financeReport, loading, selectedSta
           </div>
         </div>
         <div className="workbench-template-metric-item metric-procurement">
-          <div className="workbench-template-metric-card blue">
+          <button className="workbench-template-metric-card blue" onClick={() => navigate("/supplier-management")} type="button">
             <div className="workbench-template-metric-body">
               <p className="metric-label metric-label-inline">采购跟进</p>
               <strong>{pendingProcurements}</strong>
               <span>待跟进采购单</span>
             </div>
-          </div>
+          </button>
         </div>
-        <div className="workbench-template-metric-card wide metric-delivery">
+        <button className="workbench-template-metric-card wide metric-delivery" onClick={() => openWorkbenchFilter("completed")} type="button">
           <div>
             <p>待取机 / 送还</p>
             <strong>{readyCount}</strong>
           </div>
           <div className="workbench-template-transport-icon"><span className="material-symbols-outlined">done_all</span></div>
-        </div>
+        </button>
       </section>
 
       <div className="workbench-template-actions">
@@ -1114,6 +1207,14 @@ function RepairsHubPage({ orders, dashboard, financeReport, loading, selectedSta
         <button className="wide-action secondary" onClick={() => navigate("/scanner")} type="button">
           <span className="material-symbols-outlined">qr_code_scanner</span>
           <span>扫码登记</span>
+        </button>
+        <button className="wide-action secondary" onClick={() => navigate("/quotes/new")} type="button">
+          <span className="material-symbols-outlined">request_quote</span>
+          <span>新增报价</span>
+        </button>
+        <button className="wide-action secondary" onClick={() => navigate("/documents")} type="button">
+          <span className="material-symbols-outlined">receipt_long</span>
+          <span>报价与发票</span>
         </button>
       </div>
 
@@ -1155,19 +1256,33 @@ function RepairsHubPage({ orders, dashboard, financeReport, loading, selectedSta
 }
 
 function RepairQueuePage({ selectedStatus, search, setSearch, setSelectedStatus, openOrderForm }) {
+  const location = useLocation();
   const navigate = useNavigate();
   const [data, setData] = useState({ metrics: null, rows: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [workingId, setWorkingId] = useState("");
+  const [priorityFilter, setPriorityFilter] = useState("");
 
-  const loadQueue = useCallback(async (status = selectedStatus, keyword = search) => {
+  useEffect(() => {
+    const presetStatus = String(location.state?.presetStatus ?? "").trim();
+    const presetPriority = String(location.state?.presetPriority ?? "").trim();
+    if (presetStatus && presetStatus !== selectedStatus) {
+      setSelectedStatus(presetStatus);
+    }
+    if (presetPriority !== priorityFilter) {
+      setPriorityFilter(presetPriority);
+    }
+  }, [location.state, priorityFilter, selectedStatus, setSelectedStatus]);
+
+  const loadQueue = useCallback(async (status = selectedStatus, keyword = search, priority = priorityFilter) => {
     const query = new URLSearchParams();
     query.set("status", status);
     if (keyword.trim()) query.set("search", keyword.trim());
+    if (priority) query.set("priority", priority);
     const result = await fetchJson(`/api/repair-queue?${query.toString()}`);
     setData(result);
-  }, [search, selectedStatus]);
+  }, [priorityFilter, search, selectedStatus]);
 
   useEffect(() => {
     let ignore = false;
@@ -1178,6 +1293,7 @@ function RepairQueuePage({ selectedStatus, search, setSearch, setSelectedStatus,
         const query = new URLSearchParams();
         query.set("status", selectedStatus);
         if (search.trim()) query.set("search", search.trim());
+        if (priorityFilter) query.set("priority", priorityFilter);
         const result = await fetchJson(`/api/repair-queue?${query.toString()}`);
         if (!ignore) setData(result);
       } catch (loadError) {
@@ -1190,7 +1306,7 @@ function RepairQueuePage({ selectedStatus, search, setSearch, setSelectedStatus,
     return () => {
       ignore = true;
     };
-  }, [search, selectedStatus]);
+  }, [priorityFilter, search, selectedStatus]);
 
   async function handleQueueAction(orderId, action) {
     try {
@@ -1201,7 +1317,7 @@ function RepairQueuePage({ selectedStatus, search, setSearch, setSelectedStatus,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action }),
       });
-      await loadQueue(selectedStatus, search);
+      await loadQueue(selectedStatus, search, priorityFilter);
     } catch (actionError) {
       setError(actionError.message);
     } finally {
@@ -1234,28 +1350,28 @@ function RepairQueuePage({ selectedStatus, search, setSearch, setSelectedStatus,
       </div>
       <section className="repair-queue-template-metrics">
         <div className="repair-queue-template-metric-item">
-          <div className="repair-queue-template-metric-card">
+          <button className="repair-queue-template-metric-card" onClick={() => { setPriorityFilter(""); setSelectedStatus("in_progress"); loadQueue("in_progress", search, ""); }} type="button">
             <div className="repair-queue-template-metric-body">
               <p className="metric-label metric-label-inline">处理中</p>
               <strong>{data.metrics?.active ?? "-"}</strong>
             </div>
-          </div>
+          </button>
         </div>
         <div className="repair-queue-template-metric-item">
-          <div className="repair-queue-template-metric-card">
+          <button className="repair-queue-template-metric-card" onClick={() => { setPriorityFilter(""); setSelectedStatus("pending"); loadQueue("pending", search, ""); }} type="button">
             <div className="repair-queue-template-metric-body">
               <p className="metric-label metric-label-inline">待处理</p>
               <strong>{data.metrics?.pending ?? "-"}</strong>
             </div>
-          </div>
+          </button>
         </div>
         <div className="repair-queue-template-metric-item">
-          <div className="repair-queue-template-metric-card">
+          <button className="repair-queue-template-metric-card" onClick={() => { setPriorityFilter("urgent"); setSelectedStatus("all"); loadQueue("all", search, "urgent"); }} type="button">
             <div className="repair-queue-template-metric-body">
               <p className="metric-label metric-label-inline">加急单</p>
               <strong className="danger">{data.metrics?.urgent ?? "-"}</strong>
             </div>
-          </div>
+          </button>
         </div>
         <div className="repair-queue-template-metric-item revenue">
           <div className="repair-queue-template-metric-card">
@@ -1275,7 +1391,12 @@ function RepairQueuePage({ selectedStatus, search, setSearch, setSelectedStatus,
           const progressColor = tone === "danger" ? "#ef4444" : tone === "warning" ? "#f7a072" : "#007e85";
           const progressLabel = order.status === "in_progress" ? "维修中" : order.status === "pending" ? "待处理" : order.status === "completed" ? "已完成" : "可交付";
           return (
-            <div key={order.id} className={`repair-queue-template-card ${tone}`}>
+            <button
+              key={order.id}
+              className={`repair-queue-template-card ${tone}`}
+              onClick={() => navigate(`/orders/${getOrderRouteId(order)}`)}
+              type="button"
+            >
               <div className="repair-queue-template-card-top">
                 <div className="repair-queue-template-device">
                   <div className={`repair-queue-template-icon ${tone}`}>
@@ -1304,15 +1425,15 @@ function RepairQueuePage({ selectedStatus, search, setSearch, setSelectedStatus,
                 <p>{order.footerText}</p>
                 <div className="repair-queue-template-actions">
                   {order.status === "pending" ? (
-                    <button disabled={workingId === `${order.id}:accept`} onClick={() => handleQueueAction(order.id, "accept")} type="button">接单</button>
+                    <button disabled={workingId === `${order.id}:accept`} onClick={(event) => { event.stopPropagation(); handleQueueAction(order.id, "accept"); }} type="button">接单</button>
                   ) : null}
                   {order.status === "in_progress" ? (
-                    <button disabled={workingId === `${order.id}:complete`} onClick={() => handleQueueAction(order.id, "complete")} type="button">完工</button>
+                    <button disabled={workingId === `${order.id}:complete`} onClick={(event) => { event.stopPropagation(); handleQueueAction(order.id, "complete"); }} type="button">完工</button>
                   ) : null}
-              <button className="primary" onClick={() => navigate(`/orders/${getOrderRouteId(order)}`)} type="button">详情</button>
+              <button className="primary" onClick={(event) => { event.stopPropagation(); navigate(`/orders/${getOrderRouteId(order)}`); }} type="button">详情</button>
                 </div>
               </div>
-            </div>
+            </button>
           );
         })}
         {!data.rows.length && !loading ? <div className="empty-card">当前筛选下没有订单。</div> : null}
@@ -1438,6 +1559,8 @@ function OrderDetailPage({ customers, onStatusChange }) {
     customerPhone: "",
     customerEmail: "",
     imeiSerial: "",
+    batteryHealth: "",
+    storageCapacity: "",
     customerSignature: "",
     issueSummary: "",
     notes: "",
@@ -1463,6 +1586,8 @@ function OrderDetailPage({ customers, onStatusChange }) {
       customerPhone: detail.customerPhone ?? "",
       customerEmail: detail.customerEmail ?? "",
       imeiSerial: detail.intakeMeta?.imeiSerial ?? detail.deviceMeta?.serialNumber ?? "",
+      batteryHealth: detail.intakeMeta?.batteryHealth ?? detail.deviceMeta?.batteryHealth ?? "",
+      storageCapacity: detail.intakeMeta?.storageCapacity ?? detail.deviceMeta?.storage ?? "",
       customerSignature: detail.intakeMeta?.customerSignature ?? "",
       issueSummary: detail.issueSummary ?? "",
       notes: detail.notes ?? "",
@@ -1504,6 +1629,8 @@ function OrderDetailPage({ customers, onStatusChange }) {
             customerPhone: detail.customerPhone ?? "",
             customerEmail: detail.customerEmail ?? "",
             imeiSerial: detail.intakeMeta?.imeiSerial ?? detail.deviceMeta?.serialNumber ?? "",
+            batteryHealth: detail.intakeMeta?.batteryHealth ?? detail.deviceMeta?.batteryHealth ?? "",
+            storageCapacity: detail.intakeMeta?.storageCapacity ?? detail.deviceMeta?.storage ?? "",
             customerSignature: detail.intakeMeta?.customerSignature ?? "",
             issueSummary: detail.issueSummary ?? "",
             notes: detail.notes ?? "",
@@ -1623,6 +1750,7 @@ function OrderDetailPage({ customers, onStatusChange }) {
 
   const detailStatusLabel = order.statusMeta?.label ?? statusChinese[order.status] ?? order.status;
   const detailBadgeTone = order.status === "completed" || order.status === "picked_up" ? "success" : order.status === "in_progress" ? "primary" : "warning";
+  const devicePhotos = order.devicePhotos ?? order.intakePhotos ?? [];
 
   return (
     <div className="order-detail-template-page">
@@ -1712,39 +1840,40 @@ function OrderDetailPage({ customers, onStatusChange }) {
                 添加配件
               </button>
             </div>
-            <div className="order-detail-template-parts-table">
-              <table>
-                <thead>
-                  <tr>
-                    <th>配件名称</th>
-                    <th>数量</th>
-                    <th>单价</th>
-                    <th>小计</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {partsForm.map((part) => (
-                    <tr key={part.partId}>
-                      <td className="order-detail-template-part-name">{part.name}</td>
-                      <td><input min="1" onChange={(event) => setPartsForm((current) => current.map((item) => item.partId === part.partId ? { ...item, quantity: event.target.value } : item))} type="number" value={part.quantity} /></td>
-                      <td><input min="0" onChange={(event) => setPartsForm((current) => current.map((item) => item.partId === part.partId ? { ...item, unitPrice: event.target.value } : item))} type="number" value={part.unitPrice} /></td>
-                      <td className="order-detail-template-part-total">
-                        <strong>{`${(((Number(part.quantity) || 0) * (Number(part.unitPrice) || 0)).toLocaleString("en-US"))} VUV`}</strong>
-                        <button className="small-action-button" disabled={partsSaving} onClick={() => handleDeletePart(part.partId)} type="button">删除</button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="order-detail-template-parts-list">
+              {partsForm.map((part) => (
+                <div key={part.partId} className="order-detail-template-part-card">
+                  <div className="order-detail-template-part-name-row">
+                    <strong className="order-detail-template-part-name">{part.name}</strong>
+                  </div>
+                  <div className="order-detail-template-part-fields">
+                    <div className="order-detail-template-part-field">
+                      <span>数量</span>
+                      <input min="1" onChange={(event) => setPartsForm((current) => current.map((item) => item.partId === part.partId ? { ...item, quantity: event.target.value } : item))} type="number" value={part.quantity} />
+                    </div>
+                    <div className="order-detail-template-part-field">
+                      <span>单价</span>
+                      <input min="0" onChange={(event) => setPartsForm((current) => current.map((item) => item.partId === part.partId ? { ...item, unitPrice: event.target.value } : item))} type="number" value={part.unitPrice} />
+                    </div>
+                    <div className="order-detail-template-part-field total">
+                      <span>配件小计</span>
+                      <strong>{`${(((Number(part.quantity) || 0) * (Number(part.unitPrice) || 0)).toLocaleString("en-US"))} VUV`}</strong>
+                    </div>
+                  </div>
+                  <div className="order-detail-template-part-actions">
+                    <button className="small-action-button" disabled={partsSaving} onClick={() => handleDeletePart(part.partId)} type="button">删除</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="usage-tags order-detail-template-balance-tags">
+              <span className="soft-badge">定金: {order.depositFormatted ?? "0 VUV"}</span>
+              <span className="soft-badge">待收尾款: {order.balanceDueFormatted ?? order.amountFormatted}</span>
             </div>
             <div className="order-detail-template-totals">
               <div><span>配件小计</span><strong>{order.partsTotalFormatted ?? order.amountFormatted}</strong></div>
               <div><span>工费</span><strong>{order.laborTotalFormatted ?? "0 VUV"}</strong></div>
               <div><span>订单总价</span><strong>{order.grandTotalFormatted ?? order.amountFormatted}</strong></div>
-            </div>
-            <div className="usage-tags">
-              <span className="soft-badge">定金: {order.depositFormatted ?? "0 VUV"}</span>
-              <span className="soft-badge">待收尾款: {order.balanceDueFormatted ?? order.amountFormatted}</span>
             </div>
             <div className="order-detail-template-inline-actions">
               <button className="wide-action secondary" onClick={() => navigate(`/orders/${getOrderRouteId(order)}/parts-usage`)} type="button">使用明细</button>
@@ -1799,6 +1928,8 @@ function OrderDetailPage({ customers, onStatusChange }) {
               <Field label="客户电话"><input value={manageForm.customerPhone} onChange={(event) => setManageForm((current) => ({ ...current, customerPhone: event.target.value }))} /></Field>
               <Field label="客户邮箱" full><input type="email" value={manageForm.customerEmail} onChange={(event) => setManageForm((current) => ({ ...current, customerEmail: event.target.value }))} /></Field>
               <Field label="IMEI / 序列号" full><input value={manageForm.imeiSerial} onChange={(event) => setManageForm((current) => ({ ...current, imeiSerial: event.target.value }))} /></Field>
+              <Field label="电池健康度"><input value={manageForm.batteryHealth} onChange={(event) => setManageForm((current) => ({ ...current, batteryHealth: event.target.value }))} /></Field>
+              <Field label="存储容量"><input value={manageForm.storageCapacity} onChange={(event) => setManageForm((current) => ({ ...current, storageCapacity: event.target.value }))} /></Field>
               <Field label="客户签字" full><input value={manageForm.customerSignature} onChange={(event) => setManageForm((current) => ({ ...current, customerSignature: event.target.value }))} /></Field>
               <Field label="故障说明" full><textarea value={manageForm.issueSummary} onChange={(event) => setManageForm((current) => ({ ...current, issueSummary: event.target.value }))} /></Field>
               <Field label="维修备注" full><textarea value={manageForm.notes} onChange={(event) => setManageForm((current) => ({ ...current, notes: event.target.value }))} /></Field>
@@ -1850,14 +1981,14 @@ function OrderDetailPage({ customers, onStatusChange }) {
 
           <section className="order-detail-template-card">
             <h3>设备实拍</h3>
-            {order.intakePhotos?.length ? (
+            {devicePhotos.length ? (
               <>
                 <div className="gallery-grid">
-                  <button className="gallery-photo-button" onClick={() => setActivePhoto(order.intakePhotos[0])} type="button">
-                    <img alt={order.intakePhotos[0].stage} src={order.intakePhotos[0].image} />
+                  <button className="gallery-photo-button" onClick={() => setActivePhoto(devicePhotos[0])} type="button">
+                    <img alt={devicePhotos[0].stage} src={devicePhotos[0].image} />
                   </button>
                   <div className="gallery-stack">
-                    {order.intakePhotos.slice(1, 4).map((photo) => (
+                    {devicePhotos.slice(1, 4).map((photo) => (
                       <button key={photo.image} className="gallery-photo-button" onClick={() => setActivePhoto(photo)} type="button">
                         <img alt={photo.stage} src={photo.image} />
                       </button>
@@ -1865,23 +1996,13 @@ function OrderDetailPage({ customers, onStatusChange }) {
                   </div>
                 </div>
                 <div className="usage-tags">
-                  {order.intakePhotos.map((photo) => (
+                  {devicePhotos.map((photo) => (
                     <button key={`${photo.stage}-${photo.image}`} className="soft-badge soft-badge-button" onClick={() => setActivePhoto(photo)} type="button">{photo.stage}</button>
                   ))}
                 </div>
               </>
             ) : (
-              <div className="gallery-grid">
-                <button className="gallery-photo-button" onClick={() => setActivePhoto({ stage: "维修近景", image: detailGallery[0] })} type="button">
-                  <img alt="repair close-up" src={detailGallery[0]} />
-                </button>
-                <div className="gallery-stack">
-                  <button className="gallery-photo-button" onClick={() => setActivePhoto({ stage: "维修工具", image: detailGallery[1] })} type="button">
-                    <img alt="repair tools" src={detailGallery[1]} />
-                  </button>
-                  <button className="gallery-more" onClick={() => setActivePhoto({ stage: "维修近景", image: detailGallery[0] })} type="button">+4 图</button>
-                </div>
-              </div>
+              <div className="empty-card compact">暂无设备实拍，上传后会直接从后台显示。</div>
             )}
           </section>
         </div>
@@ -2034,13 +2155,18 @@ function InventoryPage({ dashboard, parts, movements, openMovementForm, refresh 
           </div>
           <div className="inventory-template-breakdown-grid">
             {categoryStats.map((item) => (
-              <div key={item.key} className="inventory-template-breakdown-item">
+              <button
+                key={item.key}
+                className="inventory-template-breakdown-item"
+                onClick={() => navigate(`/parts-catalog?category=${encodeURIComponent(item.key)}`)}
+                type="button"
+              >
                 <span className="inventory-template-dot" style={{ background: item.color }} />
                 <div>
                   <p>{item.label}</p>
                   <span>{item.percent}% · {item.count} 项</span>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </div>
@@ -2050,9 +2176,18 @@ function InventoryPage({ dashboard, parts, movements, openMovementForm, refresh 
 }
 
 function PartsCatalogPage({ parts }) {
+  const location = useLocation();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    setSearch(params.get("search") ?? "");
+    setCategory(params.get("category") ?? "All");
+  }, [location.search]);
+
+  const lowStockOnly = useMemo(() => new URLSearchParams(location.search).get("lowStock") === "1", [location.search]);
 
   const categories = useMemo(() => {
     const values = new Set(parts.map((part) => inferPartCategory(part.name)));
@@ -2062,12 +2197,13 @@ function PartsCatalogPage({ parts }) {
   const filteredParts = useMemo(() => {
     return parts.filter((part) => {
       const query = search.trim().toLowerCase();
-      const inferredCategory = inferPartCategory(part.name);
+      const inferredCategory = part.category ?? inferPartCategory(part.name);
       const matchesCategory = category === "All" ? true : inferredCategory === category;
       const matchesSearch = !query || part.name.toLowerCase().includes(query) || part.sku.toLowerCase().includes(query);
-      return matchesCategory && matchesSearch;
+      const matchesLowStock = lowStockOnly ? part.needsReorder : true;
+      return matchesCategory && matchesSearch && matchesLowStock;
     });
-  }, [category, parts, search]);
+  }, [category, lowStockOnly, parts, search]);
 
   return (
     <div className="inventory-catalog-template-page">
@@ -2089,6 +2225,12 @@ function PartsCatalogPage({ parts }) {
           </button>
         ))}
       </nav>
+
+      {lowStockOnly ? (
+        <div className="inventory-catalog-template-filter-tip">
+          当前正在查看低库存配件
+        </div>
+      ) : null}
 
       <section className="inventory-catalog-template-grid">
         {filteredParts.map((part) => (
@@ -2125,6 +2267,8 @@ function ScannerPage({ orders, parts }) {
   const [error, setError] = useState("");
   const [scanMessage, setScanMessage] = useState("");
   const [flashlightOn, setFlashlightOn] = useState(false);
+  const [cameraStream, setCameraStream] = useState(null);
+  const [cameraLoopId, setCameraLoopId] = useState(null);
   const recentScans = [
     { id: `order-${orders[0]?.id ?? 1}`, type: "订单", icon: "receipt_long", title: orders[0]?.orderNo ?? "RO-88294", meta: orders[0]?.title ?? "待确认设备", value: orders[0]?.amountFormatted ?? "-", action: () => navigate(`/orders/${getOrderRouteId(orders[0], "1")}`) },
     { id: `part-${parts[0]?.id ?? 1}`, type: "配件", icon: "inventory_2", title: parts[0]?.name ?? "iPhone 14 Pro Screen", meta: parts[0]?.sku ?? "-", value: parts[0]?.unitPriceFormatted ?? "-", action: () => navigate(`/parts/${parts[0]?.id ?? 1}`) },
@@ -2154,6 +2298,75 @@ function ScannerPage({ orders, parts }) {
     }
   }
 
+  async function stopScannerCamera() {
+    if (cameraLoopId) {
+      window.clearInterval(cameraLoopId);
+      setCameraLoopId(null);
+    }
+    if (cameraStream) {
+      cameraStream.getTracks().forEach((track) => track.stop());
+      setCameraStream(null);
+    }
+  }
+
+  async function startScannerCamera() {
+    try {
+      setError("");
+      setScanMessage("");
+
+      if (!window.isSecureContext && !["localhost", "127.0.0.1"].includes(window.location.hostname)) {
+        setError("当前浏览器限制 HTTP 局域网直接调相机，请改用 localhost 或 HTTPS。");
+        return;
+      }
+
+      if (!("BarcodeDetector" in window)) {
+        setError("当前浏览器不支持原生扫码，请先用图片导入或手动输入。");
+        return;
+      }
+
+      await stopScannerCamera();
+
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: "environment" } },
+        audio: false,
+      });
+
+      setCameraStream(stream);
+      window.setTimeout(() => {
+        const video = document.getElementById("scanner-live-video");
+        if (video) {
+          video.srcObject = stream;
+          video.play().catch(() => {});
+        }
+      }, 50);
+
+      const detector = new window.BarcodeDetector({
+        formats: ["qr_code", "ean_13", "ean_8", "code_128", "code_39", "upc_a", "upc_e"],
+      });
+
+      const loopId = window.setInterval(async () => {
+        const video = document.getElementById("scanner-live-video");
+        if (!video || video.readyState < 2) return;
+        try {
+          const barcodes = await detector.detect(video);
+          const firstCode = barcodes?.[0]?.rawValue?.trim();
+          if (!firstCode) return;
+          setQuery(firstCode);
+          await handleSearch(firstCode, "all");
+          setScanMessage(`已识别条码：${firstCode}`);
+          await stopScannerCamera();
+        } catch {
+          // ignore transient detect errors
+        }
+      }, 900);
+
+      setCameraLoopId(loopId);
+      setScanMessage("摄像头已开启，请将条码对准扫描框。");
+    } catch (cameraError) {
+      setError(cameraError?.message || "无法开启摄像头扫码");
+    }
+  }
+
   function handleFlashlightToggle() {
     setFlashlightOn((current) => {
       const next = !current;
@@ -2172,6 +2385,11 @@ function ScannerPage({ orders, parts }) {
     event.target.value = "";
   }
 
+  useEffect(() => () => {
+    if (cameraLoopId) window.clearInterval(cameraLoopId);
+    if (cameraStream) cameraStream.getTracks().forEach((track) => track.stop());
+  }, [cameraLoopId, cameraStream]);
+
   return (
     <div className="scanner-page">
       <div className="scanner-toggle">
@@ -2179,10 +2397,12 @@ function ScannerPage({ orders, parts }) {
         <button onClick={() => navigate("/parts-scanner")} type="button">扫描零件</button>
       </div>
       <section className="scanner-viewport-card">
+        {cameraStream ? <video autoPlay className="scanner-live-video" id="scanner-live-video" muted playsInline /> : null}
         <div className="scanner-overlay-frame">
           <div className="scanner-laser-line" />
         </div>
         <div className="scanner-floating-actions">
+          <button className={cameraStream ? "active" : ""} onClick={() => { if (cameraStream) { stopScannerCamera(); setScanMessage("摄像头扫码已停止"); } else { startScannerCamera(); } }} type="button"><span className="material-symbols-outlined">{cameraStream ? "videocam_off" : "videocam"}</span></button>
           <button className={flashlightOn ? "active" : ""} onClick={handleFlashlightToggle} type="button"><span className="material-symbols-outlined">flashlight_on</span></button>
           <button onClick={() => document.getElementById("scanner-image-upload")?.click()} type="button"><span className="material-symbols-outlined">image</span></button>
         </div>
@@ -5055,8 +5275,22 @@ function LanguageSettingsPage() {
 
 function PrintSettingsPage() {
   const [form, setForm] = useState({ paperSize: "58mm", qrEnabled: true, defaultReceiptEnabled: true, footerBrandEnabled: true });
+  const [mailForm, setMailForm] = useState({
+    smtpHost: "",
+    smtpPort: 587,
+    smtpSecure: false,
+    smtpUser: "",
+    smtpPassword: "",
+    smtpFromName: "Vila Port Repair Team",
+    smtpFromEmail: "",
+    popHost: "",
+    popPort: 110,
+    popUser: "",
+    popPassword: "",
+  });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [mailSaving, setMailSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
@@ -5065,8 +5299,14 @@ function PrintSettingsPage() {
     async function boot() {
       try {
         setLoading(true);
-        const result = await fetchJson("/api/settings/print");
-        if (!ignore) setForm(result);
+        const [printResult, mailResult] = await Promise.all([
+          fetchJson("/api/settings/print"),
+          fetchJson("/api/settings/mail-server"),
+        ]);
+        if (!ignore) {
+          setForm(printResult);
+          setMailForm(mailResult);
+        }
       } catch (loadError) {
         if (!ignore) setError(loadError.message);
       } finally {
@@ -5095,6 +5335,25 @@ function PrintSettingsPage() {
       setError(saveError.message);
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleSaveMail() {
+    try {
+      setMailSaving(true);
+      setError("");
+      setMessage("");
+      const result = await fetchJson("/api/settings/mail-server", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(mailForm),
+      });
+      setMailForm(result);
+      setMessage("邮件服务器设置已保存");
+    } catch (saveError) {
+      setError(saveError.message);
+    } finally {
+      setMailSaving(false);
     }
   }
 
@@ -5143,6 +5402,25 @@ function PrintSettingsPage() {
           <label className="settings-inline-card"><input checked={form.defaultReceiptEnabled} onChange={(event) => setForm((current) => ({ ...current, defaultReceiptEnabled: event.target.checked }))} type="checkbox" /><span>默认打印结算单</span></label>
           <label className="settings-inline-card"><input checked={form.footerBrandEnabled} onChange={(event) => setForm((current) => ({ ...current, footerBrandEnabled: event.target.checked }))} type="checkbox" /><span>页脚品牌信息</span></label>
           <button className="primary-submit" disabled={saving} onClick={handleSave} type="button">{saving ? "保存中..." : "保存打印设置"}</button>
+        </div>
+      </section>
+      <section className="settings-template-section">
+        <div className="settings-template-head">
+          <h4>邮件服务器</h4>
+        </div>
+        <div className="sheet-form compact">
+          <Field label="SMTP 主机"><input value={mailForm.smtpHost} onChange={(event) => setMailForm((current) => ({ ...current, smtpHost: event.target.value }))} /></Field>
+          <Field label="SMTP 端口"><input type="number" value={mailForm.smtpPort} onChange={(event) => setMailForm((current) => ({ ...current, smtpPort: Number(event.target.value || 0) }))} /></Field>
+          <label className="settings-inline-card"><input checked={mailForm.smtpSecure} onChange={(event) => setMailForm((current) => ({ ...current, smtpSecure: event.target.checked }))} type="checkbox" /><span>SMTP SSL/TLS</span></label>
+          <Field label="SMTP 用户"><input value={mailForm.smtpUser} onChange={(event) => setMailForm((current) => ({ ...current, smtpUser: event.target.value }))} /></Field>
+          <Field label="SMTP 密码"><input type="password" value={mailForm.smtpPassword} onChange={(event) => setMailForm((current) => ({ ...current, smtpPassword: event.target.value }))} /></Field>
+          <Field label="发件人名称"><input value={mailForm.smtpFromName} onChange={(event) => setMailForm((current) => ({ ...current, smtpFromName: event.target.value }))} /></Field>
+          <Field label="发件邮箱"><input type="email" value={mailForm.smtpFromEmail} onChange={(event) => setMailForm((current) => ({ ...current, smtpFromEmail: event.target.value }))} /></Field>
+          <Field label="POP 主机"><input value={mailForm.popHost} onChange={(event) => setMailForm((current) => ({ ...current, popHost: event.target.value }))} /></Field>
+          <Field label="POP 端口"><input type="number" value={mailForm.popPort} onChange={(event) => setMailForm((current) => ({ ...current, popPort: Number(event.target.value || 0) }))} /></Field>
+          <Field label="POP 用户"><input value={mailForm.popUser} onChange={(event) => setMailForm((current) => ({ ...current, popUser: event.target.value }))} /></Field>
+          <Field label="POP 密码"><input type="password" value={mailForm.popPassword} onChange={(event) => setMailForm((current) => ({ ...current, popPassword: event.target.value }))} /></Field>
+          <button className="primary-submit" disabled={mailSaving} onClick={handleSaveMail} type="button">{mailSaving ? "保存中..." : "保存邮件服务器"}</button>
         </div>
       </section>
     </div>
@@ -6223,6 +6501,8 @@ function CustomerDetailsPage() {
   if (error) return <div className="message-banner error">{error}</div>;
   if (!customer) return <div className="empty-card">未找到客户。</div>;
 
+  const whatsappLink = buildWhatsAppLink(customer.phone);
+
   return (
     <div className="customer-detail-template-page">
       {actionMessage ? <div className="message-banner success">{actionMessage}</div> : null}
@@ -6275,6 +6555,9 @@ function CustomerDetailsPage() {
       <section className="customer-detail-template-quick-grid">
         <button onClick={() => { window.location.href = `tel:${customer.phone}`; }} type="button"><span className="material-symbols-outlined">call</span><span>语音通话</span></button>
         <button onClick={() => { window.location.href = `sms:${customer.phone}`; }} type="button"><span className="material-symbols-outlined">sms</span><span>发送短信</span></button>
+        {whatsappLink ? (
+          <button onClick={() => { window.open(whatsappLink, "_blank", "noopener,noreferrer"); }} type="button"><span className="material-symbols-outlined">forum</span><span>WhatsApp</span></button>
+        ) : null}
         <button onClick={() => { window.location.href = `mailto:${customer.email}`; }} type="button"><span className="material-symbols-outlined">mail</span><span>电子邮件</span></button>
         <button onClick={handleShareCard} type="button"><span className="material-symbols-outlined">share</span><span>分享名片</span></button>
       </section>
@@ -6417,7 +6700,7 @@ function MyRepairHistoryPage() {
             <div className="customer-history-template-meta">
               <div>
                 <span className="material-symbols-outlined">build</span>
-                <span>{record.serviceTag}</span>
+                <span>{record.serviceTag ?? record.title}</span>
               </div>
               <div>
                 <span className="material-symbols-outlined">calendar_today</span>
@@ -6786,8 +7069,8 @@ function ReceiptPage() {
               <div>
                 <strong>{item.name}</strong>
                 <p>{item.detail}</p>
+                <p className="receipt-line-price">{item.amountFormatted}</p>
               </div>
-              <span>{item.amountFormatted}</span>
             </div>
           ))}
         </div>
@@ -7490,6 +7773,117 @@ function ShareReportPage() {
   );
 }
 
+function WhatsAppSharePage() {
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    let ignore = false;
+    async function loadShare() {
+      try {
+        setLoading(true);
+        setError("");
+        const result = await fetchJson(`/api/orders/${id}/share-report`);
+        if (!ignore) setData(result);
+      } catch (loadError) {
+        if (!ignore) setError(loadError.message);
+      } finally {
+        if (!ignore) setLoading(false);
+      }
+    }
+    loadShare();
+    return () => { ignore = true; };
+  }, [id]);
+
+  if (loading) return <div className="empty-card">WhatsApp 分享加载中...</div>;
+  if (error) return <div className="message-banner error">{error}</div>;
+  if (!data) return <div className="empty-card">未找到分享内容。</div>;
+
+  const shareText = [
+    `维修报告 ${data.orderNo}`,
+    `客户: ${data.customerName}`,
+    `备件费用: ${data.partsTotalFormatted ?? "-"}`,
+    `工费: ${data.laborTotalFormatted ?? "-"}`,
+    `总金额: ${data.totalFormatted}`,
+    `PDF: ${window.location.origin}/api/orders/${id}/report.pdf`,
+  ].join("\n");
+
+  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+
+  async function handleNativeShare() {
+    try {
+      setMessage("");
+      if (navigator.share) {
+        await navigator.share({
+          title: `维修报告 ${data.orderNo}`,
+          text: shareText,
+          url: `${window.location.origin}/api/orders/${id}/report.pdf`,
+        });
+        setMessage("已打开系统分享面板。");
+        return;
+      }
+
+      await navigator.clipboard.writeText(shareText);
+      setMessage("分享内容已复制，可直接粘贴到 WhatsApp。");
+    } catch (shareError) {
+      setMessage(shareError?.message || "分享失败，请稍后重试。");
+    }
+  }
+
+  async function handleCopy() {
+    try {
+      await navigator.clipboard.writeText(shareText);
+      setMessage("内容已复制，可直接粘贴到 WhatsApp。");
+    } catch (copyError) {
+      setMessage(copyError?.message || "复制失败，请稍后重试。");
+    }
+  }
+
+  return (
+    <div className="share-report-page">
+      {message ? <div className="message-banner success">{message}</div> : null}
+      <section className="pdf-preview-card">
+        <div className="pdf-preview-header">
+          <span>WhatsApp 分享</span>
+          <strong>{data.orderNo}</strong>
+        </div>
+        <div className="pdf-preview-body">
+          <div className="pdf-preview-brand">
+            <div className="supplier-icon"><span className="material-symbols-outlined">forum</span></div>
+            <div>
+              <h2>分享给客户</h2>
+              <p>{data.customerName}</p>
+            </div>
+          </div>
+          <div className="receipt-divider" />
+          <div className="pdf-preview-lines">
+            <div><span>备件费用</span><strong>{data.partsTotalFormatted ?? "-"}</strong></div>
+            <div><span>工费</span><strong>{data.laborTotalFormatted ?? "-"}</strong></div>
+            <div><span>总金额</span><strong>{data.totalFormatted}</strong></div>
+          </div>
+          <div className="detail-block" style={{ marginTop: 16 }}>
+            <div className="detail-block-head">
+              <h4>消息预览</h4>
+            </div>
+            <pre className="share-message-preview">{shareText}</pre>
+          </div>
+        </div>
+      </section>
+
+      <section className="share-actions">
+        <button className="whatsapp-button" onClick={() => window.open(whatsappUrl, "_blank", "noopener,noreferrer")} type="button">打开 WhatsApp</button>
+        <button className="wide-action primary" onClick={handleNativeShare} type="button">系统分享</button>
+        <button className="wide-action secondary" onClick={handleCopy} type="button">复制内容</button>
+        <button className="wide-action secondary" onClick={() => navigate(`/orders/${id}/share-report`)} type="button">返回预览</button>
+      </section>
+    </div>
+  );
+}
+
 function SendEmailReportPage() {
   const { id } = useParams();
   const [data, setData] = useState(null);
@@ -7550,12 +7944,20 @@ function SendEmailReportPage() {
           <div className="supplier-icon"><span className="material-symbols-outlined">description</span></div>
           <div>
             <strong>{data.attachmentName}</strong>
-            <p>{data.attachmentSize} · PDF 文档</p>
+            <p>{data.attachmentSize} · 80mm 小票 PDF</p>
           </div>
+        </div>
+        <div className="detail-block">
+          <div className="detail-block-head">
+            <h4>邮件服务器状态</h4>
+          </div>
+          <span className={data.mailServerConfigured ? "status-success" : "status-warning"}>
+            {data.mailServerConfigured ? "SMTP 已配置，可直接发送" : "未配置 SMTP，请先去打印设置填写邮件服务器"}
+          </span>
         </div>
       </div>
       <div className="email-bottom-bar">
-        <button className="wide-action primary" onClick={handleSend} type="button">发送邮件</button>
+        <button className="wide-action primary" disabled={!data.mailServerConfigured} onClick={handleSend} type="button">发送邮件</button>
         <button className="composer-send" onClick={() => window.open(`/api/orders/${id}/report.pdf`, "_blank")} type="button"><span className="material-symbols-outlined">attach_file</span></button>
       </div>
     </div>
@@ -7676,6 +8078,762 @@ function TechnicianPerformancePage({ staffPerformance }) {
   );
 }
 
+function CreateQuotePage({ customers, parts }) {
+  const navigate = useNavigate();
+  const [draft, setDraft] = useState(() => createQuoteDraft(customers, parts));
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    setDraft((current) => {
+      if (current.customerId || !customers.length) return current;
+      return createQuoteDraft(customers, parts);
+    });
+  }, [customers, parts]);
+
+  const selectedCustomer = customers.find((item) => String(item.id) === String(draft.customerId));
+  const subtotal = draft.items.reduce((sum, item) => sum + Number(item.quantity || 0) * Number(item.unitPrice || 0), 0);
+  const totalItems = draft.items.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+
+  function updateItem(index, patch) {
+    setDraft((current) => ({
+      ...current,
+      items: current.items.map((item, itemIndex) => (itemIndex === index ? { ...item, ...patch } : item)),
+    }));
+  }
+
+  function addItem() {
+    const candidate = parts.find((part) => !draft.items.some((item) => String(item.partId) === String(part.id)));
+    setDraft((current) => ({
+      ...current,
+      items: [
+        ...current.items,
+        candidate
+          ? {
+            itemType: "part",
+            partId: String(candidate.id),
+            name: candidate.name,
+            description: "报价配件",
+            quantity: 1,
+            unitPrice: Number(candidate.unitPrice ?? 0),
+          }
+          : {
+            itemType: "labor",
+            partId: "",
+            name: "人工服务",
+            description: "维修工费",
+            quantity: 1,
+            unitPrice: 0,
+          },
+      ],
+    }));
+  }
+
+  function removeItem(index) {
+    setDraft((current) => ({
+      ...current,
+      items: current.items.filter((_, itemIndex) => itemIndex !== index),
+    }));
+  }
+
+  async function handleSubmit() {
+    try {
+      setSaving(true);
+      setError("");
+      const payload = {
+        ...draft,
+        customerId: draft.customerId ? Number(draft.customerId) : null,
+        customerName: selectedCustomer?.name ?? draft.customerName,
+        customerPhone: selectedCustomer?.phone ?? draft.customerPhone,
+        customerEmail: selectedCustomer?.email ?? draft.customerEmail,
+        items: draft.items.map((item) => ({
+          itemType: item.itemType,
+          partId: item.partId ? Number(item.partId) : null,
+          name: item.name,
+          description: item.description,
+          quantity: Number(item.quantity || 0),
+          unitPrice: Number(item.unitPrice || 0),
+        })),
+      };
+      const created = await fetchJson("/api/quotes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      navigate(`/quotes/${created.quoteNo}`);
+    } catch (submitError) {
+      setError(submitError.message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className="quote-template-page">
+      <section className="quote-template-section">
+        <div className="quote-template-head">
+          <button className="icon-button" onClick={() => navigate(-1)} type="button"><span className="material-symbols-outlined">arrow_back</span></button>
+          <div>
+            <h2>新建报价单</h2>
+            <p>按模板结构录入客户、设备、报价项目。</p>
+          </div>
+        </div>
+        <div className="quote-template-hero-grid">
+          <article className="quote-template-hero-card accent">
+            <span>当前报价</span>
+            <strong>{formatCurrency(subtotal)}</strong>
+            <p>{totalItems} 项报价内容</p>
+          </article>
+          <article className="quote-template-hero-card">
+            <span>报价客户</span>
+            <strong>{selectedCustomer?.name ?? draft.customerName ?? "待选择客户"}</strong>
+            <p>{selectedCustomer?.phone ?? draft.customerPhone ?? "可直接带入联系方式"}</p>
+          </article>
+          <article className="quote-template-hero-card">
+            <span>设备信息</span>
+            <strong>{draft.deviceName || "待填写设备型号"}</strong>
+            <p>{draft.serviceType || "待填写服务类型"}</p>
+          </article>
+        </div>
+      </section>
+      <section className="quote-template-section">
+        <h3>客户信息</h3>
+        <div className="quote-form-grid">
+          <label>
+            <span>选择客户</span>
+            <select
+              value={draft.customerId}
+              onChange={(event) => {
+                const customer = customers.find((item) => String(item.id) === event.target.value);
+                setDraft((current) => ({
+                  ...current,
+                  customerId: event.target.value,
+                  customerName: customer?.name ?? current.customerName,
+                  customerPhone: customer?.phone ?? current.customerPhone,
+                  customerEmail: customer?.email ?? current.customerEmail,
+                }));
+              }}
+            >
+              <option value="">选择客户</option>
+              {customers.map((customer) => <option key={customer.id} value={customer.id}>{customer.name}</option>)}
+            </select>
+          </label>
+          <label>
+            <span>设备 / 型号</span>
+            <input value={draft.deviceName} onChange={(event) => setDraft((current) => ({ ...current, deviceName: event.target.value }))} placeholder="例如 iPhone 14 Pro Max" />
+          </label>
+          <label>
+            <span>服务类型</span>
+            <input value={draft.serviceType} onChange={(event) => setDraft((current) => ({ ...current, serviceType: event.target.value }))} placeholder="例如 屏幕更换" />
+          </label>
+          <label>
+            <span>有效期至</span>
+            <input type="date" value={draft.validUntil} onChange={(event) => setDraft((current) => ({ ...current, validUntil: event.target.value }))} />
+          </label>
+        </div>
+      </section>
+      <section className="quote-template-section">
+        <div className="quote-template-title-row">
+          <h3>报价项目</h3>
+          <button className="small-action-button" onClick={addItem} type="button">添加项目</button>
+        </div>
+        <div className="quote-item-list">
+          {draft.items.map((item, index) => (
+            <div key={`${item.name}-${index}`} className="quote-item-card">
+              <div className="quote-item-top">
+                <div>
+                  <strong>{item.name || "未命名项目"}</strong>
+                  <p>{item.itemType === "labor" ? "人工项目" : "配件项目"}</p>
+                </div>
+                <button className="icon-button destructive" onClick={() => removeItem(index)} type="button"><span className="material-symbols-outlined">delete</span></button>
+              </div>
+              <div className="quote-form-grid compact">
+                <label>
+                  <span>配件</span>
+                  <select
+                    value={item.partId}
+                    onChange={(event) => {
+                      const part = parts.find((candidate) => String(candidate.id) === event.target.value);
+                      updateItem(index, {
+                        itemType: "part",
+                        partId: event.target.value,
+                        name: part?.name ?? item.name,
+                        description: "报价配件",
+                        unitPrice: Number(part?.unitPrice ?? item.unitPrice ?? 0),
+                      });
+                    }}
+                  >
+                    <option value="">手动项目</option>
+                    {parts.map((part) => <option key={part.id} value={part.id}>{part.name}</option>)}
+                  </select>
+                </label>
+                <label>
+                  <span>项目名称</span>
+                  <input value={item.name} onChange={(event) => updateItem(index, { name: event.target.value })} />
+                </label>
+                <label>
+                  <span>说明</span>
+                  <input value={item.description} onChange={(event) => updateItem(index, { description: event.target.value })} />
+                </label>
+                <label>
+                  <span>数量</span>
+                  <input type="number" min="1" value={item.quantity} onChange={(event) => updateItem(index, { quantity: Number(event.target.value || 0) })} />
+                </label>
+                <label>
+                  <span>单价</span>
+                  <input type="number" min="0" value={item.unitPrice} onChange={(event) => updateItem(index, { unitPrice: Number(event.target.value || 0) })} />
+                </label>
+                <div className="quote-item-total">
+                  <span>小计</span>
+                  <strong>{formatCurrency(Number(item.quantity || 0) * Number(item.unitPrice || 0))}</strong>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+      <section className="quote-template-summary">
+        <div>
+          <span>报价合计</span>
+          <strong>{formatCurrency(subtotal)}</strong>
+        </div>
+        <button className="wide-action primary" disabled={saving} onClick={handleSubmit} type="button">{saving ? "保存中..." : "生成报价单"}</button>
+      </section>
+      {error ? <p className="inline-error">{error}</p> : null}
+    </div>
+  );
+}
+
+function QuotePreviewPage() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [data, setData] = useState(null);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let active = true;
+    fetchJson(`/api/quotes/${id}`)
+      .then((result) => {
+        if (active) setData(result);
+      })
+      .catch((loadError) => {
+        if (active) setError(loadError.message);
+      });
+    return () => {
+      active = false;
+    };
+  }, [id]);
+
+  if (!data && !error) return <LoadingState label="正在加载报价单..." />;
+  if (error) return <EmptyState title="报价单加载失败" message={error} />;
+
+  return (
+    <div className="document-template-page">
+      <section className="document-template-toolbar">
+        <button className="icon-button" onClick={() => navigate(-1)} type="button"><span className="material-symbols-outlined">arrow_back</span></button>
+        <div className="document-template-toolbar-copy">
+          <h2>报价单预览</h2>
+          <p>Quote Preview</p>
+        </div>
+        <div className="document-template-toolbar-actions">
+          <button className="wide-action secondary" onClick={() => window.print()} type="button">打印报价</button>
+          <button className="wide-action secondary" onClick={() => navigate("/documents")} type="button">文档中心</button>
+        </div>
+      </section>
+      <section className="quote-preview-card">
+        <div className="quote-preview-head">
+          <div className="document-brand-lockup">
+            <div className="document-brand-mark">
+              <span className="material-symbols-outlined">build</span>
+            </div>
+            <div>
+              <div className="soft-badge">报价预览</div>
+              <p className="document-brand-name">Vila Repair Hub</p>
+            </div>
+          </div>
+          <div className="quote-preview-title">
+            <h3>{data.quoteNo}</h3>
+            <p>{data.deviceName}</p>
+          </div>
+          <div className="quote-preview-meta">
+            <p>客户: <strong>{data.customerName}</strong></p>
+            <p>有效期至: <strong>{formatDateLabel(data.validUntil)}</strong></p>
+          </div>
+        </div>
+        <div className="document-line-items">
+          {data.items.map((item) => (
+            <div key={item.id} className="document-line-row">
+              <div>
+                <strong>{item.name}</strong>
+                <p>{item.description}</p>
+              </div>
+              <span>{item.quantity}</span>
+              <span>{item.unitPriceFormatted}</span>
+              <strong>{item.totalPriceFormatted}</strong>
+            </div>
+          ))}
+        </div>
+        <div className="document-total-box">
+          <div><span>小计</span><strong>{data.subtotalFormatted}</strong></div>
+          <div><span>税额</span><strong>{data.vatAmountFormatted}</strong></div>
+          <div className="grand"><span>报价总额</span><strong>{data.totalAmountFormatted}</strong></div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function PosRegisterPage({ parts, customers }) {
+  const navigate = useNavigate();
+  const [category, setCategory] = useState("All");
+  const [search, setSearch] = useState("");
+  const [cart, setCart] = useState([]);
+
+  const visibleParts = parts.filter((part) => {
+    const matchesCategory = category === "All" || part.category === category;
+    const query = search.trim().toLowerCase();
+    const matchesQuery = !query || part.name.toLowerCase().includes(query) || String(part.sku ?? "").toLowerCase().includes(query);
+    return matchesCategory && matchesQuery;
+  });
+
+  const cartTotal = cart.reduce((sum, item) => sum + Number(item.quantity || 0) * Number(item.unitPrice || 0), 0);
+  const cartCount = cart.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+  const lowStockCount = visibleParts.filter((part) => part.needsReorder).length;
+
+  function addToCart(part) {
+    setCart((current) => {
+      const existing = current.find((item) => String(item.partId) === String(part.id));
+      if (existing) {
+        return current.map((item) => String(item.partId) === String(part.id) ? { ...item, quantity: item.quantity + 1 } : item);
+      }
+      return [
+        ...current,
+        {
+          partId: part.id,
+          category: part.category,
+          name: part.name,
+          description: part.subtitle ?? "POS 收银商品",
+          quantity: 1,
+          unitPrice: Number(part.unitPrice ?? 0),
+        },
+      ];
+    });
+  }
+
+  return (
+    <div className="pos-template-page">
+      <section className="pos-template-head">
+        <div>
+          <h2>POS 收银台</h2>
+          <p>按原模板网格快速加购并结账。</p>
+        </div>
+        <button className="wide-action secondary" onClick={() => navigate("/pos/checkout", { state: { cart, customerId: customers[0]?.id ?? "" } })} type="button">去结账</button>
+      </section>
+      <section className="pos-template-overview">
+        <article className="pos-overview-card accent">
+          <span>购物车合计</span>
+          <strong>{formatCurrency(cartTotal)}</strong>
+          <p>{cartCount} 件商品待结账</p>
+        </article>
+        <article className="pos-overview-card">
+          <span>可售商品</span>
+          <strong>{visibleParts.length}</strong>
+          <p>{lowStockCount} 件低库存提醒</p>
+        </article>
+        <article className="pos-overview-card">
+          <span>默认客户</span>
+          <strong>{customers[0]?.name ?? "门店散客"}</strong>
+          <p>结账时可切换客户</p>
+        </article>
+      </section>
+      <section className="pos-template-search">
+        <div className="search-shell"><span className="material-symbols-outlined">search</span><input placeholder="搜索配件 / SKU" value={search} onChange={(event) => setSearch(event.target.value)} /></div>
+      </section>
+      <section className="pos-template-tabs">
+        {["All", "Screens", "Batteries", "Small Parts", "Others"].map((item) => (
+          <button key={item} className={category === item ? "active" : ""} onClick={() => setCategory(item)} type="button">{formatPartCategory(item)}</button>
+        ))}
+      </section>
+      <section className="pos-template-grid">
+        {visibleParts.map((part) => (
+          <article key={part.id} className="pos-product-card">
+            <div className="pos-product-media">
+              <span className={`soft-badge ${part.needsReorder ? "soft-badge-warn" : ""}`}>{part.needsReorder ? "低库存" : "有库存"}</span>
+            </div>
+            <div className="pos-product-copy">
+              <strong>{part.name}</strong>
+              <p>{part.subtitle ?? formatPartCategory(part.category)}</p>
+            </div>
+            <div className="pos-product-footer">
+              <strong>{part.unitPriceFormatted}</strong>
+              <button onClick={() => addToCart(part)} type="button"><span className="material-symbols-outlined">add</span></button>
+            </div>
+          </article>
+        ))}
+      </section>
+      <section className="pos-cart-bar">
+        <div>
+          <span>应付合计</span>
+          <strong>{formatCurrency(cartTotal)}</strong>
+          <p>{cartCount ? `已选 ${cartCount} 件商品` : "请选择商品后再结账"}</p>
+        </div>
+        <button className="wide-action primary" onClick={() => navigate("/pos/checkout", { state: { cart, customerId: customers[0]?.id ?? "" } })} type="button">结账</button>
+      </section>
+    </div>
+  );
+}
+
+function PosCheckoutPage({ customers }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const incomingCart = location.state?.cart ?? [];
+  const incomingCustomerId = String(location.state?.customerId ?? customers[0]?.id ?? "");
+  const [draft, setDraft] = useState(() => ({
+    ...createPosDraft(customers),
+    customerId: incomingCustomerId,
+    items: incomingCart,
+  }));
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const selectedCustomer = customers.find((item) => String(item.id) === String(draft.customerId));
+  const subtotal = draft.items.reduce((sum, item) => sum + Number(item.quantity || 0) * Number(item.unitPrice || 0), 0);
+
+  async function handleCheckout() {
+    try {
+      setSaving(true);
+      setError("");
+      const created = await fetchJson("/api/pos/sales", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customerId: draft.customerId ? Number(draft.customerId) : null,
+          customerName: selectedCustomer?.name ?? draft.customerName,
+          customerPhone: selectedCustomer?.phone ?? draft.customerPhone,
+          paymentMethod: draft.paymentMethod,
+          note: draft.note,
+          items: draft.items,
+        }),
+      });
+      navigate(`/pos/sales/${created.saleNo}/receipt`);
+    } catch (checkoutError) {
+      setError(checkoutError.message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className="document-template-page">
+      <section className="document-template-toolbar">
+        <button className="icon-button" onClick={() => navigate("/pos/register")} type="button"><span className="material-symbols-outlined">arrow_back</span></button>
+        <h2>POS 收银结账</h2>
+      </section>
+      <div className="checkout-template-grid">
+        <section className="quote-template-section">
+          <div className="quote-form-grid">
+            <label>
+              <span>客户</span>
+              <select value={draft.customerId} onChange={(event) => setDraft((current) => ({ ...current, customerId: event.target.value }))}>
+                <option value="">门店散客</option>
+                {customers.map((customer) => <option key={customer.id} value={customer.id}>{customer.name}</option>)}
+              </select>
+            </label>
+            <label>
+              <span>支付方式</span>
+              <select value={draft.paymentMethod} onChange={(event) => setDraft((current) => ({ ...current, paymentMethod: event.target.value }))}>
+                <option value="Cash">现金</option>
+                <option value="Bank Transfer">银行转账</option>
+                <option value="Check">支票</option>
+              </select>
+            </label>
+          </div>
+          <label className="quote-template-section-label">
+            <span>备注</span>
+            <textarea value={draft.note} onChange={(event) => setDraft((current) => ({ ...current, note: event.target.value }))} />
+          </label>
+          <div className="quote-template-title-row compact">
+            <h3>购物清单</h3>
+            <span className="soft-badge">{draft.items.length} 项</span>
+          </div>
+          <div className="document-line-items">
+            {draft.items.map((item, index) => (
+              <div key={`${item.name}-${index}`} className="document-line-row">
+                <div>
+                  <strong>{item.name}</strong>
+                  <p>{item.description || formatPartCategory(item.category)}</p>
+                </div>
+                <span>{item.quantity}</span>
+                <span>{formatCurrency(item.unitPrice)}</span>
+                <strong>{formatCurrency(item.quantity * item.unitPrice)}</strong>
+              </div>
+            ))}
+          </div>
+        </section>
+        <section className="quote-template-summary checkout-summary-panel">
+          <div className="checkout-summary-head">
+            <h3>收银摘要</h3>
+            <p>{selectedCustomer?.name ?? "门店散客"}</p>
+          </div>
+          <div className="document-total-box">
+            <div><span>商品小计</span><strong>{formatCurrency(subtotal)}</strong></div>
+            <div><span>税额</span><strong>{formatCurrency(0)}</strong></div>
+            <div className="grand"><span>应付总额</span><strong>{formatCurrency(subtotal)}</strong></div>
+          </div>
+          <div className="checkout-summary-notes">
+            <div className="info-mini">
+              <span>支付方式</span>
+              <strong>{formatChannelLabel(draft.paymentMethod)}</strong>
+            </div>
+            <div className="info-mini">
+              <span>客户电话</span>
+              <strong>{selectedCustomer?.phone ?? draft.customerPhone ?? "现场收银"}</strong>
+            </div>
+          </div>
+          <button className="wide-action primary" disabled={saving || !draft.items.length} onClick={handleCheckout} type="button">{saving ? "收银中..." : "完成收银"}</button>
+          {error ? <p className="inline-error">{error}</p> : null}
+        </section>
+      </div>
+    </div>
+  );
+}
+
+function PosReceipt80mmPage() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [data, setData] = useState(null);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let active = true;
+    fetchJson(`/api/pos/sales/${id}`)
+      .then((result) => {
+        if (active) setData(result);
+      })
+      .catch((loadError) => {
+        if (active) setError(loadError.message);
+      });
+    return () => {
+      active = false;
+    };
+  }, [id]);
+
+  if (!data && !error) return <LoadingState label="正在加载 POS 小票..." />;
+  if (error) return <EmptyState title="POS 小票加载失败" message={error} />;
+
+  return (
+    <div className="receipt-page pos-80mm">
+      <div className="receipt-toolbar">
+        <button className="wide-action secondary" onClick={() => navigate(`/invoices/${data.saleNo}`)} type="button">查看发票</button>
+        <button className="wide-action primary" onClick={() => window.print()} type="button">打印 80mm 小票</button>
+      </div>
+      <div className="receipt-card pos-thermal-card">
+        <div className="receipt-brand thermal-brand">
+          <div className="document-brand-mark thermal">
+            <span className="material-symbols-outlined">build</span>
+          </div>
+          <strong>Vila Port POS</strong>
+          <p>80mm 收银小票</p>
+        </div>
+        <div className="receipt-divider" />
+        <div className="receipt-meta">
+          <div><span>收银单号</span><strong>{data.saleNo}</strong></div>
+          <div><span>客户</span><strong>{data.customerName || "门店散客"}</strong></div>
+          <div><span>支付方式</span><strong>{formatChannelLabel(data.paymentMethod)}</strong></div>
+        </div>
+        <div className="receipt-divider" />
+        <div className="receipt-items">
+          {data.items.map((item) => (
+            <div key={item.id} className="receipt-line-item">
+              <div>
+                <strong>{item.name}</strong>
+                <p>{item.quantity} x {item.unitPriceFormatted}</p>
+                <p className="receipt-line-price">{item.totalPriceFormatted}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="receipt-divider" />
+        <div className="receipt-totals">
+          <div><span>小计</span><strong>{data.subtotalFormatted}</strong></div>
+          <div><span>税额</span><strong>{data.vatAmountFormatted}</strong></div>
+          <div className="receipt-grand-total"><span>合计金额</span><strong>{data.totalAmountFormatted}</strong></div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function OfficialInvoicePage() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [data, setData] = useState(null);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let active = true;
+    fetchJson(`/api/invoices/${id}`)
+      .then((result) => {
+        if (active) setData(result);
+      })
+      .catch((loadError) => {
+        if (active) setError(loadError.message);
+      });
+    return () => {
+      active = false;
+    };
+  }, [id]);
+
+  if (!data && !error) return <LoadingState label="正在加载正式发票..." />;
+  if (error) return <EmptyState title="发票加载失败" message={error} />;
+
+  return (
+    <div className="document-template-page">
+      <section className="document-template-toolbar">
+        <div className="document-template-toolbar-copy">
+          <h2>正式发票</h2>
+          <p>Official Tax Invoice</p>
+        </div>
+        <div className="document-template-toolbar-actions">
+          <button className="wide-action primary" onClick={() => window.print()} type="button">打印发票</button>
+          <button className="wide-action secondary" onClick={() => navigate(`/pos/sales/${data.saleNo}/receipt`)} type="button">查看小票</button>
+        </div>
+      </section>
+      <section className="invoice-template-card">
+        <div className="invoice-template-head">
+          <div className="document-brand-lockup">
+            <div className="document-brand-mark invoice">
+              <span className="material-symbols-outlined">receipt_long</span>
+            </div>
+            <div>
+              <span className="micro-label">Official Tax Invoice</span>
+              <p className="document-brand-name">Vila Port POS</p>
+            </div>
+          </div>
+          <div className="invoice-template-title">
+            <h2>INVOICE #{data.invoiceNo}</h2>
+            <div className="soft-badge">PAID</div>
+          </div>
+          <div className="invoice-template-meta">
+            <strong>Vila Repair Hub</strong>
+            <p>Port Vila, Efate</p>
+            <p>Issue Date: {formatDateLabel(data.issueDate)}</p>
+          </div>
+        </div>
+        <div className="invoice-template-grid">
+          <div>
+            <span className="micro-label">Billed To</span>
+            <strong>{data.customerName}</strong>
+            <p>{data.customerPhone || "门店散客"}</p>
+          </div>
+          <div>
+            <span className="micro-label">Payment Details</span>
+            <strong>{formatChannelLabel(data.paymentMethod)}</strong>
+            <p>Reference: {data.saleNo}</p>
+          </div>
+        </div>
+        <div className="document-line-items invoice">
+          {data.items.map((item) => (
+            <div key={item.id} className="document-line-row invoice">
+              <div>
+                <strong>{item.name}</strong>
+                <p>{item.description || formatPartCategory(item.category)}</p>
+              </div>
+              <span>{item.quantity}</span>
+              <span>{item.unitPriceFormatted}</span>
+              <strong>{item.totalPriceFormatted}</strong>
+            </div>
+          ))}
+        </div>
+        <div className="document-total-box invoice">
+          <div><span>Subtotal</span><strong>{data.subtotalFormatted}</strong></div>
+          <div><span>VAT</span><strong>{data.vatAmountFormatted}</strong></div>
+          <div className="grand"><span>Total Amount</span><strong>{data.totalAmountFormatted}</strong></div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function DocumentManagementPage() {
+  const navigate = useNavigate();
+  const [data, setData] = useState({ summary: null, rows: [] });
+  const [search, setSearch] = useState("");
+  const [type, setType] = useState("all");
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let active = true;
+    const query = new URLSearchParams();
+    if (type !== "all") query.set("type", type);
+    if (search.trim()) query.set("search", search.trim());
+    fetchJson(`/api/documents?${query.toString()}`)
+      .then((result) => {
+        if (active) setData(result);
+      })
+      .catch((loadError) => {
+        if (active) setError(loadError.message);
+      });
+    return () => {
+      active = false;
+    };
+  }, [search, type]);
+
+  return (
+    <div className="document-management-page">
+      <section className="document-summary-grid">
+        <article className="document-summary-card">
+          <span>待处理总额</span>
+          <strong>{data.summary?.totalPendingFormatted ?? "-"}</strong>
+        </article>
+        <article className="document-summary-card">
+          <span>已支付发票</span>
+          <strong>{data.summary?.invoicesPaid ?? 0}</strong>
+        </article>
+        <article className="document-summary-card warn">
+          <span>逾期待处理</span>
+          <strong>{data.summary?.overdue ?? 0}</strong>
+        </article>
+      </section>
+      <section className="document-template-toolbar">
+        <div className="document-template-toolbar-copy">
+          <h2>文档中心</h2>
+          <p>Quotes & Invoices</p>
+        </div>
+        <div className="search-shell document-search-shell"><span className="material-symbols-outlined">search</span><input placeholder="按编号或客户搜索..." value={search} onChange={(event) => setSearch(event.target.value)} /></div>
+        <div className="pos-template-tabs document-tabs">
+          <button className={type === "all" ? "active" : ""} onClick={() => setType("all")} type="button">全部</button>
+          <button className={type === "quote" ? "active" : ""} onClick={() => setType("quote")} type="button">报价单</button>
+          <button className={type === "invoice" ? "active" : ""} onClick={() => setType("invoice")} type="button">发票</button>
+        </div>
+      </section>
+      <section className="document-activity-list">
+        {data.rows.map((row) => (
+          <button key={`${row.type}-${row.code}`} className="document-activity-card" onClick={() => navigate(row.route)} type="button">
+            <div className={`document-activity-icon ${row.type}`}>
+              <span className="material-symbols-outlined">{row.type === "quote" ? "request_quote" : "receipt_long"}</span>
+            </div>
+            <div className="document-activity-copy">
+              <div className="document-activity-head">
+                <div>
+                  <strong>{row.code}</strong>
+                  <p>{row.customerName}</p>
+                </div>
+                <span className={`soft-badge ${row.status === "paid" ? "" : row.status === "overdue" ? "soft-badge-warn" : ""}`}>{row.typeLabel}</span>
+              </div>
+              <div className="document-activity-meta">
+                <span>{formatDateLabel(row.createdAt)}</span>
+                <strong>{row.amountFormatted}</strong>
+              </div>
+            </div>
+            <span className="material-symbols-outlined">chevron_right</span>
+          </button>
+        ))}
+      </section>
+      {error ? <p className="inline-error">{error}</p> : null}
+    </div>
+  );
+}
+
 function FinancialReportsPage() {
   const navigate = useNavigate();
   const [financeReport, setFinanceReport] = useState(null);
@@ -7759,17 +8917,17 @@ function FinancialReportsPage() {
 
       <section className="finance-template-channel-section">
         <div className="finance-template-head">
-          <h3>支付渠道分布</h3>
+          <h3>收支来源分布</h3>
           <button className="link-button" onClick={() => navigate("/revenue-breakdown")} type="button">更多图表</button>
         </div>
         <div className="finance-template-channel-grid">
           {channels.map((channel) => (
             <div key={channel.channel} className="finance-template-channel-card">
-              <div className={`finance-template-channel-icon ${channel.channel === "Cash" ? "primary" : channel.channel === "Bank Transfer" ? "blue" : "orange"}`}>
-                <span className="material-symbols-outlined">{channel.channel === "Cash" ? "payments" : channel.channel === "Bank Transfer" ? "account_balance" : "style"}</span>
+              <div className={`finance-template-channel-icon ${channel.tone ?? "primary"}`}>
+                <span className="material-symbols-outlined">{channel.icon ?? "payments"}</span>
               </div>
               <div>
-                <p>{formatChannelLabel(channel.channel)}</p>
+                <p>{channel.label ?? formatChannelLabel(channel.channel)}</p>
                 <strong>{channel.amountFormatted}</strong>
                 <span>占比 {channel.percent}%</span>
               </div>
@@ -7782,13 +8940,20 @@ function FinancialReportsPage() {
         <div className="finance-template-head">
           <h3>近期流水明细</h3>
           <div className="detail-actions-inline">
+            <button className="link-button" onClick={() => navigate("/financial-reports/daily")} type="button">日结报表</button>
+            <button className="link-button" onClick={() => navigate("/financial-reports/monthly")} type="button">月结报表</button>
             <button className="link-button" onClick={() => navigate("/financial-reports/drill-down")} type="button">下钻明细</button>
             <button className="link-button" onClick={() => window.open("/api/receipts/export.csv", "_blank")} type="button">导出流水</button>
           </div>
         </div>
         <div className="finance-template-list">
           {rows.map((row) => (
-            <div key={row.id} className="finance-template-list-item">
+            <button
+              key={row.id}
+              className="finance-template-list-item finance-list-button"
+              onClick={() => openFinanceRowDetail(navigate, row)}
+              type="button"
+            >
               <div className={`finance-template-list-icon ${row.amount >= 0 ? "positive" : "negative"}`}>
                 <span className="material-symbols-outlined">{row.amount >= 0 ? "payments" : "shopping_cart"}</span>
               </div>
@@ -7800,7 +8965,7 @@ function FinancialReportsPage() {
                 <strong className={row.amount >= 0 ? "positive" : "negative"}>{row.amountFormatted}</strong>
                 <span className={row.statusTone === "success" ? "status-success" : "status-warning"}>{row.statusLabel}</span>
               </div>
-            </div>
+            </button>
           ))}
         </div>
       </section>
@@ -7819,7 +8984,7 @@ function FinanceDrillDownPage({ financeReport }) {
     <div className="finance-drill-template-page">
       <section className="finance-drill-template-summary">
         <div className="finance-drill-template-main">
-          <span className="micro-label">总现金收入 (本月)</span>
+          <span className="micro-label">本月收入汇总</span>
           <h2>{summary?.totalRevenueFormatted ?? "-"}</h2>
           <div className="finance-growth"><span className="material-symbols-outlined">trending_up</span><span>{summary?.growthRate ?? "-"}</span></div>
         </div>
@@ -7831,16 +8996,16 @@ function FinanceDrillDownPage({ financeReport }) {
       <div className="finance-template-head">
         <div>
           <h3>流水穿透视图</h3>
-          <span>查看最近现金及收款流水</span>
+          <span>查看最近收入与支出流水</span>
         </div>
         <button className="wide-action secondary" onClick={() => window.open("/api/receipts/export.csv", "_blank")} type="button">导出</button>
       </div>
       <section className="finance-template-list-card">
         <div className="finance-template-list">
           {paidRows.map((row) => (
-            <button key={row.id} className="finance-template-list-item finance-list-button" onClick={() => navigate("/refund-management")} type="button">
+            <button key={row.id} className="finance-template-list-item finance-list-button" onClick={() => openFinanceRowDetail(navigate, row)} type="button">
               <div className="finance-template-list-icon positive">
-                <span className="material-symbols-outlined">{row.channel === "Cash" ? "payments" : row.channel === "Bank Transfer" ? "account_balance" : "sell"}</span>
+                <span className="material-symbols-outlined">{row.amount >= 0 ? "payments" : "shopping_cart"}</span>
               </div>
               <div className="finance-template-list-main finance-list-grow">
                 <strong>{row.title}</strong>
@@ -7848,6 +9013,138 @@ function FinanceDrillDownPage({ financeReport }) {
               </div>
               <div className="finance-list-right">
                 <strong className="positive">{row.amountFormatted}</strong>
+                <span className={row.statusTone === "success" ? "status-success" : "status-warning"}>{row.statusLabel}</span>
+              </div>
+            </button>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function openFinanceRowDetail(navigate, row) {
+  if (row.orderNo) {
+    navigate(`/orders/${row.orderNo}`);
+    return;
+  }
+
+  if (row.procurementNo) {
+    navigate(`/procurements/${row.procurementNo}`);
+    return;
+  }
+
+  if (row.channel === "loss_expense") {
+    navigate("/inventory/loss");
+    return;
+  }
+
+  navigate("/refund-management");
+}
+
+function ClosingReportPage({ scope = "daily" }) {
+  const navigate = useNavigate();
+  const [report, setReport] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let ignore = false;
+    async function loadReport() {
+      try {
+        setLoading(true);
+        setError("");
+        const result = await fetchJson(`/api/finance/closing-report?scope=${scope}`);
+        if (!ignore) setReport(result);
+      } catch (loadError) {
+        if (!ignore) setError(loadError.message);
+      } finally {
+        if (!ignore) setLoading(false);
+      }
+    }
+    loadReport();
+    return () => { ignore = true; };
+  }, [scope]);
+
+  if (loading) return <div className="empty-card">{scope === "monthly" ? "月结报表加载中..." : "日结报表加载中..."}</div>;
+  if (error) return <div className="message-banner error">{error}</div>;
+
+  const summary = report?.summary ?? {};
+  const rows = report?.rows ?? [];
+  const breakdown = report?.breakdown ?? [];
+  const periods = report?.periods ?? [];
+
+  return (
+    <div className="finance-template-page">
+      <section className="finance-template-hero">
+        <div className="finance-template-hero-main">
+          <p>{scope === "monthly" ? "本月结算周期" : "今日结算周期"}</p>
+          <h2>{report?.title ?? (scope === "monthly" ? "月结报表" : "日结报表")}</h2>
+          <div className="finance-growth">
+            <span className="material-symbols-outlined">calendar_month</span>
+            <span>{scope === "monthly" ? (report?.month ?? "-") : (report?.date ?? "-")}</span>
+          </div>
+        </div>
+        <div className="finance-template-mini-grid">
+          <div className="finance-template-mini-card">
+            <p>收入合计</p>
+            <strong>{summary.incomeTotalFormatted ?? "-"}</strong>
+            <div className="finance-mini-state success"><span className="material-symbols-outlined">payments</span><span>{summary.orderCount ?? 0} 单收入</span></div>
+          </div>
+          <div className="finance-template-mini-card">
+            <p>支出合计</p>
+            <strong>{summary.expenseTotalFormatted ?? "-"}</strong>
+            <div className="finance-mini-state warning"><span className="material-symbols-outlined">receipt_long</span><span>{(summary.procurementCount ?? 0) + (summary.refundCount ?? 0) + (summary.lossCount ?? 0)} 笔支出</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section className="finance-overview-template-metrics">
+        <div className="report-metric-card primary"><p>净额</p><strong>{summary.netTotalFormatted ?? "-"}</strong><span>{scope === "monthly" ? "本月结余" : "今日结余"}</span></div>
+        <div className="report-metric-card"><p>采购笔数</p><strong>{summary.procurementCount ?? 0}</strong><span>成本入账</span></div>
+        <div className="report-metric-card tertiary"><p>退款/报损</p><strong>{(summary.refundCount ?? 0) + (summary.lossCount ?? 0)}</strong><span>异常支出</span></div>
+      </section>
+
+      <section className="finance-template-chart-card">
+        <div className="finance-template-head">
+          <h3>{scope === "monthly" ? "每日结算汇总" : "结算来源分布"}</h3>
+          <button className="link-button" onClick={() => navigate("/financial-reports")} type="button">返回财务首页</button>
+        </div>
+        <div className="finance-template-list">
+          {(scope === "monthly" ? periods : breakdown).map((item) => (
+            <div key={item.date ?? item.channel} className="finance-template-list-item">
+              <div className="finance-template-list-icon positive">
+                <span className="material-symbols-outlined">{scope === "monthly" ? "calendar_today" : "pie_chart"}</span>
+              </div>
+              <div className="finance-template-list-main">
+                <strong>{scope === "monthly" ? item.date : item.label}</strong>
+                <p>{scope === "monthly" ? `${item.count} 笔流水` : `${item.count} 笔 · ${item.channel}`}</p>
+              </div>
+              <div className="finance-list-right">
+                <strong className={(scope === "monthly" ? item.net : item.amount) >= 0 ? "positive" : "negative"}>{scope === "monthly" ? item.netFormatted : item.amountFormatted}</strong>
+                <span className={(scope === "monthly" ? item.net : item.amount) >= 0 ? "status-success" : "status-warning"}>{scope === "monthly" ? "净额" : "汇总"}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="finance-template-list-card">
+        <div className="finance-template-head">
+          <h3>{scope === "monthly" ? "本月流水明细" : "今日流水明细"}</h3>
+        </div>
+        <div className="finance-template-list">
+          {rows.map((row) => (
+            <button key={row.id} className="finance-template-list-item finance-list-button" onClick={() => openFinanceRowDetail(navigate, row)} type="button">
+              <div className={`finance-template-list-icon ${row.amount >= 0 ? "positive" : "negative"}`}>
+                <span className="material-symbols-outlined">{row.amount >= 0 ? "payments" : "shopping_cart"}</span>
+              </div>
+              <div className="finance-template-list-main">
+                <strong>{row.title}</strong>
+                <p>{row.subtitle}</p>
+              </div>
+              <div className="finance-list-right">
+                <strong className={row.amount >= 0 ? "positive" : "negative"}>{row.amountFormatted}</strong>
                 <span className={row.statusTone === "success" ? "status-success" : "status-warning"}>{row.statusLabel}</span>
               </div>
             </button>
@@ -8382,7 +9679,7 @@ function ReportsOverviewPage({ financeReport, staffPerformance }) {
     <div className="finance-overview-template-page">
       <section className="finance-overview-template-hero">
         <div>
-          <span className="micro-label">Reports & Analytics</span>
+          <span className="micro-label">经营数据总览</span>
           <h2>经营分析总览</h2>
           <p>收入、完工效率和服务结构的关键洞察</p>
         </div>
@@ -8443,9 +9740,9 @@ function ReportsAdvancedPage({ financeReport }) {
           <div className="finance-template-bars monthly">{monthlyBars.map((item, index) => <div key={item.label} className="finance-template-bar-col"><div className={`finance-template-bar ${index === 3 ? "active" : ""}`} style={{ height: item.height }} /><span>{item.label}</span></div>)}</div>
         </div>
         <div className="finance-overview-template-split">
-          <h3>支付方式</h3>
+          <h3>收支来源</h3>
           <div className="finance-overview-template-payment-list">
-            {financeReport.channels.map((channel) => <div key={channel.channel}><span>{formatChannelLabel(channel.channel)}</span><strong>{channel.percent}%</strong></div>)}
+            {financeReport.channels.map((channel) => <div key={channel.channel}><span>{channel.label ?? formatChannelLabel(channel.channel)}</span><strong>{channel.percent}%</strong></div>)}
           </div>
         </div>
       </section>
@@ -8470,8 +9767,8 @@ function RevenueAnalysisPage({ financeReport }) {
       </section>
       <section className="revenue-analysis-template-grid">
         <div className="revenue-analysis-template-card">
-          <h4>支付方式</h4>
-          <div className="finance-overview-template-payment-list">{channels.map((channel) => <div key={channel.channel}><span>{formatChannelLabel(channel.channel)}</span><strong>{channel.percent}%</strong></div>)}</div>
+          <h4>收支来源</h4>
+          <div className="finance-overview-template-payment-list">{channels.map((channel) => <div key={channel.channel}><span>{channel.label ?? formatChannelLabel(channel.channel)}</span><strong>{channel.percent}%</strong></div>)}</div>
         </div>
         <div className="revenue-analysis-template-image">
           <div className="revenue-analysis-template-image-copy">
@@ -8529,8 +9826,8 @@ function RevenueBreakdownPage({ financeReport }) {
       </section>
       <section className="revenue-breakdown-template-grid">
         <div className="revenue-analysis-template-card">
-          <h4>支付占比</h4>
-          <div className="finance-overview-template-payment-list">{channels.map((channel) => <div key={channel.channel}><span>{formatChannelLabel(channel.channel)}</span><strong>{channel.amountFormatted}</strong></div>)}</div>
+          <h4>来源占比</h4>
+          <div className="finance-overview-template-payment-list">{channels.map((channel) => <div key={channel.channel}><span>{channel.label ?? formatChannelLabel(channel.channel)}</span><strong>{channel.amountFormatted}</strong></div>)}</div>
         </div>
         <div className="revenue-analysis-template-card">
           <h4>最近流水</h4>
@@ -8664,6 +9961,10 @@ function BottomNav() {
         <span className="material-symbols-outlined">group</span>
         <span>客户</span>
       </NavLink>
+      <NavLink className={({ isActive }) => (isActive ? "nav-item active" : "nav-item")} to="/pos/register">
+        <span className="material-symbols-outlined">point_of_sale</span>
+        <span>POS</span>
+      </NavLink>
       <NavLink className={({ isActive }) => (isActive ? "nav-item active" : "nav-item")} to="/financial-reports">
         <span className="material-symbols-outlined">payments</span>
         <span>财务</span>
@@ -8711,6 +10012,29 @@ function InfoTile({ label, value }) {
     <div className="info-tile">
       <p>{label}</p>
       <strong>{value}</strong>
+    </div>
+  );
+}
+
+function LoadingState({ label = "正在加载..." }) {
+  return (
+    <div className="empty-shell loading-shell">
+      <div className="empty-shell-card">
+        <span className="material-symbols-outlined">progress_activity</span>
+        <h3>{label}</h3>
+      </div>
+    </div>
+  );
+}
+
+function EmptyState({ title = "暂无数据", message = "当前没有可显示的内容。" }) {
+  return (
+    <div className="empty-shell">
+      <div className="empty-shell-card">
+        <span className="material-symbols-outlined">inbox</span>
+        <h3>{title}</h3>
+        <p>{message}</p>
+      </div>
     </div>
   );
 }

@@ -53,6 +53,7 @@ export function createReadModels({ pgOne, pgQuery, pgGetSuppliers }) {
     const amount = toNumber(order.amount);
     const deposit = toNumber(order.deposit);
     const balanceDue = Math.max(0, amount - deposit);
+
     return {
       ...order,
       id,
@@ -70,13 +71,24 @@ export function createReadModels({ pgOne, pgQuery, pgGetSuppliers }) {
   }
 
   function mapPart(row) {
+    const reorderLevel = Number(row.reorderLevel ?? 0) > 0 ? Number(row.reorderLevel) : 3;
     const costPrice = Number(row.costPrice ?? 0);
+    const partName = String(row.name ?? "").toLowerCase();
+    const category = partName.includes("battery")
+      ? "Batteries"
+      : partName.includes("screen") || partName.includes("display") || partName.includes("digitizer") || partName.includes("oled")
+        ? "Screens"
+        : partName.includes("cable") || partName.includes("speaker") || partName.includes("camera") || partName.includes("adhesive")
+          ? "Small Parts"
+          : "Others";
     return {
       ...row,
+      reorderLevel,
+      category,
       unitPriceFormatted: formatMoney(row.unitPrice),
       costPrice,
       costPriceFormatted: formatMoney(costPrice),
-      needsReorder: row.stock <= row.reorderLevel,
+      needsReorder: Number(row.stock ?? 0) <= reorderLevel,
     };
   }
 
@@ -124,12 +136,14 @@ export function createReadModels({ pgOne, pgQuery, pgGetSuppliers }) {
     `, [orderId]);
   }
 
-  async function pgGetOrderIntake(orderId) {
-    return pgOne(`
+async function pgGetOrderIntake(orderId) {
+  return pgOne(`
       SELECT
         order_id AS "orderId",
         intake_code AS "intakeCode",
         imei_serial AS "imeiSerial",
+        battery_health AS "batteryHealth",
+        storage_capacity AS "storageCapacity",
         customer_signature AS "customerSignature",
         created_at AS "createdAt"
       FROM order_intake
@@ -137,11 +151,11 @@ export function createReadModels({ pgOne, pgQuery, pgGetSuppliers }) {
     `, [orderId]);
   }
 
-  async function pgGetRepairQueue(status = "all", search = "") {
+  async function pgGetRepairQueue(status = "all", search = "", filters = {}) {
     const { whereClause, params } = buildPgOrderFilters(status, search);
     const rows = await pgQuery(`${baseOrderSelect} ${whereClause} ORDER BY o.scheduled_date DESC, o.id DESC`, params);
 
-    const queueRows = rows.map((row) => {
+    const mappedRows = rows.map((row) => {
       const elapsedMinutes = diffMinutesFromNow(`${row.scheduledDate}T09:00:00`);
       const priority = queuePriorityForOrder(row, elapsedMinutes);
       const progress = queueProgressByStatus(row.status);
@@ -162,12 +176,15 @@ export function createReadModels({ pgOne, pgQuery, pgGetSuppliers }) {
       };
     });
 
+    const urgentOnly = String(filters.priority ?? "").trim().toLowerCase() === "urgent";
+    const queueRows = urgentOnly ? mappedRows.filter((item) => item.priority === "urgent") : mappedRows;
+
     return {
       metrics: {
-        active: queueRows.filter((item) => item.status === "in_progress").length,
-        pending: queueRows.filter((item) => item.status === "pending").length,
-        urgent: queueRows.filter((item) => item.priority === "urgent").length,
-        revenueEstimate: formatMoney(queueRows.reduce((sum, item) => sum + Number(item.amount), 0)),
+        active: mappedRows.filter((item) => item.status === "in_progress").length,
+        pending: mappedRows.filter((item) => item.status === "pending").length,
+        urgent: mappedRows.filter((item) => item.priority === "urgent").length,
+        revenueEstimate: formatMoney(mappedRows.reduce((sum, item) => sum + Number(item.amount), 0)),
       },
       rows: queueRows,
     };
@@ -309,6 +326,7 @@ export function createReadModels({ pgOne, pgQuery, pgGetSuppliers }) {
         o.order_no AS "orderNo",
         o.device_name AS "deviceName",
         o.title,
+        o.issue_summary AS "issueSummary",
         o.status,
         o.scheduled_date AS "scheduledDate",
         o.amount
@@ -331,12 +349,12 @@ export function createReadModels({ pgOne, pgQuery, pgGetSuppliers }) {
         title: sanitizeOrderTitle(row),
         amountFormatted: formatMoney(toNumber(row.amount)),
         statusMeta: statusMeta[row.status] ?? { label: row.status, tone: "neutral" },
-        serviceTag: sanitizeOrderTitle(row),
+        serviceTag: sanitizeIssueSummary(row),
       })),
     };
   }
 
-  async function pgGetParts() {
+  async function pgGetParts(filters = {}) {
     const rows = await pgQuery(`
       SELECT
         id,
@@ -351,13 +369,28 @@ export function createReadModels({ pgOne, pgQuery, pgGetSuppliers }) {
       ORDER BY stock ASC, name ASC
     `);
 
-    return rows.map((row) => mapPart({
+    const mapped = rows.map((row) => mapPart({
       ...row,
       stock: toNumber(row.stock),
       reorderLevel: toNumber(row.reorderLevel),
       unitPrice: toNumber(row.unitPrice),
       costPrice: toNumber(row.costPrice),
     }));
+
+    const category = String(filters.category ?? "").trim();
+    const query = String(filters.search ?? "").trim().toLowerCase();
+    const lowStockOnly = String(filters.lowStock ?? "") === "1" || filters.lowStock === true;
+
+    return mapped.filter((part) => {
+      const matchesCategory = !category || category === "All" ? true : part.category === category;
+      const matchesSearch = !query
+        ? true
+        : String(part.name ?? "").toLowerCase().includes(query)
+          || String(part.sku ?? "").toLowerCase().includes(query)
+          || String(part.supplier ?? "").toLowerCase().includes(query);
+      const matchesLowStock = lowStockOnly ? part.needsReorder : true;
+      return matchesCategory && matchesSearch && matchesLowStock;
+    });
   }
 
   async function pgGetPartById(id) {
@@ -543,74 +576,264 @@ export function createReadModels({ pgOne, pgQuery, pgGetSuppliers }) {
   }
 
   async function pgGetFinanceReport() {
-    const totals = await pgOne(`
+    const orderRows = await pgQuery(`
       SELECT
-        COUNT(*) AS "totalOrders",
-        COALESCE(SUM(amount), 0) AS "totalRevenue",
-        COALESCE(SUM(CASE WHEN status = 'completed' THEN amount ELSE amount * 0.85 END), 0) AS "settledRevenue"
-      FROM orders
+        o.id,
+        o.order_no AS "orderNo",
+        o.title,
+        o.device_name AS "deviceName",
+        o.issue_summary AS "issueSummary",
+        o.status,
+        o.scheduled_date AS "scheduledDate",
+        o.amount,
+        o.deposit,
+        c.name AS "customerName"
+      FROM orders o
+      JOIN customers c ON c.id = o.customer_id
+      ORDER BY o.scheduled_date DESC, o.id DESC
     `);
 
-    const rows = await pgQuery(`
+    const refundRows = await pgQuery(`
       SELECT
-        id,
-        order_no AS "orderNo",
-        title,
-        device_name AS "deviceName",
-        status,
-        scheduled_date AS "scheduledDate",
-        amount
-      FROM orders
-      ORDER BY scheduled_date DESC, id DESC
+        r.id,
+        r.order_id AS "orderId",
+        r.amount,
+        r.reason,
+        r.method,
+        r.status,
+        r.created_at AS "createdAt",
+        o.order_no AS "orderNo",
+        o.title
+      FROM refunds r
+      LEFT JOIN orders o ON o.id = r.order_id
+      ORDER BY r.id DESC
     `);
 
-    const normalizedRows = rows.map((row) => ({ ...row, amount: toNumber(row.amount) }));
-    const todayKey = getTodayDateKey();
-    const totalOrders = toNumber(totals?.totalOrders);
-    const totalRevenue = toNumber(totals?.totalRevenue);
-    const settledRevenue = toNumber(totals?.settledRevenue);
-    const todayRevenue = normalizedRows.filter((row) => row.scheduledDate === todayKey).reduce((sum, row) => sum + row.amount, 0);
-    const completedOrders = normalizedRows.filter((row) => row.status === "completed" || row.status === "picked_up").length;
-    const averageTicket = totalOrders ? Math.round(totalRevenue / totalOrders) : 0;
+    const procurementRows = await pgQuery(`
+      SELECT
+        p.id,
+        p.procurement_no AS "procurementNo",
+        p.supplier,
+        p.quantity,
+        p.unit_price AS "unitPrice",
+        p.status,
+        p.created_at AS "createdAt",
+        part.name AS "partName",
+        p.shipping_fee AS "shippingFee",
+        p.customs_fee AS "customsFee",
+        p.other_fee AS "otherFee"
+      FROM procurements p
+      LEFT JOIN parts part ON part.id = p.part_id
+      ORDER BY p.id DESC
+    `);
 
-    const byChannel = [
-      { channel: "现金", amount: Math.round(totalRevenue * 0.36) },
-      { channel: "银行转账", amount: Math.round(totalRevenue * 0.55) },
-      { channel: "支票", amount: Math.round(totalRevenue * 0.09) },
-    ];
+    const lossRows = await pgQuery(`
+      SELECT
+        ia.id,
+        ia.adjustment_type AS "adjustmentType",
+        ia.quantity,
+        ia.note,
+        ia.created_at AS "createdAt",
+        p.name AS "partName",
+        p.cost_price AS "costPrice",
+        p.unit_price AS "unitPrice"
+      FROM inventory_adjustments ia
+      JOIN parts p ON p.id = ia.part_id
+      WHERE ia.source = 'loss' OR ia.adjustment_type = 'scrap'
+      ORDER BY ia.id DESC
+    `);
 
-    const categoryMap = new Map([["Smartphone", 0], ["Laptop", 0], ["Tablet", 0], ["Other", 0]]);
-    const serviceMap = new Map();
+    const normalizedOrders = orderRows.map((row) => ({
+      ...row,
+      id: toNumber(row.id, row.id),
+      amount: toNumber(row.amount),
+      deposit: toNumber(row.deposit),
+    }));
 
-    normalizedRows.forEach((row) => {
-      const device = String(row.deviceName ?? "").toLowerCase();
-      const title = sanitizeOrderTitle(row).toLowerCase();
-      let category = "Other";
-      if (device.includes("iphone") || device.includes("phone") || device.includes("galaxy") || device.includes("pixel")) category = "Smartphone";
-      else if (device.includes("macbook") || device.includes("laptop")) category = "Laptop";
-      else if (device.includes("ipad") || device.includes("tablet")) category = "Tablet";
-      categoryMap.set(category, categoryMap.get(category) + row.amount);
+    const normalizedRefunds = refundRows.map((row) => ({
+      ...row,
+      id: toNumber(row.id, row.id),
+      amount: toNumber(row.amount),
+    }));
 
-      let service = "综合维修";
-      if (title.includes("screen") || title.includes("lcd")) service = "屏幕维修";
-      else if (title.includes("battery")) service = "电池服务";
-      else if (title.includes("camera")) service = "摄像头维修";
-      else if (title.includes("water")) service = "进液损坏";
-      serviceMap.set(service, (serviceMap.get(service) ?? 0) + row.amount);
+    const normalizedProcurements = procurementRows.map((row) => {
+      const quantity = toNumber(row.quantity);
+      const unitPrice = toNumber(row.unitPrice);
+      const shippingFee = toNumber(row.shippingFee);
+      const customsFee = toNumber(row.customsFee);
+      const otherFee = toNumber(row.otherFee);
+      return {
+        ...row,
+        id: toNumber(row.id, row.id),
+        quantity,
+        unitPrice,
+        shippingFee,
+        customsFee,
+        otherFee,
+        totalCost: (quantity * unitPrice) + shippingFee + customsFee + otherFee,
+      };
     });
 
-    const categories = Array.from(categoryMap.entries()).map(([name, amount]) => ({
-      name,
-      amount,
-      amountFormatted: formatMoney(amount),
-      percent: totalRevenue ? Math.round((amount / totalRevenue) * 100) : 0,
+    const normalizedLosses = lossRows.map((row) => {
+      const quantity = toNumber(row.quantity);
+      const costPrice = toNumber(row.costPrice);
+      const unitPrice = toNumber(row.unitPrice);
+      return {
+        ...row,
+        id: toNumber(row.id, row.id),
+        quantity,
+        costPrice,
+        unitPrice,
+        totalLoss: quantity * (costPrice || unitPrice),
+      };
+    });
+
+    const todayKey = getTodayDateKey();
+    const totalOrders = normalizedOrders.length;
+    const totalRevenue = normalizedOrders.reduce((sum, row) => sum + row.amount, 0);
+    const todayRevenue = normalizedOrders
+      .filter((row) => row.scheduledDate === todayKey)
+      .reduce((sum, row) => sum + row.amount, 0);
+    const totalRefundAmount = normalizedRefunds.reduce((sum, row) => sum + row.amount, 0);
+    const totalProcurementCost = normalizedProcurements.reduce((sum, row) => sum + row.totalCost, 0);
+    const totalLossAmount = normalizedLosses.reduce((sum, row) => sum + row.totalLoss, 0);
+    const settledRevenue = totalRevenue - totalRefundAmount;
+    const pendingBalance = normalizedOrders.reduce((sum, row) => {
+      if (row.status === "picked_up") return sum;
+      return sum + Math.max(0, row.amount - row.deposit);
+    }, 0);
+    const completedOrders = normalizedOrders.filter((row) => row.status === "completed" || row.status === "picked_up").length;
+    const averageTicket = totalOrders ? Math.round(totalRevenue / totalOrders) : 0;
+
+    const currentMonthPrefix = todayKey.slice(0, 7);
+    const currentMonthRevenue = normalizedOrders
+      .filter((row) => String(row.scheduledDate ?? "").startsWith(currentMonthPrefix))
+      .reduce((sum, row) => sum + row.amount, 0);
+    const currentMonthDate = new Date(`${currentMonthPrefix}-01T00:00:00`);
+    const lastMonthDate = new Date(currentMonthDate);
+    lastMonthDate.setMonth(lastMonthDate.getMonth() - 1);
+    const lastMonthPrefix = `${lastMonthDate.getFullYear()}-${String(lastMonthDate.getMonth() + 1).padStart(2, "0")}`;
+    const lastMonthRevenue = normalizedOrders
+      .filter((row) => String(row.scheduledDate ?? "").startsWith(lastMonthPrefix))
+      .reduce((sum, row) => sum + row.amount, 0);
+    const growthBase = lastMonthRevenue || currentMonthRevenue || 1;
+    const growthDelta = currentMonthRevenue - lastMonthRevenue;
+    const growthRate = `${growthDelta >= 0 ? "+" : ""}${((growthDelta / growthBase) * 100).toFixed(1)}%`;
+
+    const sourceBuckets = [
+      { channel: "repair_income", label: "维修收入", icon: "payments", tone: "primary", amount: totalRevenue },
+      { channel: "refund_expense", label: "退款支出", icon: "assignment_return", tone: "orange", amount: totalRefundAmount },
+      { channel: "procurement_expense", label: "采购成本", icon: "local_shipping", tone: "blue", amount: totalProcurementCost },
+      { channel: "loss_expense", label: "报损成本", icon: "inventory_2", tone: "orange", amount: totalLossAmount },
+    ].filter((item) => item.amount > 0);
+
+    const categoryMap = new Map([["手机维修", 0], ["平板设备", 0], ["笔记本设备", 0], ["其他设备", 0]]);
+    const serviceMap = new Map();
+
+    normalizedOrders.forEach((row) => {
+      const device = String(row.deviceName ?? "").toLowerCase();
+      const issue = String(row.issueSummary ?? "").toLowerCase();
+      const title = sanitizeOrderTitle(row).toLowerCase();
+      let category = "其他设备";
+      if (device.includes("iphone") || device.includes("phone") || device.includes("galaxy") || device.includes("pixel")) category = "手机维修";
+      else if (device.includes("ipad") || device.includes("tablet")) category = "平板设备";
+      else if (device.includes("macbook") || device.includes("laptop")) category = "笔记本设备";
+      categoryMap.set(category, (categoryMap.get(category) ?? 0) + row.amount);
+
+      let service = "综合维修";
+      if (title.includes("screen") || title.includes("lcd") || issue.includes("screen") || issue.includes("lcd") || issue.includes("屏")) service = "屏幕维修";
+      else if (title.includes("battery") || issue.includes("battery") || issue.includes("电池")) service = "电池服务";
+      else if (title.includes("camera") || issue.includes("camera") || issue.includes("摄像")) service = "摄像头维修";
+      else if (title.includes("water") || issue.includes("water") || issue.includes("进液")) service = "进液损坏";
+      serviceMap.set(service, {
+        count: (serviceMap.get(service)?.count ?? 0) + 1,
+        amount: (serviceMap.get(service)?.amount ?? 0) + row.amount,
+      });
+    });
+
+    const categorySplit = Array.from(categoryMap.entries())
+      .map(([name, amount]) => ({
+        name,
+        amount,
+        amountFormatted: formatMoney(amount),
+        percent: totalRevenue ? Math.round((amount / totalRevenue) * 100) : 0,
+      }))
+      .filter((item) => item.amount > 0)
+      .sort((a, b) => b.amount - a.amount);
+
+    const topServices = Array.from(serviceMap.entries())
+      .map(([name, value]) => ({
+        name,
+        count: value.count,
+        amount: value.amount,
+        amountFormatted: formatMoney(value.amount),
+      }))
+      .sort((a, b) => b.amount - a.amount)
+      .slice(0, 4);
+
+    const orderTransactions = normalizedOrders.map((row) => ({
+      id: `order-${row.id}`,
+      orderNo: row.orderNo,
+      amount: row.amount,
+      amountFormatted: formatMoney(row.amount),
+      channel: "repair_income",
+      channelLabel: "维修收入",
+      title: sanitizeOrderTitle(row),
+      subtitle: `${row.scheduledDate} · ${row.customerName}`,
+      statusLabel: statusMeta[row.status]?.label ?? row.status,
+      statusTone: statusMeta[row.status]?.tone ?? "neutral",
+      createdAt: `${row.scheduledDate}T09:00:00`,
     }));
 
-    const topServices = Array.from(serviceMap.entries()).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([name, amount]) => ({
-      name,
-      amount,
-      amountFormatted: formatMoney(amount),
+    const refundTransactions = normalizedRefunds.map((row) => {
+      const cleanReason = /[?？]{2,}/.test(String(row.reason ?? "")) ? "退款申请" : String(row.reason ?? "").trim() || "退款申请";
+      return {
+        id: `refund-${row.id}`,
+        orderNo: row.orderNo,
+        amount: -row.amount,
+        amountFormatted: formatMoney(-row.amount),
+        channel: "refund_expense",
+        channelLabel: "退款支出",
+        title: `退款 · ${row.orderNo ?? `#${row.orderId}`}`,
+        subtitle: `${String(row.createdAt ?? "").slice(0, 10)} · ${cleanReason}`,
+        statusLabel: row.status === "approved" ? "已批准" : row.status === "pending" ? "待处理" : row.status,
+        statusTone: row.status === "approved" ? "success" : "warning",
+        createdAt: row.createdAt,
+      };
+    });
+
+    const procurementTransactions = normalizedProcurements.map((row) => ({
+      id: `procurement-${row.id}`,
+      procurementNo: row.procurementNo,
+      amount: -row.totalCost,
+      amountFormatted: formatMoney(-row.totalCost),
+      channel: "procurement_expense",
+      channelLabel: "采购成本",
+      title: `采购入库 · ${row.partName ?? row.procurementNo}`,
+      subtitle: `${String(row.createdAt ?? "").slice(0, 10)} · ${row.supplier}`,
+      statusLabel: row.status,
+      statusTone: row.status === "已交付" ? "success" : "warning",
+      createdAt: row.createdAt,
     }));
+
+    const lossTransactions = normalizedLosses.map((row) => ({
+      id: `loss-${row.id}`,
+      amount: -row.totalLoss,
+      amountFormatted: formatMoney(-row.totalLoss),
+      channel: "loss_expense",
+      channelLabel: "报损成本",
+      title: `配件报损 · ${row.partName}`,
+      subtitle: `${String(row.createdAt ?? "").slice(0, 10)} · ${row.note || "库存报损"}`,
+      statusLabel: "已记录",
+      statusTone: "warning",
+      createdAt: row.createdAt,
+    }));
+
+    const rows = [...orderTransactions, ...refundTransactions, ...procurementTransactions, ...lossTransactions]
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+    const transactionCount = rows.length;
+    const channelTotal = sourceBuckets.reduce((sum, item) => sum + item.amount, 0);
 
     return {
       summary: {
@@ -624,20 +847,19 @@ export function createReadModels({ pgOne, pgQuery, pgGetSuppliers }) {
         completedOrders,
         averageTicket,
         averageTicketFormatted: formatMoney(averageTicket),
+        transactionCount,
+        growthRate,
+        pendingBalance,
+        pendingBalanceFormatted: formatMoney(pendingBalance),
       },
-      byChannel: byChannel.map((item) => ({
+      channels: sourceBuckets.map((item) => ({
         ...item,
         amountFormatted: formatMoney(item.amount),
-        percent: totalRevenue ? Math.round((item.amount / totalRevenue) * 100) : 0,
+        percent: channelTotal ? Math.round((item.amount / channelTotal) * 100) : 0,
       })),
-      categories,
+      categorySplit,
       topServices,
-      transactions: normalizedRows.map((row) => ({
-        ...row,
-        title: sanitizeOrderTitle(row),
-        amountFormatted: formatMoney(row.amount),
-        statusMeta: statusMeta[row.status] ?? { label: row.status, tone: "neutral" },
-      })),
+      rows,
     };
   }
 
