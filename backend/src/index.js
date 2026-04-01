@@ -127,7 +127,9 @@ async function ensurePersistentDatabaseReady() {
   }
 
   try {
-    const existing = await head(blobSnapshotPath);
+    const existing = await head(blobSnapshotPath, {
+      token: process.env.BLOB_READ_WRITE_TOKEN,
+    });
     blobSnapshotUrl = existing.url;
 
     const response = await fetch(existing.downloadUrl, {
@@ -161,6 +163,7 @@ async function persistDatabaseSnapshot(reason = "update") {
     addRandomSuffix: false,
     allowOverwrite: true,
     contentType: "application/x-sqlite3",
+    token: process.env.BLOB_READ_WRITE_TOKEN,
   });
 
   blobSnapshotUrl = uploaded.url;
@@ -176,7 +179,7 @@ function queueDatabaseSnapshot(reason) {
     .catch(() => undefined)
     .then(() => persistDatabaseSnapshot(reason))
     .catch((error) => {
-      console.error("Failed to persist Vercel Blob database snapshot:", error);
+      console.error("Failed to persist Vercel Blob database snapshot:", error?.stack ?? error?.message ?? String(error));
     });
 }
 
