@@ -1989,6 +1989,60 @@ async function pgGetReceiptMeta(orderId) {
   `, [orderId]);
 }
 
+async function pgGetRefundRows() {
+  const rows = await pgQuery(`
+    SELECT
+      r.id,
+      r.order_id AS "orderId",
+      r.amount,
+      r.reason,
+      r.method,
+      r.status,
+      r.created_at AS "createdAt",
+      o.order_no AS "orderNo",
+      o.title,
+      o.scheduled_date AS "scheduledDate",
+      c.name AS "customerName"
+    FROM refunds r
+    JOIN orders o ON o.id = r.order_id
+    JOIN customers c ON c.id = o.customer_id
+    ORDER BY r.id DESC
+  `);
+
+  return rows.map((row) => ({
+    ...row,
+    amount: toNumber(row.amount),
+    amountFormatted: formatMoney(toNumber(row.amount)),
+    createdLabel: formatChatTimestamp(row.createdAt),
+  }));
+}
+
+async function pgGetReviewRows() {
+  const rows = await pgQuery(`
+    SELECT
+      rv.id,
+      rv.order_id AS "orderId",
+      rv.rating,
+      rv.review,
+      rv.reply,
+      rv.created_at AS "createdAt",
+      o.order_no AS "orderNo",
+      o.scheduled_date AS "scheduledDate",
+      c.name AS "customerName"
+    FROM reviews rv
+    JOIN orders o ON o.id = rv.order_id
+    JOIN customers c ON c.id = o.customer_id
+    ORDER BY rv.id DESC
+  `);
+
+  return rows.map((row) => ({
+    ...row,
+    rating: toNumber(row.rating),
+    createdLabel: formatChatTimestamp(row.createdAt),
+    status: row.reply ? "已回复" : "待回复",
+  }));
+}
+
 function getOrderParts(orderId) {
   return db.prepare(`
     SELECT
@@ -4031,8 +4085,8 @@ app.get("/api/orders/:id/execution", (req, res) => {
   });
 });
 
-app.post("/api/orders/:id/execution", (req, res) => {
-  const order = getOrderById(req.params.id);
+app.post("/api/orders/:id/execution", async (req, res) => {
+  const order = usePostgresRuntime ? await pgGetOrderById(req.params.id) : getOrderById(req.params.id);
 
   if (!order) {
     res.status(404).json({ message: "Order not found" });
@@ -4057,19 +4111,35 @@ app.post("/api/orders/:id/execution", (req, res) => {
   const safeElapsed = Number.isFinite(elapsedMinutes) && elapsedMinutes > 0 ? Math.round(elapsedMinutes) : 45;
   const status = phase === "completed" ? "completed" : phase === "diagnosis" ? "pending" : "in_progress";
 
-  db.transaction(() => {
-    db.prepare(`
-      INSERT INTO order_execution (order_id, phase, checklist_json, elapsed_minutes, updated_at)
-      VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
-      ON CONFLICT(order_id) DO UPDATE SET
-        phase = excluded.phase,
-        checklist_json = excluded.checklist_json,
-        elapsed_minutes = excluded.elapsed_minutes,
-        updated_at = CURRENT_TIMESTAMP
-    `).run(order.id, phase, JSON.stringify(normalizedChecklist), safeElapsed);
+  if (usePostgresRuntime) {
+    await pgWithTransaction(async (client) => {
+      await client.query(`
+        INSERT INTO order_execution (order_id, phase, checklist_json, elapsed_minutes, updated_at)
+        VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
+        ON CONFLICT (order_id) DO UPDATE SET
+          phase = EXCLUDED.phase,
+          checklist_json = EXCLUDED.checklist_json,
+          elapsed_minutes = EXCLUDED.elapsed_minutes,
+          updated_at = CURRENT_TIMESTAMP
+      `, [order.id, phase, JSON.stringify(normalizedChecklist), safeElapsed]);
 
-    db.prepare("UPDATE orders SET status = ? WHERE id = ?").run(status, order.id);
-  })();
+      await client.query("UPDATE orders SET status = $1 WHERE id = $2", [status, order.id]);
+    });
+  } else {
+    db.transaction(() => {
+      db.prepare(`
+        INSERT INTO order_execution (order_id, phase, checklist_json, elapsed_minutes, updated_at)
+        VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
+        ON CONFLICT(order_id) DO UPDATE SET
+          phase = excluded.phase,
+          checklist_json = excluded.checklist_json,
+          elapsed_minutes = excluded.elapsed_minutes,
+          updated_at = CURRENT_TIMESTAMP
+      `).run(order.id, phase, JSON.stringify(normalizedChecklist), safeElapsed);
+
+      db.prepare("UPDATE orders SET status = ? WHERE id = ?").run(status, order.id);
+    })();
+  }
 
   res.json({
     ok: true,
@@ -4415,7 +4485,7 @@ app.get("/api/refunds", (_req, res) => {
   });
 });
 
-app.post("/api/refunds", (req, res) => {
+app.post("/api/refunds", async (req, res) => {
   const orderId = Number(req.body?.orderId);
   const amount = Number(req.body?.amount);
   const reason = String(req.body?.reason ?? "").trim();
@@ -4426,18 +4496,29 @@ app.post("/api/refunds", (req, res) => {
     return;
   }
 
-  const order = getOrderById(orderId);
+  const order = usePostgresRuntime ? await pgGetOrderById(orderId) : getOrderById(orderId);
   if (!order) {
     res.status(404).json({ message: "Order not found" });
     return;
   }
 
-  const result = db.prepare(`
-    INSERT INTO refunds (order_id, amount, reason, method, status)
-    VALUES (?, ?, ?, ?, 'pending')
-  `).run(orderId, Math.round(amount), reason, method);
+  const created = usePostgresRuntime
+    ? await pgOne(`
+      INSERT INTO refunds (order_id, amount, reason, method, status)
+      VALUES ($1, $2, $3, $4, 'pending')
+      RETURNING id
+    `, [orderId, Math.round(amount), reason, method]).then(async (row) => {
+      const rows = await pgGetRefundRows();
+      return rows.find((item) => item.id === row.id);
+    })
+    : (() => {
+      const result = db.prepare(`
+        INSERT INTO refunds (order_id, amount, reason, method, status)
+        VALUES (?, ?, ?, ?, 'pending')
+      `).run(orderId, Math.round(amount), reason, method);
 
-  const created = getRefundRows().find((row) => row.id === Number(result.lastInsertRowid));
+      return getRefundRows().find((row) => row.id === Number(result.lastInsertRowid));
+    })();
   appendAuditLog({ actor: "Cashier", type: "Refund", tone: "danger", message: `Created refund request for ${order.orderNo}`, meta: method });
   res.status(201).json(created);
 });
@@ -4460,7 +4541,7 @@ app.get("/api/reviews", (_req, res) => {
   });
 });
 
-app.post("/api/reviews/:id/reply", (req, res) => {
+app.post("/api/reviews/:id/reply", async (req, res) => {
   const reviewId = Number(req.params.id);
   const reply = String(req.body?.reply ?? "").trim();
 
@@ -4469,13 +4550,23 @@ app.post("/api/reviews/:id/reply", (req, res) => {
     return;
   }
 
-  const result = db.prepare("UPDATE reviews SET reply = ? WHERE id = ?").run(reply, reviewId);
-  if (result.changes === 0) {
-    res.status(404).json({ message: "Review not found" });
-    return;
+  let updated;
+  if (usePostgresRuntime) {
+    const result = await pgOne("UPDATE reviews SET reply = $1 WHERE id = $2 RETURNING id", [reply, reviewId]);
+    if (!result) {
+      res.status(404).json({ message: "Review not found" });
+      return;
+    }
+    updated = (await pgGetReviewRows()).find((row) => Number(row.id) === reviewId);
+  } else {
+    const result = db.prepare("UPDATE reviews SET reply = ? WHERE id = ?").run(reply, reviewId);
+    if (result.changes === 0) {
+      res.status(404).json({ message: "Review not found" });
+      return;
+    }
+    updated = getReviewRows().find((row) => row.id === reviewId);
   }
 
-  const updated = getReviewRows().find((row) => row.id === reviewId);
   appendAuditLog({ actor: "Support Lead", type: "Review Reply", tone: "primary", message: `Replied to review for ${updated.orderNo}`, meta: "Customer Care" });
   res.json(updated);
 });
@@ -4503,7 +4594,7 @@ app.get("/api/receipts/export.csv", (_req, res) => {
   res.send(csvLines.join("\n"));
 });
 
-app.post("/api/orders", (req, res) => {
+app.post("/api/orders", async (req, res) => {
   const {
     title,
     deviceName,
@@ -4555,8 +4646,8 @@ app.post("/api/orders", (req, res) => {
     return;
   }
 
-  const orderNo = getNextOrderNo();
-  const intakeCode = getNextIntakeCode();
+  const orderNo = usePostgresRuntime ? await pgGetNextOrderNo() : getNextOrderNo();
+  const intakeCode = usePostgresRuntime ? await pgGetNextIntakeCode() : getNextIntakeCode();
 
   const intakePhotos = [
     { stage: "手机正面", imageUrl: String(deviceFrontPhoto).trim(), note: "建单时记录的设备正面照片。" },
@@ -4569,60 +4660,117 @@ app.post("/api/orders", (req, res) => {
     return;
   }
 
-  const result = db.transaction(() => {
-    const customerMatch = db.prepare(`
-      SELECT id
-      FROM customers
-      WHERE lower(name) = lower(?)
-        AND phone = ?
-      LIMIT 1
-    `).get(customerName.trim(), customerPhone.trim());
+  const result = usePostgresRuntime
+    ? await pgWithTransaction(async (client) => {
+      const customerMatch = await client.query(`
+        SELECT id
+        FROM customers
+        WHERE lower(name) = lower($1)
+          AND phone = $2
+        LIMIT 1
+      `, [customerName.trim(), customerPhone.trim()]);
 
-    let customerId = customerMatch?.id;
+      let customerId = customerMatch.rows[0]?.id;
 
-    if (!customerId) {
-      customerId = db.prepare(`
-        INSERT INTO customers (name, phone, email, tier)
-        VALUES (?, ?, ?, 'standard')
-      `).run(customerName.trim(), customerPhone.trim(), customerEmail.trim()).lastInsertRowid;
-    } else {
-      db.prepare("UPDATE customers SET email = ? WHERE id = ?").run(customerEmail.trim(), customerId);
-    }
+      if (!customerId) {
+        const insertedCustomer = await client.query(`
+          INSERT INTO customers (name, phone, email, tier)
+          VALUES ($1, $2, $3, 'standard')
+          RETURNING id
+        `, [customerName.trim(), customerPhone.trim(), customerEmail.trim()]);
+        customerId = insertedCustomer.rows[0]?.id;
+      } else {
+        await client.query("UPDATE customers SET email = $1 WHERE id = $2", [customerEmail.trim(), customerId]);
+      }
 
-    const orderId = db.prepare(`
-      INSERT INTO orders
-      (order_no, title, device_name, status, customer_id, technician, scheduled_date, amount, deposit, issue_summary, notes)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(
-      orderNo,
-      generatedTitle,
-      normalizedDeviceName,
-      status,
-      customerId,
-      technician.trim(),
-      scheduledDate,
-      numericAmount,
-      Math.round(numericDeposit),
-      normalizedIssueSummary,
-      notes.trim(),
-    ).lastInsertRowid;
+      const orderInserted = await client.query(`
+        INSERT INTO orders
+        (order_no, title, device_name, status, customer_id, technician, scheduled_date, amount, deposit, issue_summary, notes)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+        RETURNING id
+      `, [
+        orderNo,
+        generatedTitle,
+        normalizedDeviceName,
+        status,
+        customerId,
+        technician.trim(),
+        scheduledDate,
+        numericAmount,
+        Math.round(numericDeposit),
+        normalizedIssueSummary,
+        notes.trim(),
+      ]);
+      const orderId = orderInserted.rows[0]?.id;
 
-    intakePhotos.forEach((photo) => {
+      for (const photo of intakePhotos) {
+        await client.query(`
+          INSERT INTO order_photos (order_id, stage, image_url, note)
+          VALUES ($1, $2, $3, $4)
+        `, [orderId, photo.stage, photo.imageUrl, photo.note]);
+      }
+
+      await client.query(`
+        INSERT INTO order_intake (order_id, intake_code, imei_serial, customer_signature)
+        VALUES ($1, $2, $3, $4)
+      `, [orderId, intakeCode, String(imeiSerial).trim(), String(customerSignature).trim()]);
+
+      return Number(orderId);
+    })
+    : db.transaction(() => {
+      const customerMatch = db.prepare(`
+        SELECT id
+        FROM customers
+        WHERE lower(name) = lower(?)
+          AND phone = ?
+        LIMIT 1
+      `).get(customerName.trim(), customerPhone.trim());
+
+      let customerId = customerMatch?.id;
+
+      if (!customerId) {
+        customerId = db.prepare(`
+          INSERT INTO customers (name, phone, email, tier)
+          VALUES (?, ?, ?, 'standard')
+        `).run(customerName.trim(), customerPhone.trim(), customerEmail.trim()).lastInsertRowid;
+      } else {
+        db.prepare("UPDATE customers SET email = ? WHERE id = ?").run(customerEmail.trim(), customerId);
+      }
+
+      const orderId = db.prepare(`
+        INSERT INTO orders
+        (order_no, title, device_name, status, customer_id, technician, scheduled_date, amount, deposit, issue_summary, notes)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        orderNo,
+        generatedTitle,
+        normalizedDeviceName,
+        status,
+        customerId,
+        technician.trim(),
+        scheduledDate,
+        numericAmount,
+        Math.round(numericDeposit),
+        normalizedIssueSummary,
+        notes.trim(),
+      ).lastInsertRowid;
+
+      intakePhotos.forEach((photo) => {
+        db.prepare(`
+          INSERT INTO order_photos (order_id, stage, image_url, note)
+          VALUES (?, ?, ?, ?)
+        `).run(orderId, photo.stage, photo.imageUrl, photo.note);
+      });
+
       db.prepare(`
-        INSERT INTO order_photos (order_id, stage, image_url, note)
+        INSERT INTO order_intake (order_id, intake_code, imei_serial, customer_signature)
         VALUES (?, ?, ?, ?)
-      `).run(orderId, photo.stage, photo.imageUrl, photo.note);
-    });
+      `).run(orderId, intakeCode, String(imeiSerial).trim(), String(customerSignature).trim());
 
-    db.prepare(`
-      INSERT INTO order_intake (order_id, intake_code, imei_serial, customer_signature)
-      VALUES (?, ?, ?, ?)
-    `).run(orderId, intakeCode, String(imeiSerial).trim(), String(customerSignature).trim());
+      return Number(orderId);
+    })();
 
-    return Number(orderId);
-  })();
-
-  const created = getOrderById(result);
+  const created = usePostgresRuntime ? await pgGetOrderById(result) : getOrderById(result);
   res.status(201).json(mapOrder(created));
 });
 
@@ -5502,7 +5650,7 @@ app.get("/api/customers/:id/history", async (req, res) => {
   });
 });
 
-app.post("/api/customers/:id/followups", (req, res) => {
+app.post("/api/customers/:id/followups", async (req, res) => {
   const customerId = Number(req.params.id);
   const note = String(req.body?.note ?? "").trim();
   const channel = String(req.body?.channel ?? "phone").trim() || "phone";
@@ -5513,18 +5661,37 @@ app.post("/api/customers/:id/followups", (req, res) => {
     return;
   }
 
-  const customer = db.prepare("SELECT id FROM customers WHERE id = ?").get(customerId);
+  const customer = usePostgresRuntime
+    ? await pgOne("SELECT id FROM customers WHERE id = $1", [customerId])
+    : db.prepare("SELECT id FROM customers WHERE id = ?").get(customerId);
   if (!customer) {
     res.status(404).json({ message: "Customer not found" });
     return;
   }
 
-  const result = db.prepare(`
-    INSERT INTO customer_followups (customer_id, order_id, channel, note)
-    VALUES (?, ?, ?, ?)
-  `).run(customerId, orderId, channel, note);
+  const created = usePostgresRuntime
+    ? await pgOne(`
+      INSERT INTO customer_followups (customer_id, order_id, channel, note)
+      VALUES ($1, $2, $3, $4)
+      RETURNING
+        id,
+        customer_id AS "customerId",
+        order_id AS "orderId",
+        channel,
+        note,
+        created_at AS "createdAt"
+    `, [customerId, orderId, channel, note]).then((row) => ({
+      ...row,
+      createdLabel: formatChatTimestamp(row.createdAt),
+    }))
+    : (() => {
+      const result = db.prepare(`
+        INSERT INTO customer_followups (customer_id, order_id, channel, note)
+        VALUES (?, ?, ?, ?)
+      `).run(customerId, orderId, channel, note);
 
-  const created = getFollowupRows(customerId).find((row) => row.id === Number(result.lastInsertRowid));
+      return getFollowupRows(customerId).find((row) => row.id === Number(result.lastInsertRowid));
+    })();
   appendAuditLog({ actor: "Customer Care", type: "Follow-up", tone: "primary", message: `Logged follow-up for customer #${customerId}`, meta: channel });
   res.status(201).json(created);
 });
@@ -6330,7 +6497,7 @@ app.get("/api/inventory/loss-records", (_req, res) => {
   })));
 });
 
-app.post("/api/inventory/audit-session", (req, res) => {
+app.post("/api/inventory/audit-session", async (req, res) => {
   const {
     operator = "Aiden",
     items = [],
@@ -6353,41 +6520,80 @@ app.post("/api/inventory/audit-session", (req, res) => {
     return;
   }
 
-  const sessionNo = getNextAuditSessionNo();
+  const sessionNo = usePostgresRuntime ? await pgGetNextAuditSessionNo() : getNextAuditSessionNo();
   const discrepancies = [];
 
-  db.transaction(() => {
-    normalizedItems.forEach((item) => {
-      const part = getPartById(item.partId);
-      if (!part) {
-        return;
-      }
+  if (usePostgresRuntime) {
+    await pgWithTransaction(async (client) => {
+      for (const item of normalizedItems) {
+        const part = await pgOne(`
+          SELECT id, name, stock
+          FROM parts
+          WHERE id = $1
+        `, [item.partId]);
+        if (!part) {
+          continue;
+        }
 
-      const discrepancy = item.actualStock - part.stock;
-      db.prepare(`
-        INSERT INTO inventory_audits (session_no, part_id, system_stock, actual_stock, discrepancy, operator)
-        VALUES (?, ?, ?, ?, ?, ?)
-      `).run(sessionNo, item.partId, part.stock, item.actualStock, discrepancy, operator.trim());
+        const discrepancy = item.actualStock - toNumber(part.stock);
+        await client.query(`
+          INSERT INTO inventory_audits (session_no, part_id, system_stock, actual_stock, discrepancy, operator)
+          VALUES ($1, $2, $3, $4, $5, $6)
+        `, [sessionNo, item.partId, toNumber(part.stock), item.actualStock, discrepancy, operator.trim()]);
 
-      if (discrepancy !== 0) {
-        db.prepare("UPDATE parts SET stock = ? WHERE id = ?").run(item.actualStock, item.partId);
-        db.prepare(`
-          INSERT INTO inventory_movements (part_id, movement_type, quantity, note)
-          VALUES (?, ?, ?, ?)
-        `).run(
-          item.partId,
-          discrepancy > 0 ? "in" : "out",
-          Math.abs(discrepancy),
-          `Audit ${sessionNo} reconciliation`,
-        );
-        discrepancies.push({
-          partId: item.partId,
-          partName: part.name,
-          discrepancy,
-        });
+        if (discrepancy !== 0) {
+          await client.query("UPDATE parts SET stock = $1 WHERE id = $2", [item.actualStock, item.partId]);
+          await client.query(`
+            INSERT INTO inventory_movements (part_id, movement_type, quantity, note)
+            VALUES ($1, $2, $3, $4)
+          `, [
+            item.partId,
+            discrepancy > 0 ? "in" : "out",
+            Math.abs(discrepancy),
+            `Audit ${sessionNo} reconciliation`,
+          ]);
+          discrepancies.push({
+            partId: item.partId,
+            partName: part.name,
+            discrepancy,
+          });
+        }
       }
     });
-  })();
+  } else {
+    db.transaction(() => {
+      normalizedItems.forEach((item) => {
+        const part = getPartById(item.partId);
+        if (!part) {
+          return;
+        }
+
+        const discrepancy = item.actualStock - part.stock;
+        db.prepare(`
+          INSERT INTO inventory_audits (session_no, part_id, system_stock, actual_stock, discrepancy, operator)
+          VALUES (?, ?, ?, ?, ?, ?)
+        `).run(sessionNo, item.partId, part.stock, item.actualStock, discrepancy, operator.trim());
+
+        if (discrepancy !== 0) {
+          db.prepare("UPDATE parts SET stock = ? WHERE id = ?").run(item.actualStock, item.partId);
+          db.prepare(`
+            INSERT INTO inventory_movements (part_id, movement_type, quantity, note)
+            VALUES (?, ?, ?, ?)
+          `).run(
+            item.partId,
+            discrepancy > 0 ? "in" : "out",
+            Math.abs(discrepancy),
+            `Audit ${sessionNo} reconciliation`,
+          );
+          discrepancies.push({
+            partId: item.partId,
+            partName: part.name,
+            discrepancy,
+          });
+        }
+      });
+    });
+  }
 
   appendAuditLog({
     actor: operator.trim(),
@@ -6460,7 +6666,7 @@ app.get("/api/inventory-movements", async (_req, res) => {
   res.json(usePostgresRuntime ? await pgGetRecentMovements() : getRecentMovements());
 });
 
-app.post("/api/inventory/inbound-batch", (req, res) => {
+app.post("/api/inventory/inbound-batch", async (req, res) => {
   const sourceCurrency = String(req.body?.sourceCurrency ?? "VUV").trim().toUpperCase();
   const exchangeRate = Math.max(0.000001, Number(req.body?.exchangeRate ?? 1) || 1);
   const shippingFee = Math.max(0, Math.round(Number(req.body?.shippingFee ?? 0) || 0));
@@ -6489,16 +6695,39 @@ app.post("/api/inventory/inbound-batch", (req, res) => {
     return;
   }
 
-  const itemsWithParts = normalizedItems.map((item) => {
-    const part = getPartById(item.partId);
-    if (!part) return null;
-    const purchaseValueVuv = Math.round(item.sourceUnitPrice * item.quantity * (sourceCurrency === "CNY" ? exchangeRate : 1));
-    return {
+  const itemsWithParts = [];
+  for (const item of normalizedItems) {
+    const part = usePostgresRuntime
+      ? await pgOne(`
+        SELECT
+          id,
+          name,
+          sku,
+          stock,
+          reorder_level AS "reorderLevel",
+          unit_price AS "unitPrice",
+          cost_price AS "costPrice",
+          supplier
+        FROM parts
+        WHERE id = $1
+      `, [item.partId])
+      : getPartById(item.partId);
+    if (!part) {
+      itemsWithParts.push(null);
+      continue;
+    }
+    itemsWithParts.push({
       ...item,
-      part,
-      purchaseValueVuv,
-    };
-  });
+      part: {
+        ...part,
+        stock: toNumber(part.stock),
+        reorderLevel: toNumber(part.reorderLevel),
+        unitPrice: toNumber(part.unitPrice),
+        costPrice: toNumber(part.costPrice),
+      },
+      purchaseValueVuv: Math.round(item.sourceUnitPrice * item.quantity * (sourceCurrency === "CNY" ? exchangeRate : 1)),
+    });
+  }
 
   if (itemsWithParts.some((item) => !item)) {
     res.status(404).json({ message: "One or more parts were not found" });
@@ -6508,90 +6737,182 @@ app.post("/api/inventory/inbound-batch", (req, res) => {
   const safeItems = itemsWithParts;
   const totalExtraFees = shippingFee + customsFee + declarationFee + otherFee;
   const allocatedExtras = allocateBatchExtraFees(safeItems, totalExtraFees);
-  const batchNo = getNextInboundBatchNo();
+  const batchNo = usePostgresRuntime ? await pgGetNextInboundBatchNo() : getNextInboundBatchNo();
 
-  const responsePayload = db.transaction(() => {
-    const batchId = Number(db.prepare(`
-      INSERT INTO inbound_batches (
-        batch_no,
-        source_currency,
-        exchange_rate,
-        shipping_fee,
-        customs_fee,
-        declaration_fee,
-        other_fee,
-        note
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(batchNo, sourceCurrency, exchangeRate, shippingFee, customsFee, declarationFee, otherFee, note).lastInsertRowid);
+  const responsePayload = usePostgresRuntime
+    ? await pgWithTransaction(async (client) => {
+      const batchInserted = await client.query(`
+        INSERT INTO inbound_batches (
+          batch_no,
+          source_currency,
+          exchange_rate,
+          shipping_fee,
+          customs_fee,
+          declaration_fee,
+          other_fee,
+          note
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        RETURNING id
+      `, [batchNo, sourceCurrency, exchangeRate, shippingFee, customsFee, declarationFee, otherFee, note]);
+      const batchId = Number(batchInserted.rows[0]?.id);
 
-    const savedItems = safeItems.map((item, index) => {
-      const allocatedExtra = allocatedExtras[index] ?? 0;
-      const totalLandedCost = item.purchaseValueVuv + allocatedExtra;
-      const landedUnitCost = Math.round(totalLandedCost / item.quantity);
-      const supplierName = item.supplierName || item.part.supplier || "";
+      const savedItems = [];
+      for (let index = 0; index < safeItems.length; index += 1) {
+        const item = safeItems[index];
+        const allocatedExtra = allocatedExtras[index] ?? 0;
+        const totalLandedCost = item.purchaseValueVuv + allocatedExtra;
+        const landedUnitCost = Math.round(totalLandedCost / item.quantity);
+        const supplierName = item.supplierName || item.part.supplier || "";
 
-      db.prepare(`
-        INSERT INTO inbound_batch_items (
-          batch_id,
-          part_id,
-          quantity,
-          supplier_name,
-          source_unit_price,
-          landed_unit_cost
-        ) VALUES (?, ?, ?, ?, ?, ?)
-      `).run(batchId, item.partId, item.quantity, supplierName, item.sourceUnitPrice, landedUnitCost);
+        await client.query(`
+          INSERT INTO inbound_batch_items (
+            batch_id,
+            part_id,
+            quantity,
+            supplier_name,
+            source_unit_price,
+            landed_unit_cost
+          ) VALUES ($1, $2, $3, $4, $5, $6)
+        `, [batchId, item.partId, item.quantity, supplierName, item.sourceUnitPrice, landedUnitCost]);
 
-      db.prepare(`
-        UPDATE parts
-        SET
-          stock = stock + ?,
-          cost_price = ?,
-          supplier = CASE WHEN ? != '' THEN ? ELSE supplier END
-        WHERE id = ?
-      `).run(item.quantity, landedUnitCost, supplierName, supplierName, item.partId);
+        await client.query(`
+          UPDATE parts
+          SET
+            stock = stock + $1,
+            cost_price = $2,
+            supplier = CASE WHEN $3 != '' THEN $4 ELSE supplier END
+          WHERE id = $5
+        `, [item.quantity, landedUnitCost, supplierName, supplierName, item.partId]);
 
-      db.prepare(`
-        INSERT INTO inventory_movements (part_id, movement_type, quantity, note)
-        VALUES (?, 'in', ?, ?)
-      `).run(
-        item.partId,
-        item.quantity,
-        `Inbound Batch ${batchNo} · ${sourceCurrency} ${item.sourceUnitPrice}/件 · 快递 ${Math.round(allocatedExtra > 0 ? shippingFee * (item.purchaseValueVuv / Math.max(safeItems.reduce((sum, row) => sum + row.purchaseValueVuv, 0), 1)) : 0)} · 落地 ${formatMoney(landedUnitCost)}/件`,
-      );
+        await client.query(`
+          INSERT INTO inventory_movements (part_id, movement_type, quantity, note)
+          VALUES ($1, 'in', $2, $3)
+        `, [
+          item.partId,
+          item.quantity,
+          `Inbound Batch ${batchNo} · ${sourceCurrency} ${item.sourceUnitPrice}/件 · 快递 ${Math.round(allocatedExtra > 0 ? shippingFee * (item.purchaseValueVuv / Math.max(safeItems.reduce((sum, row) => sum + row.purchaseValueVuv, 0), 1)) : 0)} · 落地 ${formatMoney(landedUnitCost)}/件`,
+        ]);
+
+        savedItems.push({
+          partId: item.partId,
+          partName: item.part.name,
+          quantity: item.quantity,
+          supplierName,
+          sourceUnitPrice: item.sourceUnitPrice,
+          sourceUnitPriceFormatted: sourceCurrency === "CNY" ? formatCny(item.sourceUnitPrice) : formatMoney(item.sourceUnitPrice),
+          purchaseValueVuv: item.purchaseValueVuv,
+          purchaseValueVuvFormatted: formatMoney(item.purchaseValueVuv),
+          allocatedExtra,
+          allocatedExtraFormatted: formatMoney(allocatedExtra),
+          landedUnitCost,
+          landedUnitCostFormatted: formatMoney(landedUnitCost),
+          totalLandedCost,
+          totalLandedCostFormatted: formatMoney(totalLandedCost),
+        });
+      }
+
+      const parts = [];
+      for (const item of savedItems) {
+        parts.push(mapPart(await pgGetPartById(item.partId)));
+      }
 
       return {
-        partId: item.partId,
-        partName: item.part.name,
-        quantity: item.quantity,
-        supplierName,
-        sourceUnitPrice: item.sourceUnitPrice,
-        sourceUnitPriceFormatted: sourceCurrency === "CNY" ? formatCny(item.sourceUnitPrice) : formatMoney(item.sourceUnitPrice),
-        purchaseValueVuv: item.purchaseValueVuv,
-        purchaseValueVuvFormatted: formatMoney(item.purchaseValueVuv),
-        allocatedExtra,
-        allocatedExtraFormatted: formatMoney(allocatedExtra),
-        landedUnitCost,
-        landedUnitCostFormatted: formatMoney(landedUnitCost),
-        totalLandedCost,
-        totalLandedCostFormatted: formatMoney(totalLandedCost),
+        batchNo,
+        sourceCurrency,
+        exchangeRate,
+        shippingFee,
+        customsFee,
+        declarationFee,
+        otherFee,
+        totalExtraFees,
+        totalExtraFeesFormatted: formatMoney(totalExtraFees),
+        note,
+        items: savedItems,
+        parts,
       };
-    });
+    })
+    : db.transaction(() => {
+      const batchId = Number(db.prepare(`
+        INSERT INTO inbound_batches (
+          batch_no,
+          source_currency,
+          exchange_rate,
+          shipping_fee,
+          customs_fee,
+          declaration_fee,
+          other_fee,
+          note
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(batchNo, sourceCurrency, exchangeRate, shippingFee, customsFee, declarationFee, otherFee, note).lastInsertRowid);
 
-    return {
-      batchNo,
-      sourceCurrency,
-      exchangeRate,
-      shippingFee,
-      customsFee,
-      declarationFee,
-      otherFee,
-      totalExtraFees,
-      totalExtraFeesFormatted: formatMoney(totalExtraFees),
-      note,
-      items: savedItems,
-      parts: savedItems.map((item) => mapPart(getPartById(item.partId))),
-    };
-  })();
+      const savedItems = safeItems.map((item, index) => {
+        const allocatedExtra = allocatedExtras[index] ?? 0;
+        const totalLandedCost = item.purchaseValueVuv + allocatedExtra;
+        const landedUnitCost = Math.round(totalLandedCost / item.quantity);
+        const supplierName = item.supplierName || item.part.supplier || "";
+
+        db.prepare(`
+          INSERT INTO inbound_batch_items (
+            batch_id,
+            part_id,
+            quantity,
+            supplier_name,
+            source_unit_price,
+            landed_unit_cost
+          ) VALUES (?, ?, ?, ?, ?, ?)
+        `).run(batchId, item.partId, item.quantity, supplierName, item.sourceUnitPrice, landedUnitCost);
+
+        db.prepare(`
+          UPDATE parts
+          SET
+            stock = stock + ?,
+            cost_price = ?,
+            supplier = CASE WHEN ? != '' THEN ? ELSE supplier END
+          WHERE id = ?
+        `).run(item.quantity, landedUnitCost, supplierName, supplierName, item.partId);
+
+        db.prepare(`
+          INSERT INTO inventory_movements (part_id, movement_type, quantity, note)
+          VALUES (?, 'in', ?, ?)
+        `).run(
+          item.partId,
+          item.quantity,
+          `Inbound Batch ${batchNo} · ${sourceCurrency} ${item.sourceUnitPrice}/件 · 快递 ${Math.round(allocatedExtra > 0 ? shippingFee * (item.purchaseValueVuv / Math.max(safeItems.reduce((sum, row) => sum + row.purchaseValueVuv, 0), 1)) : 0)} · 落地 ${formatMoney(landedUnitCost)}/件`,
+        );
+
+        return {
+          partId: item.partId,
+          partName: item.part.name,
+          quantity: item.quantity,
+          supplierName,
+          sourceUnitPrice: item.sourceUnitPrice,
+          sourceUnitPriceFormatted: sourceCurrency === "CNY" ? formatCny(item.sourceUnitPrice) : formatMoney(item.sourceUnitPrice),
+          purchaseValueVuv: item.purchaseValueVuv,
+          purchaseValueVuvFormatted: formatMoney(item.purchaseValueVuv),
+          allocatedExtra,
+          allocatedExtraFormatted: formatMoney(allocatedExtra),
+          landedUnitCost,
+          landedUnitCostFormatted: formatMoney(landedUnitCost),
+          totalLandedCost,
+          totalLandedCostFormatted: formatMoney(totalLandedCost),
+        };
+      });
+
+      return {
+        batchNo,
+        sourceCurrency,
+        exchangeRate,
+        shippingFee,
+        customsFee,
+        declarationFee,
+        otherFee,
+        totalExtraFees,
+        totalExtraFeesFormatted: formatMoney(totalExtraFees),
+        note,
+        items: savedItems,
+        parts: savedItems.map((item) => mapPart(getPartById(item.partId))),
+      };
+    })();
 
   appendAuditLog({
     actor: "Warehouse Clerk",
