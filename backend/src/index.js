@@ -5,6 +5,7 @@ import https from "node:https";
 import os from "node:os";
 import { fileURLToPath } from "node:url";
 import Database from "better-sqlite3";
+import { BlobNotFoundError, head, put } from "@vercel/blob";
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
@@ -24,6 +25,8 @@ const dbPath = isVercelRuntime
 const certsDir = path.resolve(backendRoot, "certs");
 const httpsKeyPath = path.resolve(certsDir, "localhost-key.pem");
 const httpsCertPath = path.resolve(certsDir, "localhost-cert.pem");
+const blobSnapshotPath = process.env.DB_BLOB_PATH ?? "database/stitch.sqlite";
+const blobPersistenceEnabled = isVercelRuntime && Boolean(process.env.BLOB_READ_WRITE_TOKEN);
 
 if (isVercelRuntime && !fs.existsSync(dbPath)) {
   fs.mkdirSync(path.dirname(dbPath), { recursive: true });
@@ -32,6 +35,11 @@ if (isVercelRuntime && !fs.existsSync(dbPath)) {
     fs.copyFileSync(localDbPath, dbPath);
   }
 }
+
+let blobSnapshotUrl = null;
+let persistQueue = Promise.resolve();
+
+await ensurePersistentDatabaseReady();
 
 const db = new Database(dbPath);
 db.pragma("journal_mode = WAL");
@@ -111,6 +119,65 @@ function ensureHttpsCertificate() {
     cert: generated.cert,
     hosts: getLocalHostnames(),
   };
+}
+
+async function ensurePersistentDatabaseReady() {
+  if (!blobPersistenceEnabled) {
+    return;
+  }
+
+  try {
+    const existing = await head(blobSnapshotPath);
+    blobSnapshotUrl = existing.url;
+
+    const response = await fetch(existing.downloadUrl, {
+      headers: {
+        Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Unable to download persisted database: ${response.status}`);
+    }
+
+    const arrayBuffer = await response.arrayBuffer();
+    fs.mkdirSync(path.dirname(dbPath), { recursive: true });
+    fs.writeFileSync(dbPath, Buffer.from(arrayBuffer));
+  } catch (error) {
+    if (!(error instanceof BlobNotFoundError)) {
+      console.warn("Failed to restore Vercel Blob database snapshot:", error);
+    }
+  }
+}
+
+async function persistDatabaseSnapshot(reason = "update") {
+  if (!blobPersistenceEnabled || !fs.existsSync(dbPath)) {
+    return;
+  }
+
+  const fileBuffer = fs.readFileSync(dbPath);
+  const uploaded = await put(blobSnapshotPath, fileBuffer, {
+    access: "private",
+    addRandomSuffix: false,
+    allowOverwrite: true,
+    contentType: "application/x-sqlite3",
+  });
+
+  blobSnapshotUrl = uploaded.url;
+  console.log(`Persisted database snapshot (${reason}) to ${uploaded.pathname}`);
+}
+
+function queueDatabaseSnapshot(reason) {
+  if (!blobPersistenceEnabled) {
+    return;
+  }
+
+  persistQueue = persistQueue
+    .catch(() => undefined)
+    .then(() => persistDatabaseSnapshot(reason))
+    .catch((error) => {
+      console.error("Failed to persist Vercel Blob database snapshot:", error);
+    });
 }
 
 db.exec(`
@@ -787,6 +854,25 @@ app.use(cors({
     callback(new Error("Origin not allowed by CORS"));
   },
 }));
+
+app.use((req, res, next) => {
+  if (!blobPersistenceEnabled) {
+    next();
+    return;
+  }
+
+  res.on("finish", () => {
+    if (
+      req.path.startsWith("/api/")
+      && !["GET", "HEAD", "OPTIONS"].includes(req.method)
+      && res.statusCode < 400
+    ) {
+      queueDatabaseSnapshot(`${req.method} ${req.path}`);
+    }
+  });
+
+  next();
+});
 app.use(express.json());
 
 const money = new Intl.NumberFormat("en-US");
@@ -5121,6 +5207,10 @@ function startStandaloneServer() {
       console.log(`Stitch backend listening on http://${host}:${port}`);
     });
   }
+}
+
+if (blobPersistenceEnabled) {
+  queueDatabaseSnapshot("startup");
 }
 
 if (!isVercelRuntime) {
