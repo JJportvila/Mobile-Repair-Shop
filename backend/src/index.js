@@ -2128,6 +2128,33 @@ function getOrderMessages(order) {
   return [...getDefaultCommunicationMessages(order), ...storedMessages];
 }
 
+async function pgGetOrderMessages(order) {
+  const storedMessages = await pgQuery(`
+    SELECT
+      id,
+      sender,
+      type,
+      body,
+      meta_json AS "metaJson",
+      created_at AS "createdAt"
+    FROM order_messages
+    WHERE order_id = $1
+    ORDER BY id ASC
+  `, [order.id]);
+
+  return [
+    ...getDefaultCommunicationMessages(order),
+    ...storedMessages.map((row) => ({
+      id: `db-${row.id}`,
+      sender: row.sender,
+      type: row.type,
+      body: row.body,
+      time: formatChatTimestamp(row.createdAt),
+      ...parseJson(row.metaJson, {}),
+    })),
+  ];
+}
+
 function getDefaultCompletionChecklist(order) {
   return [
     { id: "display", label: "Display & Touch responsive", checked: true },
@@ -2870,7 +2897,262 @@ function getStaffPermissionSettings() {
     canAdjustInventory: Boolean(row.canAdjustInventory),
     canViewFinance: Boolean(row.canViewFinance),
     isActive: Boolean(row.isActive),
+    }));
+}
+
+async function pgGetOrderFormOptionsInternal(includeInactive = false) {
+  const activeClause = includeInactive ? "" : "WHERE is_active = true";
+  const [brands, models, technicians, issueTemplates] = await Promise.all([
+    pgQuery(`
+      SELECT
+        id,
+        name,
+        market,
+        is_active AS "isActive",
+        sort_order AS "sortOrder"
+      FROM order_form_brands
+      ${activeClause}
+      ORDER BY sort_order ASC, id ASC
+    `),
+    pgQuery(`
+      SELECT
+        id,
+        brand_id AS "brandId",
+        name,
+        is_active AS "isActive",
+        sort_order AS "sortOrder"
+      FROM order_form_models
+      ${activeClause}
+      ORDER BY brand_id ASC, sort_order ASC, id ASC
+    `),
+    pgQuery(`
+      SELECT
+        id,
+        name,
+        is_active AS "isActive",
+        sort_order AS "sortOrder"
+      FROM order_form_technicians
+      ${activeClause}
+      ORDER BY sort_order ASC, id ASC
+    `),
+    pgQuery(`
+      SELECT
+        id,
+        title,
+        is_active AS "isActive",
+        sort_order AS "sortOrder"
+      FROM order_form_issue_templates
+      ${activeClause}
+      ORDER BY sort_order ASC, id ASC
+    `),
+  ]);
+
+  return { brands, models, technicians, issueTemplates };
+}
+
+async function pgGetStoreSettings() {
+  return pgOne(`
+    SELECT
+      store_name AS "storeName",
+      store_code AS "storeCode",
+      phone,
+      email,
+      address,
+      cover_image AS "coverImage",
+      updated_at AS "updatedAt"
+    FROM settings_store
+    WHERE id = 1
+  `);
+}
+
+async function pgGetLanguageSettings() {
+  return pgOne(`
+    SELECT
+      primary_language AS "primaryLanguage",
+      external_language AS "externalLanguage",
+      local_language AS "localLanguage",
+      updated_at AS "updatedAt"
+    FROM settings_language
+    WHERE id = 1
+  `);
+}
+
+async function pgGetPrintSettings() {
+  const row = await pgOne(`
+    SELECT
+      paper_size AS "paperSize",
+      qr_enabled AS "qrEnabled",
+      default_receipt_enabled AS "defaultReceiptEnabled",
+      footer_brand_enabled AS "footerBrandEnabled",
+      updated_at AS "updatedAt"
+    FROM settings_print
+    WHERE id = 1
+  `);
+
+  return {
+    ...row,
+    qrEnabled: Boolean(row?.qrEnabled),
+    defaultReceiptEnabled: Boolean(row?.defaultReceiptEnabled),
+    footerBrandEnabled: Boolean(row?.footerBrandEnabled),
+  };
+}
+
+async function pgGetBusinessHoursSettings() {
+  const rows = await pgQuery(`
+    SELECT
+      id,
+      day_label AS "dayLabel",
+      hours_value AS "hoursValue",
+      note,
+      sort_order AS "sortOrder"
+    FROM settings_business_hours
+    ORDER BY sort_order ASC, id ASC
+  `);
+  const holidayRule = await pgOne(`
+    SELECT
+      holiday_enabled AS "holidayEnabled",
+      holiday_hours AS "holidayHours",
+      holiday_note AS "holidayNote"
+    FROM settings_business_rules
+    WHERE id = 1
+  `);
+
+  return {
+    rows,
+    holidayRule: {
+      holidayEnabled: Boolean(holidayRule?.holidayEnabled),
+      holidayHours: holidayRule?.holidayHours ?? "10:00 - 15:00",
+      holidayNote: holidayRule?.holidayNote ?? "",
+    },
+  };
+}
+
+async function pgGetStaffPermissionSettings() {
+  const rows = await pgQuery(`
+    SELECT
+      id,
+      name,
+      role,
+      scope,
+      can_edit_orders AS "canEditOrders",
+      can_adjust_inventory AS "canAdjustInventory",
+      can_view_finance AS "canViewFinance",
+      is_active AS "isActive",
+      sort_order AS "sortOrder"
+    FROM settings_staff
+    ORDER BY sort_order ASC, id ASC
+  `);
+
+  return rows.map((row) => ({
+    ...row,
+    canEditOrders: Boolean(row.canEditOrders),
+    canAdjustInventory: Boolean(row.canAdjustInventory),
+    canViewFinance: Boolean(row.canViewFinance),
+    isActive: Boolean(row.isActive),
   }));
+}
+
+async function pgGetAuditLogs() {
+  const rows = await pgQuery(`
+    SELECT
+      id,
+      actor,
+      type,
+      tone,
+      message,
+      meta,
+      created_at AS "createdAt"
+    FROM audit_logs
+    ORDER BY id DESC
+    LIMIT 50
+  `);
+
+  return rows.map((row) => ({
+    ...row,
+    meta: row.meta ? `${formatChatTimestamp(row.createdAt)} · ${row.meta}` : formatChatTimestamp(row.createdAt),
+  }));
+}
+
+async function pgBuildNotifications() {
+  const [readRows, lowStockParts, recentOrders, recentAuditLogs] = await Promise.all([
+    pgQuery(`SELECT notification_id AS "notificationId" FROM notification_reads`),
+    pgQuery(`
+      SELECT id, name, sku, stock, reorder_level AS "reorderLevel"
+      FROM parts
+      WHERE stock <= reorder_level
+      ORDER BY stock ASC, name ASC
+      LIMIT 3
+    `),
+    pgQuery(`
+      SELECT
+        o.id,
+        o.order_no AS "orderNo",
+        o.status,
+        o.created_at AS "createdAt",
+        o.scheduled_date AS "scheduledDate",
+        c.name AS "customerName"
+      FROM orders o
+      JOIN customers c ON c.id = o.customer_id
+      ORDER BY o.id DESC
+      LIMIT 4
+    `),
+    pgQuery(`
+      SELECT id, type, tone, message, created_at AS "createdAt"
+      FROM audit_logs
+      ORDER BY id DESC
+      LIMIT 4
+    `),
+  ]);
+
+  const readIds = new Set(readRows.map((row) => row.notificationId));
+  const todayKey = getTodayDateKey();
+  const notifications = [];
+
+  lowStockParts.forEach((part) => {
+    notifications.push({
+      id: `inventory-${part.id}`,
+      category: "inventory",
+      title: "库存预警",
+      body: `${part.name} 当前库存 ${toNumber(part.stock)}，低于补货阈值 ${toNumber(part.reorderLevel)}。`,
+      tone: toNumber(part.stock) <= 2 ? "warning" : "secondary",
+      tag: "紧急补货",
+      time: todayKey,
+      link: "/low-stock-alerts",
+    });
+  });
+
+  recentOrders.forEach((order) => {
+    notifications.push({
+      id: `order-${order.id}`,
+      category: "order",
+      title: order.status === "completed" || order.status === "picked_up" ? "订单进度更新" : "订单提醒",
+      body: `订单 #${order.orderNo} (${order.customerName}) 当前状态：${statusMeta[order.status]?.label ?? order.status}。`,
+      tone: order.status === "completed" || order.status === "picked_up" ? "success" : "primary",
+      tag: order.status === "completed" || order.status === "picked_up" ? "已完工" : "新订单",
+      time: formatChatTimestamp(order.createdAt),
+      link: `/orders/${order.orderNo ?? order.id}`,
+    });
+  });
+
+  recentAuditLogs.forEach((log) => {
+    notifications.push({
+      id: `audit-${log.id}`,
+      category: "system",
+      title: log.type,
+      body: log.message,
+      tone: log.tone === "danger" ? "warning" : log.tone,
+      tag: "系统日志",
+      time: formatChatTimestamp(log.createdAt),
+      link: "/audit-logs",
+    });
+  });
+
+  return notifications
+    .map((item) => ({
+      ...item,
+      isRead: readIds.has(item.id),
+    }))
+    .sort((a, b) => String(b.time).localeCompare(String(a.time)));
 }
 
 function mapPart(row) {
@@ -3317,19 +3599,19 @@ app.get("/api/health", (_req, res) => {
   res.json({ ok: true, timestamp: new Date().toISOString() });
 });
 
-app.get("/api/order-form-options", (_req, res) => {
-  res.json(getOrderFormOptions());
+app.get("/api/order-form-options", async (_req, res) => {
+  res.json(usePostgresRuntime ? await pgGetOrderFormOptionsInternal(false) : getOrderFormOptions());
 });
 
-app.get("/api/order-form-options/admin", (_req, res) => {
-  res.json(getOrderFormOptionsInternal(true));
+app.get("/api/order-form-options/admin", async (_req, res) => {
+  res.json(usePostgresRuntime ? await pgGetOrderFormOptionsInternal(true) : getOrderFormOptionsInternal(true));
 });
 
-app.get("/api/settings/store", (_req, res) => {
-  res.json(getStoreSettings());
+app.get("/api/settings/store", async (_req, res) => {
+  res.json(usePostgresRuntime ? await pgGetStoreSettings() : getStoreSettings());
 });
 
-app.patch("/api/settings/store", (req, res) => {
+app.patch("/api/settings/store", async (req, res) => {
   const storeName = String(req.body?.storeName ?? "").trim();
   const storeCode = String(req.body?.storeCode ?? "").trim();
   const phone = String(req.body?.phone ?? "").trim();
@@ -3342,25 +3624,33 @@ app.patch("/api/settings/store", (req, res) => {
     return;
   }
 
-  db.prepare(`
-    UPDATE settings_store
-    SET store_name = ?, store_code = ?, phone = ?, email = ?, address = ?, cover_image = ?, updated_at = CURRENT_TIMESTAMP
-    WHERE id = 1
-  `).run(storeName, storeCode, phone, email, address, coverImage);
+  if (usePostgresRuntime) {
+    await pgQuery(`
+      UPDATE settings_store
+      SET store_name = $1, store_code = $2, phone = $3, email = $4, address = $5, cover_image = $6, updated_at = CURRENT_TIMESTAMP
+      WHERE id = 1
+    `, [storeName, storeCode, phone, email, address, coverImage]);
+  } else {
+    db.prepare(`
+      UPDATE settings_store
+      SET store_name = ?, store_code = ?, phone = ?, email = ?, address = ?, cover_image = ?, updated_at = CURRENT_TIMESTAMP
+      WHERE id = 1
+    `).run(storeName, storeCode, phone, email, address, coverImage);
+  }
 
   appendAuditLog({ actor: "System Admin", type: "Store Settings", message: `Updated store settings for ${storeName}`, meta: "Settings" });
-  res.json(getStoreSettings());
+  res.json(usePostgresRuntime ? await pgGetStoreSettings() : getStoreSettings());
 });
 
-app.get("/api/settings/business-hours", (_req, res) => {
-  res.json(getBusinessHoursSettings());
+app.get("/api/settings/business-hours", async (_req, res) => {
+  res.json(usePostgresRuntime ? await pgGetBusinessHoursSettings() : getBusinessHoursSettings());
 });
 
-app.get("/api/settings/language", (_req, res) => {
-  res.json(getLanguageSettings());
+app.get("/api/settings/language", async (_req, res) => {
+  res.json(usePostgresRuntime ? await pgGetLanguageSettings() : getLanguageSettings());
 });
 
-app.patch("/api/settings/language", (req, res) => {
+app.patch("/api/settings/language", async (req, res) => {
   const primaryLanguage = String(req.body?.primaryLanguage ?? "").trim();
   const externalLanguage = String(req.body?.externalLanguage ?? "").trim();
   const localLanguage = String(req.body?.localLanguage ?? "").trim();
@@ -3370,21 +3660,29 @@ app.patch("/api/settings/language", (req, res) => {
     return;
   }
 
-  db.prepare(`
-    UPDATE settings_language
-    SET primary_language = ?, external_language = ?, local_language = ?, updated_at = CURRENT_TIMESTAMP
-    WHERE id = 1
-  `).run(primaryLanguage, externalLanguage, localLanguage);
+  if (usePostgresRuntime) {
+    await pgQuery(`
+      UPDATE settings_language
+      SET primary_language = $1, external_language = $2, local_language = $3, updated_at = CURRENT_TIMESTAMP
+      WHERE id = 1
+    `, [primaryLanguage, externalLanguage, localLanguage]);
+  } else {
+    db.prepare(`
+      UPDATE settings_language
+      SET primary_language = ?, external_language = ?, local_language = ?, updated_at = CURRENT_TIMESTAMP
+      WHERE id = 1
+    `).run(primaryLanguage, externalLanguage, localLanguage);
+  }
 
   appendAuditLog({ actor: "System Admin", type: "Language Settings", message: "Updated language settings", meta: primaryLanguage });
-  res.json(getLanguageSettings());
+  res.json(usePostgresRuntime ? await pgGetLanguageSettings() : getLanguageSettings());
 });
 
-app.get("/api/settings/print", (_req, res) => {
-  res.json(getPrintSettings());
+app.get("/api/settings/print", async (_req, res) => {
+  res.json(usePostgresRuntime ? await pgGetPrintSettings() : getPrintSettings());
 });
 
-app.patch("/api/settings/print", (req, res) => {
+app.patch("/api/settings/print", async (req, res) => {
   const paperSize = String(req.body?.paperSize ?? "").trim();
   const qrEnabled = req.body?.qrEnabled ? 1 : 0;
   const defaultReceiptEnabled = req.body?.defaultReceiptEnabled ? 1 : 0;
@@ -3395,17 +3693,25 @@ app.patch("/api/settings/print", (req, res) => {
     return;
   }
 
-  db.prepare(`
-    UPDATE settings_print
-    SET paper_size = ?, qr_enabled = ?, default_receipt_enabled = ?, footer_brand_enabled = ?, updated_at = CURRENT_TIMESTAMP
-    WHERE id = 1
-  `).run(paperSize, qrEnabled, defaultReceiptEnabled, footerBrandEnabled);
+  if (usePostgresRuntime) {
+    await pgQuery(`
+      UPDATE settings_print
+      SET paper_size = $1, qr_enabled = $2, default_receipt_enabled = $3, footer_brand_enabled = $4, updated_at = CURRENT_TIMESTAMP
+      WHERE id = 1
+    `, [paperSize, qrEnabled, defaultReceiptEnabled, footerBrandEnabled]);
+  } else {
+    db.prepare(`
+      UPDATE settings_print
+      SET paper_size = ?, qr_enabled = ?, default_receipt_enabled = ?, footer_brand_enabled = ?, updated_at = CURRENT_TIMESTAMP
+      WHERE id = 1
+    `).run(paperSize, qrEnabled, defaultReceiptEnabled, footerBrandEnabled);
+  }
 
   appendAuditLog({ actor: "System Admin", type: "Print Settings", message: "Updated print settings", meta: paperSize });
-  res.json(getPrintSettings());
+  res.json(usePostgresRuntime ? await pgGetPrintSettings() : getPrintSettings());
 });
 
-app.put("/api/settings/business-hours", (req, res) => {
+app.put("/api/settings/business-hours", async (req, res) => {
   const rows = Array.isArray(req.body?.rows) ? req.body.rows : [];
   const holidayEnabled = req.body?.holidayEnabled ? 1 : 0;
   const holidayHours = String(req.body?.holidayHours ?? "").trim();
@@ -3416,34 +3722,55 @@ app.put("/api/settings/business-hours", (req, res) => {
     return;
   }
 
-  db.transaction(() => {
-    db.prepare("DELETE FROM settings_business_hours").run();
-    const insertHour = db.prepare(`
-      INSERT INTO settings_business_hours (day_label, hours_value, note, sort_order)
-      VALUES (?, ?, ?, ?)
-    `);
-    rows.forEach((row, index) => {
-      insertHour.run(String(row.dayLabel).trim(), String(row.hoursValue).trim(), String(row.note ?? "").trim(), index + 1);
+  if (usePostgresRuntime) {
+    await pgWithTransaction(async (client) => {
+      await client.query("DELETE FROM settings_business_hours");
+      for (let index = 0; index < rows.length; index += 1) {
+        const row = rows[index];
+        await client.query(`
+          INSERT INTO settings_business_hours (day_label, hours_value, note, sort_order)
+          VALUES ($1, $2, $3, $4)
+        `, [String(row.dayLabel).trim(), String(row.hoursValue).trim(), String(row.note ?? "").trim(), index + 1]);
+      }
+      await client.query(`
+        INSERT INTO settings_business_rules (id, holiday_enabled, holiday_hours, holiday_note)
+        VALUES (1, $1, $2, $3)
+        ON CONFLICT (id) DO UPDATE SET
+          holiday_enabled = EXCLUDED.holiday_enabled,
+          holiday_hours = EXCLUDED.holiday_hours,
+          holiday_note = EXCLUDED.holiday_note
+      `, [holidayEnabled, holidayHours || "10:00 - 15:00", holidayNote]);
     });
-    db.prepare(`
-      INSERT INTO settings_business_rules (id, holiday_enabled, holiday_hours, holiday_note)
-      VALUES (1, ?, ?, ?)
-      ON CONFLICT(id) DO UPDATE SET
-        holiday_enabled = excluded.holiday_enabled,
-        holiday_hours = excluded.holiday_hours,
-        holiday_note = excluded.holiday_note
-    `).run(holidayEnabled, holidayHours || "10:00 - 15:00", holidayNote);
-  })();
+  } else {
+    db.transaction(() => {
+      db.prepare("DELETE FROM settings_business_hours").run();
+      const insertHour = db.prepare(`
+        INSERT INTO settings_business_hours (day_label, hours_value, note, sort_order)
+        VALUES (?, ?, ?, ?)
+      `);
+      rows.forEach((row, index) => {
+        insertHour.run(String(row.dayLabel).trim(), String(row.hoursValue).trim(), String(row.note ?? "").trim(), index + 1);
+      });
+      db.prepare(`
+        INSERT INTO settings_business_rules (id, holiday_enabled, holiday_hours, holiday_note)
+        VALUES (1, ?, ?, ?)
+        ON CONFLICT(id) DO UPDATE SET
+          holiday_enabled = excluded.holiday_enabled,
+          holiday_hours = excluded.holiday_hours,
+          holiday_note = excluded.holiday_note
+      `).run(holidayEnabled, holidayHours || "10:00 - 15:00", holidayNote);
+    })();
+  }
 
   appendAuditLog({ actor: "System Admin", type: "Business Hours", message: "Updated business hours", meta: "Settings" });
-  res.json(getBusinessHoursSettings());
+  res.json(usePostgresRuntime ? await pgGetBusinessHoursSettings() : getBusinessHoursSettings());
 });
 
-app.get("/api/settings/staff-permissions", (_req, res) => {
-  res.json(getStaffPermissionSettings());
+app.get("/api/settings/staff-permissions", async (_req, res) => {
+  res.json(usePostgresRuntime ? await pgGetStaffPermissionSettings() : getStaffPermissionSettings());
 });
 
-app.post("/api/settings/staff-permissions", (req, res) => {
+app.post("/api/settings/staff-permissions", async (req, res) => {
   const name = String(req.body?.name ?? "").trim();
   const role = String(req.body?.role ?? "").trim();
   const scope = String(req.body?.scope ?? "").trim();
@@ -3457,19 +3784,30 @@ app.post("/api/settings/staff-permissions", (req, res) => {
     return;
   }
 
-  const nextSort = db.prepare("SELECT COALESCE(MAX(sort_order), 0) + 1 AS value FROM settings_staff").get().value;
-  db.prepare(`
-    INSERT INTO settings_staff (name, role, scope, can_edit_orders, can_adjust_inventory, can_view_finance, is_active, sort_order)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-  `).run(name, role, scope, canEditOrders, canAdjustInventory, canViewFinance, isActive, nextSort);
+  if (usePostgresRuntime) {
+    const nextSort = Number((await pgOne("SELECT COALESCE(MAX(sort_order), 0) + 1 AS value FROM settings_staff"))?.value ?? 1);
+    await pgQuery(
+      `INSERT INTO settings_staff (name, role, scope, can_edit_orders, can_adjust_inventory, can_view_finance, is_active, sort_order)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      [name, role, scope, Boolean(canEditOrders), Boolean(canAdjustInventory), Boolean(canViewFinance), Boolean(isActive), nextSort],
+    );
+  } else {
+    const nextSort = db.prepare("SELECT COALESCE(MAX(sort_order), 0) + 1 AS value FROM settings_staff").get().value;
+    db.prepare(`
+      INSERT INTO settings_staff (name, role, scope, can_edit_orders, can_adjust_inventory, can_view_finance, is_active, sort_order)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(name, role, scope, canEditOrders, canAdjustInventory, canViewFinance, isActive, nextSort);
+  }
 
   appendAuditLog({ actor: "System Admin", type: "Staff Permission", message: `Added staff profile ${name}`, meta: role });
-  res.status(201).json(getStaffPermissionSettings());
+  res.status(201).json(usePostgresRuntime ? await pgGetStaffPermissionSettings() : getStaffPermissionSettings());
 });
 
-app.patch("/api/settings/staff-permissions/:id", (req, res) => {
+app.patch("/api/settings/staff-permissions/:id", async (req, res) => {
   const id = Number(req.params.id);
-  const existing = db.prepare("SELECT id FROM settings_staff WHERE id = ?").get(id);
+  const existing = usePostgresRuntime
+    ? await pgOne("SELECT id FROM settings_staff WHERE id = $1", [id])
+    : db.prepare("SELECT id FROM settings_staff WHERE id = ?").get(id);
   if (!existing) {
     res.status(404).json({ message: "Staff profile not found" });
     return;
@@ -3488,49 +3826,76 @@ app.patch("/api/settings/staff-permissions/:id", (req, res) => {
     return;
   }
 
-  db.prepare(`
-    UPDATE settings_staff
-    SET name = ?, role = ?, scope = ?, can_edit_orders = ?, can_adjust_inventory = ?, can_view_finance = ?, is_active = ?
-    WHERE id = ?
-  `).run(name, role, scope, canEditOrders, canAdjustInventory, canViewFinance, isActive, id);
+  if (usePostgresRuntime) {
+    await pgQuery(
+      `UPDATE settings_staff
+       SET name = $1, role = $2, scope = $3, can_edit_orders = $4, can_adjust_inventory = $5, can_view_finance = $6, is_active = $7
+       WHERE id = $8`,
+      [name, role, scope, Boolean(canEditOrders), Boolean(canAdjustInventory), Boolean(canViewFinance), Boolean(isActive), id],
+    );
+  } else {
+    db.prepare(`
+      UPDATE settings_staff
+      SET name = ?, role = ?, scope = ?, can_edit_orders = ?, can_adjust_inventory = ?, can_view_finance = ?, is_active = ?
+      WHERE id = ?
+    `).run(name, role, scope, canEditOrders, canAdjustInventory, canViewFinance, isActive, id);
+  }
 
   appendAuditLog({ actor: "System Admin", type: "Staff Permission", message: `Updated staff profile ${name}`, meta: role });
-  res.json(getStaffPermissionSettings());
+  res.json(usePostgresRuntime ? await pgGetStaffPermissionSettings() : getStaffPermissionSettings());
 });
 
-app.delete("/api/settings/staff-permissions/:id", (req, res) => {
+app.delete("/api/settings/staff-permissions/:id", async (req, res) => {
   const id = Number(req.params.id);
-  const staff = db.prepare("SELECT name FROM settings_staff WHERE id = ?").get(id);
+  const staff = usePostgresRuntime
+    ? await pgOne("SELECT name FROM settings_staff WHERE id = $1", [id])
+    : db.prepare("SELECT name FROM settings_staff WHERE id = ?").get(id);
   if (!staff) {
     res.status(404).json({ message: "Staff profile not found" });
     return;
   }
 
-  db.prepare("DELETE FROM settings_staff WHERE id = ?").run(id);
+  if (usePostgresRuntime) {
+    await pgQuery("DELETE FROM settings_staff WHERE id = $1", [id]);
+  } else {
+    db.prepare("DELETE FROM settings_staff WHERE id = ?").run(id);
+  }
   appendAuditLog({ actor: "System Admin", type: "Staff Permission", message: `Deleted staff profile ${staff.name}`, meta: "Delete" });
-  res.json(getStaffPermissionSettings());
+  res.json(usePostgresRuntime ? await pgGetStaffPermissionSettings() : getStaffPermissionSettings());
 });
 
-app.patch("/api/settings/reorder", (req, res) => {
+app.patch("/api/settings/reorder", async (req, res) => {
   const items = Array.isArray(req.body?.items) ? req.body.items : [];
   if (!items.length) {
     res.status(400).json({ message: "Reorder items are required" });
     return;
   }
 
-  db.transaction(() => {
-    const update = db.prepare("UPDATE parts SET reorder_level = ? WHERE id = ?");
-    items.forEach((item) => {
-      const id = Number(item.id);
-      const reorderLevel = Number(item.reorderLevel);
-      if (Number.isInteger(id) && Number.isInteger(reorderLevel) && reorderLevel >= 0) {
-        update.run(reorderLevel, id);
+  if (usePostgresRuntime) {
+    await pgWithTransaction(async (client) => {
+      for (const item of items) {
+        const id = Number(item.id);
+        const reorderLevel = Number(item.reorderLevel);
+        if (Number.isInteger(id) && Number.isInteger(reorderLevel) && reorderLevel >= 0) {
+          await client.query("UPDATE parts SET reorder_level = $1 WHERE id = $2", [reorderLevel, id]);
+        }
       }
     });
-  })();
+  } else {
+    db.transaction(() => {
+      const update = db.prepare("UPDATE parts SET reorder_level = ? WHERE id = ?");
+      items.forEach((item) => {
+        const id = Number(item.id);
+        const reorderLevel = Number(item.reorderLevel);
+        if (Number.isInteger(id) && Number.isInteger(reorderLevel) && reorderLevel >= 0) {
+          update.run(reorderLevel, id);
+        }
+      });
+    })();
+  }
 
   appendAuditLog({ actor: "System Admin", type: "Reorder Settings", message: "Updated reorder thresholds", meta: "Inventory" });
-  const rows = db.prepare(`
+  res.json(usePostgresRuntime ? await pgGetParts() : db.prepare(`
     SELECT
       id,
       name,
@@ -3541,16 +3906,27 @@ app.patch("/api/settings/reorder", (req, res) => {
       supplier
     FROM parts
     ORDER BY stock ASC, name ASC
-  `).all();
-  res.json(rows.map(mapPart));
+  `).all().map(mapPart));
 });
 
-app.post("/api/order-form-options/brands", (req, res) => {
+app.post("/api/order-form-options/brands", async (req, res) => {
   const name = String(req.body?.name ?? "").trim();
   const market = String(req.body?.market ?? "Vanuatu").trim() || "Vanuatu";
 
   if (!name) {
     res.status(400).json({ message: "Brand name is required" });
+    return;
+  }
+
+  if (usePostgresRuntime) {
+    const nextSort = Number((await pgOne("SELECT COALESCE(MAX(sort_order), 0) + 1 AS value FROM order_form_brands"))?.value ?? 1);
+    const row = await pgOne(
+      `INSERT INTO order_form_brands (name, market, sort_order)
+       VALUES ($1, $2, $3)
+       RETURNING id, name, market, sort_order AS "sortOrder"`,
+      [name, market, nextSort],
+    );
+    res.status(201).json(row);
     return;
   }
 
@@ -3566,7 +3942,7 @@ app.post("/api/order-form-options/brands", (req, res) => {
   `).get(result.lastInsertRowid));
 });
 
-app.post("/api/order-form-options/models", (req, res) => {
+app.post("/api/order-form-options/models", async (req, res) => {
   const brandId = Number(req.body?.brandId);
   const name = String(req.body?.name ?? "").trim();
 
@@ -3575,9 +3951,23 @@ app.post("/api/order-form-options/models", (req, res) => {
     return;
   }
 
-  const brand = db.prepare("SELECT id FROM order_form_brands WHERE id = ? AND is_active = 1").get(brandId);
+  const brand = usePostgresRuntime
+    ? await pgOne("SELECT id FROM order_form_brands WHERE id = $1 AND is_active = true", [brandId])
+    : db.prepare("SELECT id FROM order_form_brands WHERE id = ? AND is_active = 1").get(brandId);
   if (!brand) {
     res.status(404).json({ message: "Brand not found" });
+    return;
+  }
+
+  if (usePostgresRuntime) {
+    const nextSort = Number((await pgOne("SELECT COALESCE(MAX(sort_order), 0) + 1 AS value FROM order_form_models WHERE brand_id = $1", [brandId]))?.value ?? 1);
+    const row = await pgOne(
+      `INSERT INTO order_form_models (brand_id, name, sort_order)
+       VALUES ($1, $2, $3)
+       RETURNING id, brand_id AS "brandId", name, sort_order AS "sortOrder"`,
+      [brandId, name, nextSort],
+    );
+    res.status(201).json(row);
     return;
   }
 
@@ -3593,11 +3983,23 @@ app.post("/api/order-form-options/models", (req, res) => {
   `).get(result.lastInsertRowid));
 });
 
-app.post("/api/order-form-options/technicians", (req, res) => {
+app.post("/api/order-form-options/technicians", async (req, res) => {
   const name = String(req.body?.name ?? "").trim();
 
   if (!name) {
     res.status(400).json({ message: "Technician name is required" });
+    return;
+  }
+
+  if (usePostgresRuntime) {
+    const nextSort = Number((await pgOne("SELECT COALESCE(MAX(sort_order), 0) + 1 AS value FROM order_form_technicians"))?.value ?? 1);
+    const row = await pgOne(
+      `INSERT INTO order_form_technicians (name, sort_order)
+       VALUES ($1, $2)
+       RETURNING id, name, sort_order AS "sortOrder"`,
+      [name, nextSort],
+    );
+    res.status(201).json(row);
     return;
   }
 
@@ -3613,11 +4015,23 @@ app.post("/api/order-form-options/technicians", (req, res) => {
   `).get(result.lastInsertRowid));
 });
 
-app.post("/api/order-form-options/issues", (req, res) => {
+app.post("/api/order-form-options/issues", async (req, res) => {
   const title = String(req.body?.title ?? "").trim();
 
   if (!title) {
     res.status(400).json({ message: "Issue title is required" });
+    return;
+  }
+
+  if (usePostgresRuntime) {
+    const nextSort = Number((await pgOne("SELECT COALESCE(MAX(sort_order), 0) + 1 AS value FROM order_form_issue_templates"))?.value ?? 1);
+    const row = await pgOne(
+      `INSERT INTO order_form_issue_templates (title, sort_order)
+       VALUES ($1, $2)
+       RETURNING id, title, sort_order AS "sortOrder"`,
+      [title, nextSort],
+    );
+    res.status(201).json(row);
     return;
   }
 
@@ -3633,7 +4047,7 @@ app.post("/api/order-form-options/issues", (req, res) => {
   `).get(result.lastInsertRowid));
 });
 
-app.patch("/api/order-form-options/:collection/:id", (req, res) => {
+app.patch("/api/order-form-options/:collection/:id", async (req, res) => {
   const collection = String(req.params.collection ?? "");
   const id = Number(req.params.id);
 
@@ -3650,7 +4064,9 @@ app.patch("/api/order-form-options/:collection/:id", (req, res) => {
     return;
   }
 
-  const current = db.prepare(`SELECT id, is_active AS isActive, sort_order AS sortOrder, ${target.nameColumn} AS label FROM ${target.table} WHERE id = ?`).get(id);
+  const current = usePostgresRuntime
+    ? await pgOne(`SELECT id, is_active AS "isActive", sort_order AS "sortOrder", ${target.nameColumn} AS label FROM ${target.table} WHERE id = $1`, [id])
+    : db.prepare(`SELECT id, is_active AS isActive, sort_order AS sortOrder, ${target.nameColumn} AS label FROM ${target.table} WHERE id = ?`).get(id);
   if (!current) {
     res.status(404).json({ message: "Option not found" });
     return;
@@ -3659,37 +4075,68 @@ app.patch("/api/order-form-options/:collection/:id", (req, res) => {
   const isActive = req.body?.isActive === undefined ? current.isActive : (req.body.isActive ? 1 : 0);
   const direction = req.body?.direction;
 
-  db.transaction(() => {
-    if (direction === "up" || direction === "down") {
-      const operator = direction === "up" ? "<" : ">";
-      const ordering = direction === "up" ? "DESC" : "ASC";
-      const neighbor = db.prepare(`
-        SELECT id, sort_order AS sortOrder
-        FROM ${target.table}
-        WHERE id != ? AND sort_order ${operator} ?
-        ORDER BY sort_order ${ordering}, id ${ordering}
-        LIMIT 1
-      `).get(id, current.sortOrder);
+  if (usePostgresRuntime) {
+    await pgWithTransaction(async (client) => {
+      if (direction === "up" || direction === "down") {
+        const operator = direction === "up" ? "<" : ">";
+        const ordering = direction === "up" ? "DESC" : "ASC";
+        const neighbor = (await client.query(
+          `
+            SELECT id, sort_order AS "sortOrder"
+            FROM ${target.table}
+            WHERE id != $1 AND sort_order ${operator} $2
+            ORDER BY sort_order ${ordering}, id ${ordering}
+            LIMIT 1
+          `,
+          [id, current.sortOrder],
+        )).rows[0];
 
-      if (neighbor) {
-        db.prepare(`UPDATE ${target.table} SET sort_order = ? WHERE id = ?`).run(neighbor.sortOrder, current.id);
-        db.prepare(`UPDATE ${target.table} SET sort_order = ? WHERE id = ?`).run(current.sortOrder, neighbor.id);
+        if (neighbor) {
+          await client.query(`UPDATE ${target.table} SET sort_order = $1 WHERE id = $2`, [neighbor.sortOrder, current.id]);
+          await client.query(`UPDATE ${target.table} SET sort_order = $1 WHERE id = $2`, [current.sortOrder, neighbor.id]);
+        }
       }
-    }
 
-    if (req.body?.direction !== "up" && req.body?.direction !== "down") {
-      const sortOrder = Number.isInteger(req.body?.sortOrder) ? req.body.sortOrder : current.sortOrder;
-      db.prepare(`UPDATE ${target.table} SET is_active = ?, sort_order = ? WHERE id = ?`).run(isActive, sortOrder, id);
-    } else {
-      db.prepare(`UPDATE ${target.table} SET is_active = ? WHERE id = ?`).run(isActive, id);
-    }
-  })();
+      if (direction !== "up" && direction !== "down") {
+        const sortOrder = Number.isInteger(req.body?.sortOrder) ? req.body.sortOrder : current.sortOrder;
+        await client.query(`UPDATE ${target.table} SET is_active = $1, sort_order = $2 WHERE id = $3`, [Boolean(isActive), sortOrder, id]);
+      } else {
+        await client.query(`UPDATE ${target.table} SET is_active = $1 WHERE id = $2`, [Boolean(isActive), id]);
+      }
+    });
+  } else {
+    db.transaction(() => {
+      if (direction === "up" || direction === "down") {
+        const operator = direction === "up" ? "<" : ">";
+        const ordering = direction === "up" ? "DESC" : "ASC";
+        const neighbor = db.prepare(`
+          SELECT id, sort_order AS sortOrder
+          FROM ${target.table}
+          WHERE id != ? AND sort_order ${operator} ?
+          ORDER BY sort_order ${ordering}, id ${ordering}
+          LIMIT 1
+        `).get(id, current.sortOrder);
+
+        if (neighbor) {
+          db.prepare(`UPDATE ${target.table} SET sort_order = ? WHERE id = ?`).run(neighbor.sortOrder, current.id);
+          db.prepare(`UPDATE ${target.table} SET sort_order = ? WHERE id = ?`).run(current.sortOrder, neighbor.id);
+        }
+      }
+
+      if (req.body?.direction !== "up" && req.body?.direction !== "down") {
+        const sortOrder = Number.isInteger(req.body?.sortOrder) ? req.body.sortOrder : current.sortOrder;
+        db.prepare(`UPDATE ${target.table} SET is_active = ?, sort_order = ? WHERE id = ?`).run(isActive, sortOrder, id);
+      } else {
+        db.prepare(`UPDATE ${target.table} SET is_active = ? WHERE id = ?`).run(isActive, id);
+      }
+    })();
+  }
 
   appendAuditLog({ actor: "System Admin", type: "Order Options", message: `Updated ${current.label}`, meta: collection });
-  res.json(getOrderFormOptions());
+  res.json(usePostgresRuntime ? await pgGetOrderFormOptionsInternal(false) : getOrderFormOptions());
 });
 
-app.delete("/api/order-form-options/:collection/:id", (req, res) => {
+app.delete("/api/order-form-options/:collection/:id", async (req, res) => {
   const collection = String(req.params.collection ?? "");
   const id = Number(req.params.id);
 
@@ -3706,15 +4153,24 @@ app.delete("/api/order-form-options/:collection/:id", (req, res) => {
     return;
   }
 
-  db.transaction(() => {
-    if (collection === "brands") {
-      db.prepare("DELETE FROM order_form_models WHERE brand_id = ?").run(id);
-    }
-    db.prepare(`DELETE FROM ${target.table} WHERE id = ?`).run(id);
-  })();
+  if (usePostgresRuntime) {
+    await pgWithTransaction(async (client) => {
+      if (collection === "brands") {
+        await client.query("DELETE FROM order_form_models WHERE brand_id = $1", [id]);
+      }
+      await client.query(`DELETE FROM ${target.table} WHERE id = $1`, [id]);
+    });
+  } else {
+    db.transaction(() => {
+      if (collection === "brands") {
+        db.prepare("DELETE FROM order_form_models WHERE brand_id = ?").run(id);
+      }
+      db.prepare(`DELETE FROM ${target.table} WHERE id = ?`).run(id);
+    })();
+  }
 
   appendAuditLog({ actor: "System Admin", type: "Order Options", message: `Deleted option from ${collection}`, meta: "Delete" });
-  res.json(getOrderFormOptions());
+  res.json(usePostgresRuntime ? await pgGetOrderFormOptionsInternal(false) : getOrderFormOptions());
 });
 
 app.get("/api/dashboard", async (_req, res) => {
@@ -3979,8 +4435,8 @@ app.get("/api/orders/:id", async (req, res) => {
   });
 });
 
-app.get("/api/orders/:id/communication", (req, res) => {
-  const order = getOrderById(req.params.id);
+app.get("/api/orders/:id/communication", async (req, res) => {
+  const order = usePostgresRuntime ? await pgGetOrderById(req.params.id) : getOrderById(req.params.id);
 
   if (!order) {
     res.status(404).json({ message: "Order not found" });
@@ -3992,20 +4448,21 @@ app.get("/api/orders/:id/communication", (req, res) => {
     orderNo: order.orderNo,
     amountFormatted: formatMoney(order.amount),
     suggestedReplies: ["等待配件", "可取机", "检测中", "需支付定金"],
-    messages: getOrderMessages(order),
+    messages: usePostgresRuntime ? await pgGetOrderMessages(order) : getOrderMessages(order),
   });
 });
 
-app.get("/api/orders/:id/intake", (req, res) => {
-  const order = getOrderById(req.params.id);
+app.get("/api/orders/:id/intake", async (req, res) => {
+  const order = usePostgresRuntime ? await pgGetOrderById(req.params.id) : getOrderById(req.params.id);
 
   if (!order) {
     res.status(404).json({ message: "Order not found" });
     return;
   }
 
-  const intake = getOrderIntake(order.id);
-  const intakePhotos = getStoredPhotosByStages(order.id, ["手机正面", "手机背面", "客户照片"]);
+  const intake = usePostgresRuntime ? await pgGetOrderIntake(order.id) : getOrderIntake(order.id);
+  const intakePhotos = (usePostgresRuntime ? await pgGetStoredPhotos(order.id) : getStoredPhotos(order.id))
+    .filter((photo) => ["手机正面", "手机背面", "客户照片"].includes(photo.stage));
 
   res.json({
     ...mapOrder(order),
@@ -4021,15 +4478,15 @@ app.get("/api/orders/:id/intake", (req, res) => {
   });
 });
 
-app.get("/api/orders/:id/completion", (req, res) => {
-  const order = getOrderById(req.params.id);
+app.get("/api/orders/:id/completion", async (req, res) => {
+  const order = usePostgresRuntime ? await pgGetOrderById(req.params.id) : getOrderById(req.params.id);
 
   if (!order) {
     res.status(404).json({ message: "Order not found" });
     return;
   }
 
-  const completion = getOrderCompletionRecord(order.id);
+  const completion = usePostgresRuntime ? await pgGetOrderCompletionRecord(order.id) : getOrderCompletionRecord(order.id);
   const checklist = completion
     ? parseJson(completion.checklistJson, getDefaultCompletionChecklist(order))
     : getDefaultCompletionChecklist(order);
@@ -4051,20 +4508,20 @@ app.get("/api/orders/:id/completion", (req, res) => {
   });
 });
 
-app.get("/api/orders/:id/execution", (req, res) => {
-  const order = getOrderById(req.params.id);
+app.get("/api/orders/:id/execution", async (req, res) => {
+  const order = usePostgresRuntime ? await pgGetOrderById(req.params.id) : getOrderById(req.params.id);
 
   if (!order) {
     res.status(404).json({ message: "Order not found" });
     return;
   }
 
-  const execution = getOrderExecutionRecord(order.id);
+  const execution = usePostgresRuntime ? await pgGetOrderExecutionRecord(order.id) : getOrderExecutionRecord(order.id);
   const checklist = execution
     ? parseJson(execution.checklistJson, getDefaultExecutionChecklist())
     : getDefaultExecutionChecklist();
   const timeline = getOrderTimeline(order, execution?.phase ?? "repair");
-  const parts = getOrderParts(order.id).map((part) => ({
+  const parts = (usePostgresRuntime ? await pgGetOrderParts(order.id) : getOrderParts(order.id)).map((part) => ({
     ...part,
     unitPriceFormatted: formatMoney(part.unitPrice),
     subtotalFormatted: formatMoney(part.subtotal),
@@ -4149,29 +4606,45 @@ app.post("/api/orders/:id/execution", async (req, res) => {
   });
 });
 
-app.get("/api/orders/:id/deductions", (req, res) => {
-  const order = getOrderById(req.params.id);
+app.get("/api/orders/:id/deductions", async (req, res) => {
+  const order = usePostgresRuntime ? await pgGetOrderById(req.params.id) : getOrderById(req.params.id);
 
   if (!order) {
     res.status(404).json({ message: "Order not found" });
     return;
   }
 
-  const rows = db.prepare(`
-    SELECT
-      m.id,
-      m.part_id AS partId,
-      p.name AS partName,
-      p.sku,
-      m.quantity,
-      m.note,
-      m.created_at AS createdAt,
-      p.unit_price AS unitPrice
-    FROM inventory_movements m
-    JOIN parts p ON p.id = m.part_id
-    WHERE m.movement_type = 'out' AND m.note LIKE ?
-    ORDER BY m.id DESC
-  `).all(`%${order.orderNo}%`);
+  const rows = usePostgresRuntime
+    ? await pgQuery(`
+      SELECT
+        m.id,
+        m.part_id AS "partId",
+        p.name AS "partName",
+        p.sku,
+        m.quantity,
+        m.note,
+        m.created_at AS "createdAt",
+        p.unit_price AS "unitPrice"
+      FROM inventory_movements m
+      JOIN parts p ON p.id = m.part_id
+      WHERE m.movement_type = 'out' AND m.note ILIKE $1
+      ORDER BY m.id DESC
+    `, [`%${order.orderNo}%`])
+    : db.prepare(`
+      SELECT
+        m.id,
+        m.part_id AS partId,
+        p.name AS partName,
+        p.sku,
+        m.quantity,
+        m.note,
+        m.created_at AS createdAt,
+        p.unit_price AS unitPrice
+      FROM inventory_movements m
+      JOIN parts p ON p.id = m.part_id
+      WHERE m.movement_type = 'out' AND m.note LIKE ?
+      ORDER BY m.id DESC
+    `).all(`%${order.orderNo}%`);
 
   const totalValue = rows.reduce((sum, row) => sum + (row.unitPrice * row.quantity), 0);
 
@@ -4189,32 +4662,49 @@ app.get("/api/orders/:id/deductions", (req, res) => {
   });
 });
 
-app.get("/api/orders/:id/deductions/journal", (req, res) => {
-  const order = getOrderById(req.params.id);
+app.get("/api/orders/:id/deductions/journal", async (req, res) => {
+  const order = usePostgresRuntime ? await pgGetOrderById(req.params.id) : getOrderById(req.params.id);
 
   if (!order) {
     res.status(404).json({ message: "Order not found" });
     return;
   }
 
-  const rows = db.prepare(`
-    SELECT
-      m.id,
-      p.name AS partName,
-      m.quantity,
-      m.note,
-      m.created_at AS createdAt
-    FROM inventory_movements m
-    JOIN parts p ON p.id = m.part_id
-    WHERE m.movement_type = 'out' AND m.note LIKE ?
-    ORDER BY m.id DESC
-  `).all(`%${order.orderNo}%`);
+  const rows = usePostgresRuntime
+    ? await pgQuery(`
+      SELECT
+        m.id,
+        p.name AS "partName",
+        m.quantity,
+        m.note,
+        m.created_at AS "createdAt"
+      FROM inventory_movements m
+      JOIN parts p ON p.id = m.part_id
+      WHERE m.movement_type = 'out' AND m.note ILIKE $1
+      ORDER BY m.id DESC
+    `, [`%${order.orderNo}%`])
+    : db.prepare(`
+      SELECT
+        m.id,
+        p.name AS partName,
+        m.quantity,
+        m.note,
+        m.created_at AS createdAt
+      FROM inventory_movements m
+      JOIN parts p ON p.id = m.part_id
+      WHERE m.movement_type = 'out' AND m.note LIKE ?
+      ORDER BY m.id DESC
+    `).all(`%${order.orderNo}%`);
+
+  const activeOrders = usePostgresRuntime
+    ? Number((await pgOne("SELECT COUNT(*) AS count FROM orders WHERE status IN ('pending', 'in_progress')"))?.count ?? 0)
+    : db.prepare("SELECT COUNT(*) AS count FROM orders WHERE status IN ('pending', 'in_progress')").get().count;
 
   res.json({
     orderNo: order.orderNo,
     totalDeductions: rows.reduce((sum, row) => sum + row.quantity, 0),
     totalValueFormatted: formatMoney(rows.reduce((sum, row) => sum + row.quantity * 1000, 0)),
-    activeOrders: db.prepare("SELECT COUNT(*) AS count FROM orders WHERE status IN ('pending', 'in_progress')").get().count,
+    activeOrders,
     rows: rows.map((row) => ({
       ...row,
       createdAt: formatChatTimestamp(row.createdAt),
@@ -4223,16 +4713,16 @@ app.get("/api/orders/:id/deductions/journal", (req, res) => {
   });
 });
 
-app.get("/api/orders/:id/receipt", (req, res) => {
-  const order = getOrderById(req.params.id);
+app.get("/api/orders/:id/receipt", async (req, res) => {
+  const order = usePostgresRuntime ? await pgGetOrderById(req.params.id) : getOrderById(req.params.id);
 
   if (!order) {
     res.status(404).json({ message: "Order not found" });
     return;
   }
 
-  const parts = getOrderParts(req.params.id);
-  const receiptMeta = getReceiptMeta(order.id);
+  const parts = usePostgresRuntime ? await pgGetOrderParts(order.id) : getOrderParts(req.params.id);
+  const receiptMeta = usePostgresRuntime ? await pgGetReceiptMeta(order.id) : getReceiptMeta(order.id);
 
   const partsTotal = parts.reduce((sum, item) => sum + item.subtotal, 0);
   const laborTotal = Math.max(0, order.amount - partsTotal);
@@ -4266,22 +4756,38 @@ app.get("/api/orders/:id/receipt", (req, res) => {
   });
 });
 
-app.get("/api/receipts", (_req, res) => {
-  const receipts = db.prepare(`
-    SELECT
-      o.id,
-      o.order_no AS orderNo,
-      o.scheduled_date AS scheduledDate,
-      o.amount,
-      o.status,
-      c.name AS customerName,
-      rm.printed_at AS printedAt,
-      rm.picked_up_at AS pickedUpAt
-    FROM orders o
-    JOIN customers c ON c.id = o.customer_id
-    LEFT JOIN receipt_meta rm ON rm.order_id = o.id
-    ORDER BY o.scheduled_date DESC, o.id DESC
-  `).all();
+app.get("/api/receipts", async (_req, res) => {
+  const receipts = usePostgresRuntime
+    ? await pgQuery(`
+      SELECT
+        o.id,
+        o.order_no AS "orderNo",
+        o.scheduled_date AS "scheduledDate",
+        o.amount,
+        o.status,
+        c.name AS "customerName",
+        rm.printed_at AS "printedAt",
+        rm.picked_up_at AS "pickedUpAt"
+      FROM orders o
+      JOIN customers c ON c.id = o.customer_id
+      LEFT JOIN receipt_meta rm ON rm.order_id = o.id
+      ORDER BY o.scheduled_date DESC, o.id DESC
+    `)
+    : db.prepare(`
+      SELECT
+        o.id,
+        o.order_no AS orderNo,
+        o.scheduled_date AS scheduledDate,
+        o.amount,
+        o.status,
+        c.name AS customerName,
+        rm.printed_at AS printedAt,
+        rm.picked_up_at AS pickedUpAt
+      FROM orders o
+      JOIN customers c ON c.id = o.customer_id
+      LEFT JOIN receipt_meta rm ON rm.order_id = o.id
+      ORDER BY o.scheduled_date DESC, o.id DESC
+    `).all();
 
   res.json(receipts.map((row, index) => ({
     id: row.id,
@@ -4300,15 +4806,16 @@ app.get("/api/receipts", (_req, res) => {
   })));
 });
 
-app.get("/api/orders/:id/photo-upload", (req, res) => {
-  const order = getOrderById(req.params.id);
+app.get("/api/orders/:id/photo-upload", async (req, res) => {
+  const order = usePostgresRuntime ? await pgGetOrderById(req.params.id) : getOrderById(req.params.id);
 
   if (!order) {
     res.status(404).json({ message: "Order not found" });
     return;
   }
 
-  const storedPhotos = getStoredPhotosByStages(order.id, ["维修后"]);
+  const storedPhotos = (usePostgresRuntime ? await pgGetStoredPhotos(order.id) : getStoredPhotos(order.id))
+    .filter((item) => item.stage === "维修后");
   const photos = storedPhotos.length ? storedPhotos.map((item) => item.image) : getDefaultUploadPhotos();
 
   res.json({
@@ -4320,15 +4827,15 @@ app.get("/api/orders/:id/photo-upload", (req, res) => {
   });
 });
 
-app.get("/api/orders/:id/photo-archive", (req, res) => {
-  const order = getOrderById(req.params.id);
+app.get("/api/orders/:id/photo-archive", async (req, res) => {
+  const order = usePostgresRuntime ? await pgGetOrderById(req.params.id) : getOrderById(req.params.id);
 
   if (!order) {
     res.status(404).json({ message: "Order not found" });
     return;
   }
 
-  const storedPhotos = getStoredPhotos(order.id);
+  const storedPhotos = usePostgresRuntime ? await pgGetStoredPhotos(order.id) : getStoredPhotos(order.id);
   const intakeSections = ["手机正面", "手机背面", "客户照片"]
     .map((stage) => {
       const rows = storedPhotos.filter((photo) => photo.stage === stage);
@@ -4387,8 +4894,8 @@ app.get("/api/orders/:id/photo-archive", (req, res) => {
   });
 });
 
-app.get("/api/orders/:id/share-report", (req, res) => {
-  const order = getOrderById(req.params.id);
+app.get("/api/orders/:id/share-report", async (req, res) => {
+  const order = usePostgresRuntime ? await pgGetOrderById(req.params.id) : getOrderById(req.params.id);
 
   if (!order) {
     res.status(404).json({ message: "Order not found" });
@@ -4410,8 +4917,8 @@ app.get("/api/orders/:id/share-report", (req, res) => {
   });
 });
 
-app.get("/api/orders/:id/email-report", (req, res) => {
-  const order = getOrderById(req.params.id);
+app.get("/api/orders/:id/email-report", async (req, res) => {
+  const order = usePostgresRuntime ? await pgGetOrderById(req.params.id) : getOrderById(req.params.id);
 
   if (!order) {
     res.status(404).json({ message: "Order not found" });
@@ -4428,8 +4935,8 @@ app.get("/api/orders/:id/email-report", (req, res) => {
   });
 });
 
-app.post("/api/orders/:id/email-report/send", (req, res) => {
-  const order = getOrderById(req.params.id);
+app.post("/api/orders/:id/email-report/send", async (req, res) => {
+  const order = usePostgresRuntime ? await pgGetOrderById(req.params.id) : getOrderById(req.params.id);
 
   if (!order) {
     res.status(404).json({ message: "Order not found" });
@@ -4446,8 +4953,8 @@ app.post("/api/orders/:id/email-report/send", (req, res) => {
   });
 });
 
-app.get("/api/orders/:id/report.pdf", (req, res) => {
-  const order = getOrderById(req.params.id);
+app.get("/api/orders/:id/report.pdf", async (req, res) => {
+  const order = usePostgresRuntime ? await pgGetOrderById(req.params.id) : getOrderById(req.params.id);
 
   if (!order) {
     res.status(404).json({ message: "Order not found" });
@@ -4473,12 +4980,14 @@ app.get("/api/orders/:id/report.pdf", (req, res) => {
   res.send(pdf);
 });
 
-app.get("/api/refunds", (_req, res) => {
-  const rows = getRefundRows();
+app.get("/api/refunds", async (_req, res) => {
+  const rows = usePostgresRuntime ? await pgGetRefundRows() : getRefundRows();
   res.json({
     rows,
     metrics: {
-      completedOrders: db.prepare("SELECT COUNT(*) AS count FROM orders WHERE status IN ('completed', 'picked_up')").get().count,
+      completedOrders: usePostgresRuntime
+        ? toNumber((await pgOne("SELECT COUNT(*) AS count FROM orders WHERE status IN ('completed', 'picked_up')"))?.count)
+        : db.prepare("SELECT COUNT(*) AS count FROM orders WHERE status IN ('completed', 'picked_up')").get().count,
       totalRefundsFormatted: formatMoney(rows.reduce((sum, row) => sum + row.amount, 0)),
       pendingCount: rows.filter((row) => row.status === "pending").length,
     },
@@ -4523,8 +5032,8 @@ app.post("/api/refunds", async (req, res) => {
   res.status(201).json(created);
 });
 
-app.get("/api/reviews", (_req, res) => {
-  const rows = getReviewRows();
+app.get("/api/reviews", async (_req, res) => {
+  const rows = usePostgresRuntime ? await pgGetReviewRows() : getReviewRows();
   const total = rows.length || 1;
   const average = rows.length ? (rows.reduce((sum, row) => sum + row.rating, 0) / rows.length) : 0;
   res.json({
@@ -5696,47 +6205,67 @@ app.post("/api/customers/:id/followups", async (req, res) => {
   res.status(201).json(created);
 });
 
-app.get("/api/audit/logs", (_req, res) => {
-  const rows = getAuditLogs();
+app.get("/api/audit/logs", async (_req, res) => {
+  const rows = usePostgresRuntime ? await pgGetAuditLogs() : getAuditLogs();
   res.json({
     rows,
     count: rows.length,
   });
 });
 
-app.get("/api/notifications", (req, res) => {
+app.get("/api/notifications", async (req, res) => {
   const filter = String(req.query.filter ?? "all");
-  const rows = buildNotifications().filter((item) => (filter === "all" ? true : item.category === filter));
+  const rows = (usePostgresRuntime ? await pgBuildNotifications() : buildNotifications()).filter((item) => (filter === "all" ? true : item.category === filter));
   res.json({
     rows,
     unreadCount: rows.filter((item) => !item.isRead).length,
   });
 });
 
-app.post("/api/notifications/read-all", (_req, res) => {
-  const rows = buildNotifications();
-  const insert = db.prepare(`
-    INSERT INTO notification_reads (notification_id, read_at)
-    VALUES (?, CURRENT_TIMESTAMP)
-    ON CONFLICT(notification_id) DO UPDATE SET read_at = CURRENT_TIMESTAMP
-  `);
-  const run = db.transaction(() => {
-    rows.forEach((item) => insert.run(item.id));
-  });
-  run();
+app.post("/api/notifications/read-all", async (_req, res) => {
+  const rows = usePostgresRuntime ? await pgBuildNotifications() : buildNotifications();
+  if (usePostgresRuntime) {
+    await pgWithTransaction(async (client) => {
+      for (const item of rows) {
+        await client.query(`
+          INSERT INTO notification_reads (notification_id, read_at)
+          VALUES ($1, CURRENT_TIMESTAMP)
+          ON CONFLICT (notification_id) DO UPDATE SET read_at = CURRENT_TIMESTAMP
+        `, [item.id]);
+      }
+    });
+  } else {
+    const insert = db.prepare(`
+      INSERT INTO notification_reads (notification_id, read_at)
+      VALUES (?, CURRENT_TIMESTAMP)
+      ON CONFLICT(notification_id) DO UPDATE SET read_at = CURRENT_TIMESTAMP
+    `);
+    const run = db.transaction(() => {
+      rows.forEach((item) => insert.run(item.id));
+    });
+    run();
+  }
   res.json({ ok: true, count: rows.length });
 });
 
-app.post("/api/notifications/:id/read", (req, res) => {
-  db.prepare(`
-    INSERT INTO notification_reads (notification_id, read_at)
-    VALUES (?, CURRENT_TIMESTAMP)
-    ON CONFLICT(notification_id) DO UPDATE SET read_at = CURRENT_TIMESTAMP
-  `).run(req.params.id);
+app.post("/api/notifications/:id/read", async (req, res) => {
+  if (usePostgresRuntime) {
+    await pgQuery(`
+      INSERT INTO notification_reads (notification_id, read_at)
+      VALUES ($1, CURRENT_TIMESTAMP)
+      ON CONFLICT (notification_id) DO UPDATE SET read_at = CURRENT_TIMESTAMP
+    `, [req.params.id]);
+  } else {
+    db.prepare(`
+      INSERT INTO notification_reads (notification_id, read_at)
+      VALUES (?, CURRENT_TIMESTAMP)
+      ON CONFLICT(notification_id) DO UPDATE SET read_at = CURRENT_TIMESTAMP
+    `).run(req.params.id);
+  }
   res.json({ ok: true });
 });
 
-app.post("/api/parts/movements", (req, res) => {
+app.post("/api/parts/movements", async (req, res) => {
   const partId = Number(req.body?.partId);
   const movementType = String(req.body?.movementType ?? "in");
   const quantity = Number(req.body?.quantity);
@@ -5752,7 +6281,21 @@ app.post("/api/parts/movements", (req, res) => {
     return;
   }
 
-  const part = getPartById(partId);
+  const part = usePostgresRuntime
+    ? await pgOne(`
+      SELECT
+        id,
+        name,
+        sku,
+        stock,
+        reorder_level AS "reorderLevel",
+        unit_price AS "unitPrice",
+        cost_price AS "costPrice",
+        supplier
+      FROM parts
+      WHERE id = $1
+    `, [partId])
+    : getPartById(partId);
   if (!part) {
     res.status(404).json({ message: "Part not found" });
     return;
@@ -5764,13 +6307,23 @@ app.post("/api/parts/movements", (req, res) => {
     return;
   }
 
-  db.transaction(() => {
-    db.prepare("UPDATE parts SET stock = ? WHERE id = ?").run(nextStock, partId);
-    db.prepare(`
-      INSERT INTO inventory_movements (part_id, movement_type, quantity, note)
-      VALUES (?, ?, ?, ?)
-    `).run(partId, movementType, quantity, note || (movementType === "in" ? "Manual inbound registration" : "Manual outbound registration"));
-  })();
+  if (usePostgresRuntime) {
+    await pgWithTransaction(async (client) => {
+      await client.query("UPDATE parts SET stock = $1 WHERE id = $2", [nextStock, partId]);
+      await client.query(`
+        INSERT INTO inventory_movements (part_id, movement_type, quantity, note)
+        VALUES ($1, $2, $3, $4)
+      `, [partId, movementType, quantity, note || (movementType === "in" ? "Manual inbound registration" : "Manual outbound registration")]);
+    });
+  } else {
+    db.transaction(() => {
+      db.prepare("UPDATE parts SET stock = ? WHERE id = ?").run(nextStock, partId);
+      db.prepare(`
+        INSERT INTO inventory_movements (part_id, movement_type, quantity, note)
+        VALUES (?, ?, ?, ?)
+      `).run(partId, movementType, quantity, note || (movementType === "in" ? "Manual inbound registration" : "Manual outbound registration"));
+    })();
+  }
 
   appendAuditLog({
     actor: "Inventory Manager",
@@ -5850,7 +6403,7 @@ app.post("/api/parts/:id/reorder", async (req, res) => {
   });
 });
 
-app.get("/api/search", (req, res) => {
+app.get("/api/search", async (req, res) => {
   const query = String(req.query.query ?? "").trim();
   const scope = String(req.query.scope ?? "all");
 
@@ -5862,62 +6415,110 @@ app.get("/api/search", (req, res) => {
   const like = `%${query}%`;
   const orders = scope === "parts"
     ? []
-    : db.prepare(`
-      SELECT
-        o.id,
-        o.order_no AS orderNo,
-        o.device_name AS deviceName,
-        o.title,
-        o.status,
-        o.amount,
-        c.name AS customerName
-      FROM orders o
-      JOIN customers c ON c.id = o.customer_id
-      LEFT JOIN order_intake oi ON oi.order_id = o.id
-      WHERE o.order_no LIKE ? OR o.device_name LIKE ? OR o.title LIKE ? OR c.name LIKE ? OR c.phone LIKE ? OR oi.imei_serial LIKE ?
-      ORDER BY o.id DESC
-      LIMIT 8
-    `).all(like, like, like, like, like, like).map((row) => ({
-      ...row,
-      amountFormatted: formatMoney(row.amount),
-      link: `/orders/${row.orderNo ?? row.id}`,
-    }));
+    : (usePostgresRuntime
+      ? await pgQuery(`
+        SELECT
+          o.id,
+          o.order_no AS "orderNo",
+          o.device_name AS "deviceName",
+          o.title,
+          o.status,
+          o.amount,
+          c.name AS "customerName"
+        FROM orders o
+        JOIN customers c ON c.id = o.customer_id
+        LEFT JOIN order_intake oi ON oi.order_id = o.id
+        WHERE o.order_no ILIKE $1 OR o.device_name ILIKE $1 OR o.title ILIKE $1 OR c.name ILIKE $1 OR c.phone ILIKE $1 OR oi.imei_serial ILIKE $1
+        ORDER BY o.id DESC
+        LIMIT 8
+      `, [like])
+      : db.prepare(`
+        SELECT
+          o.id,
+          o.order_no AS orderNo,
+          o.device_name AS deviceName,
+          o.title,
+          o.status,
+          o.amount,
+          c.name AS customerName
+        FROM orders o
+        JOIN customers c ON c.id = o.customer_id
+        LEFT JOIN order_intake oi ON oi.order_id = o.id
+        WHERE o.order_no LIKE ? OR o.device_name LIKE ? OR o.title LIKE ? OR c.name LIKE ? OR c.phone LIKE ? OR oi.imei_serial LIKE ?
+        ORDER BY o.id DESC
+        LIMIT 8
+      `).all(like, like, like, like, like, like))
+      .map((row) => ({
+        ...row,
+        amountFormatted: formatMoney(toNumber(row.amount)),
+        link: `/orders/${row.orderNo ?? row.id}`,
+      }));
 
   const parts = scope === "orders"
     ? []
-    : db.prepare(`
-      SELECT
-        id,
-        name,
-        sku,
-        stock,
-        reorder_level AS reorderLevel,
-        unit_price AS unitPrice
-      FROM parts
-      WHERE sku LIKE ? OR name LIKE ?
-      ORDER BY stock ASC, name ASC
-      LIMIT 8
-    `).all(like, like).map((row) => ({
-      ...mapPart(row),
-      link: `/parts/${row.id}`,
-    }));
+    : (usePostgresRuntime
+      ? await pgQuery(`
+        SELECT
+          id,
+          name,
+          sku,
+          stock,
+          reorder_level AS "reorderLevel",
+          unit_price AS "unitPrice",
+          cost_price AS "costPrice",
+          supplier
+        FROM parts
+        WHERE sku ILIKE $1 OR name ILIKE $1
+        ORDER BY stock ASC, name ASC
+        LIMIT 8
+      `, [like])
+      : db.prepare(`
+        SELECT
+          id,
+          name,
+          sku,
+          stock,
+          reorder_level AS reorderLevel,
+          unit_price AS unitPrice
+        FROM parts
+        WHERE sku LIKE ? OR name LIKE ?
+        ORDER BY stock ASC, name ASC
+        LIMIT 8
+      `).all(like, like))
+      .map((row) => ({
+        ...mapPart(row),
+        link: `/parts/${row.id}`,
+      }));
 
   const customers = scope === "parts"
     ? []
-    : db.prepare(`
-      SELECT
-        id,
-        name,
-        phone,
-        email
-      FROM customers
-      WHERE name LIKE ? OR phone LIKE ? OR email LIKE ?
-      ORDER BY id DESC
-      LIMIT 8
-    `).all(like, like, like).map((row) => ({
-      ...row,
-      link: `/customers/${row.id}`,
-    }));
+    : (usePostgresRuntime
+      ? await pgQuery(`
+        SELECT
+          id,
+          name,
+          phone,
+          email
+        FROM customers
+        WHERE name ILIKE $1 OR phone ILIKE $1 OR email ILIKE $1
+        ORDER BY id DESC
+        LIMIT 8
+      `, [like])
+      : db.prepare(`
+        SELECT
+          id,
+          name,
+          phone,
+          email
+        FROM customers
+        WHERE name LIKE ? OR phone LIKE ? OR email LIKE ?
+        ORDER BY id DESC
+        LIMIT 8
+      `).all(like, like, like))
+      .map((row) => ({
+        ...row,
+        link: `/customers/${row.id}`,
+      }));
 
   res.json({ orders, parts, customers });
 });
@@ -6607,58 +7208,6 @@ app.post("/api/inventory/audit-session", async (req, res) => {
     ok: true,
     sessionNo,
     discrepancies,
-  });
-});
-
-app.post("/api/parts/movements", (req, res) => {
-  const { partId, movementType, quantity, note = "" } = req.body;
-  const numericQuantity = Number(quantity);
-
-  if (!partId || !["in", "out"].includes(movementType) || !Number.isInteger(numericQuantity) || numericQuantity <= 0) {
-    res.status(400).json({ message: "Invalid movement payload" });
-    return;
-  }
-
-  const part = getPartById(partId);
-  if (!part) {
-    res.status(404).json({ message: "Part not found" });
-    return;
-  }
-
-  const nextStock = movementType === "in" ? part.stock + numericQuantity : part.stock - numericQuantity;
-  if (nextStock < 0) {
-    res.status(400).json({ message: "Insufficient stock for outbound movement" });
-    return;
-  }
-
-  const result = db.transaction(() => {
-    db.prepare("UPDATE parts SET stock = ? WHERE id = ?").run(nextStock, partId);
-    const movementId = db.prepare(`
-      INSERT INTO inventory_movements (part_id, movement_type, quantity, note)
-      VALUES (?, ?, ?, ?)
-    `).run(partId, movementType, numericQuantity, note.trim()).lastInsertRowid;
-
-    return Number(movementId);
-  })();
-
-  const movement = db.prepare(`
-    SELECT
-      m.id,
-      m.part_id AS partId,
-      p.name AS partName,
-      p.sku,
-      m.movement_type AS movementType,
-      m.quantity,
-      m.note,
-      m.created_at AS createdAt
-    FROM inventory_movements m
-    JOIN parts p ON p.id = m.part_id
-    WHERE m.id = ?
-  `).get(result);
-
-  res.status(201).json({
-    movement,
-    part: mapPart(getPartById(partId)),
   });
 });
 
