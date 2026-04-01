@@ -942,21 +942,21 @@ const statusMeta = {
 const baseOrderSelect = `
   SELECT
     o.id,
-    o.order_no AS orderNo,
+    o.order_no AS "orderNo",
     o.title,
-    o.device_name AS deviceName,
+    o.device_name AS "deviceName",
     o.status,
     o.technician,
-    o.scheduled_date AS scheduledDate,
+    o.scheduled_date AS "scheduledDate",
     o.amount,
     o.deposit,
-    o.issue_summary AS issueSummary,
+    o.issue_summary AS "issueSummary",
     o.notes,
-    c.id AS customerId,
-    c.name AS customerName,
-    c.phone AS customerPhone,
-    c.email AS customerEmail,
-    c.tier AS customerTier
+    c.id AS "customerId",
+    c.name AS "customerName",
+    c.phone AS "customerPhone",
+    c.email AS "customerEmail",
+    c.tier AS "customerTier"
   FROM orders o
   JOIN customers c ON c.id = o.customer_id
 `;
@@ -1160,6 +1160,742 @@ async function pgGetRepairQueue(status = "all", search = "") {
       revenueEstimate: formatMoney(queueRows.reduce((sum, item) => sum + Number(item.amount), 0)),
     },
     rows: queueRows,
+  };
+}
+
+function toNumber(value, fallback = 0) {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? numeric : fallback;
+}
+
+async function pgGetCustomerAvatar(customerId) {
+  const row = await pgOne(`
+    SELECT
+      op.image_url AS "imageUrl"
+    FROM order_photos op
+    JOIN orders o ON o.id = op.order_id
+    WHERE o.customer_id = $1
+      AND op.stage = '客户照片'
+    ORDER BY op.id DESC
+    LIMIT 1
+  `, [customerId]);
+
+  return row?.imageUrl ?? null;
+}
+
+async function pgGetFollowupRows(customerId) {
+  const rows = await pgQuery(`
+    SELECT
+      f.id,
+      f.customer_id AS "customerId",
+      f.order_id AS "orderId",
+      f.channel,
+      f.note,
+      f.created_at AS "createdAt",
+      o.order_no AS "orderNo"
+    FROM customer_followups f
+    LEFT JOIN orders o ON o.id = f.order_id
+    WHERE f.customer_id = $1
+    ORDER BY f.id DESC
+  `, [customerId]);
+
+  return rows.map((row) => ({
+    ...row,
+    createdLabel: formatChatTimestamp(row.createdAt),
+  }));
+}
+
+async function pgGetCustomers() {
+  const rows = await pgQuery(`
+    SELECT
+      c.id,
+      c.name,
+      c.phone,
+      c.email,
+      c.tier,
+      COUNT(o.id) AS "orderCount",
+      COALESCE(SUM(o.amount), 0) AS "lifetimeValue"
+    FROM customers c
+    LEFT JOIN orders o ON o.customer_id = c.id
+    GROUP BY c.id
+    ORDER BY COALESCE(SUM(o.amount), 0) DESC, c.name ASC
+  `);
+
+  return Promise.all(rows.map(async (row) => ({
+    ...row,
+    orderCount: toNumber(row.orderCount),
+    lifetimeValue: toNumber(row.lifetimeValue),
+    avatarPhoto: await pgGetCustomerAvatar(row.id),
+    lifetimeValueFormatted: formatMoney(toNumber(row.lifetimeValue)),
+  })));
+}
+
+async function pgGetCustomerById(customerId) {
+  const customer = await pgOne(`
+    SELECT
+      c.id,
+      c.name,
+      c.phone,
+      c.email,
+      c.tier,
+      MIN(o.scheduled_date) AS "registeredSince",
+      COUNT(o.id) AS "orderCount",
+      COALESCE(SUM(o.amount), 0) AS "lifetimeValue"
+    FROM customers c
+    LEFT JOIN orders o ON o.customer_id = c.id
+    WHERE c.id = $1
+    GROUP BY c.id
+  `, [customerId]);
+
+  if (!customer) {
+    return null;
+  }
+
+  const records = await pgQuery(`
+    SELECT
+      o.id,
+      o.order_no AS "orderNo",
+      o.title,
+      o.device_name AS "deviceName",
+      o.status,
+      o.scheduled_date AS "scheduledDate",
+      o.amount
+    FROM orders o
+    WHERE o.customer_id = $1
+    ORDER BY o.scheduled_date DESC, o.id DESC
+  `, [customerId]);
+
+  return {
+    ...customer,
+    orderCount: toNumber(customer.orderCount),
+    lifetimeValue: toNumber(customer.lifetimeValue),
+    avatarPhoto: await pgGetCustomerAvatar(customer.id),
+    address: customer.id % 2 === 0 ? "Lini Highway, Port Vila" : "Kumul Highway, Port Vila",
+    registeredSince: customer.registeredSince ?? "2026-01-01",
+    customerRank: toNumber(customer.lifetimeValue) >= 30000 ? "高价值客户" : "标准客户",
+    lifetimeValueFormatted: formatMoney(toNumber(customer.lifetimeValue)),
+    records: records.map((row) => ({
+      ...row,
+      amount: toNumber(row.amount),
+      amountFormatted: formatMoney(toNumber(row.amount)),
+      statusMeta: statusMeta[row.status] ?? { label: row.status, tone: "neutral" },
+      serviceTag: sanitizeOrderTitle(row),
+    })),
+  };
+}
+
+async function pgGetCustomerHistory(customerId) {
+  const customer = await pgOne(`
+    SELECT
+      c.id,
+      c.name,
+      COUNT(o.id) AS "totalOrders",
+      COALESCE(SUM(o.amount), 0) AS "totalSpend",
+      SUM(CASE WHEN o.status = 'completed' OR o.status = 'picked_up' THEN 1 ELSE 0 END) AS "completedOrders"
+    FROM customers c
+    LEFT JOIN orders o ON o.customer_id = c.id
+    WHERE c.id = $1
+    GROUP BY c.id
+  `, [customerId]);
+
+  if (!customer) {
+    return null;
+  }
+
+  const records = await pgQuery(`
+    SELECT
+      o.id,
+      o.order_no AS "orderNo",
+      o.device_name AS "deviceName",
+      o.title,
+      o.status,
+      o.scheduled_date AS "scheduledDate",
+      o.amount
+    FROM orders o
+    WHERE o.customer_id = $1
+    ORDER BY o.scheduled_date DESC, o.id DESC
+  `, [customerId]);
+
+  return {
+    ...customer,
+    totalOrders: toNumber(customer.totalOrders),
+    totalSpend: toNumber(customer.totalSpend),
+    completedOrders: toNumber(customer.completedOrders),
+    avatarPhoto: await pgGetCustomerAvatar(customer.id),
+    totalSpendFormatted: formatMoney(toNumber(customer.totalSpend)),
+    followups: await pgGetFollowupRows(customerId),
+    records: records.map((row) => ({
+      ...row,
+      amount: toNumber(row.amount),
+      title: sanitizeOrderTitle(row),
+      amountFormatted: formatMoney(toNumber(row.amount)),
+      statusMeta: statusMeta[row.status] ?? { label: row.status, tone: "neutral" },
+      serviceTag: sanitizeOrderTitle(row),
+    })),
+  };
+}
+
+async function pgGetParts() {
+  const rows = await pgQuery(`
+    SELECT
+      id,
+      name,
+      sku,
+      stock,
+      reorder_level AS "reorderLevel",
+      unit_price AS "unitPrice",
+      cost_price AS "costPrice",
+      supplier
+    FROM parts
+    ORDER BY stock ASC, name ASC
+  `);
+
+  return rows.map((row) => mapPart({
+    ...row,
+    stock: toNumber(row.stock),
+    reorderLevel: toNumber(row.reorderLevel),
+    unitPrice: toNumber(row.unitPrice),
+    costPrice: toNumber(row.costPrice),
+  }));
+}
+
+async function pgGetPartById(id) {
+  const part = await pgOne(`
+    SELECT
+      id,
+      name,
+      sku,
+      stock,
+      reorder_level AS "reorderLevel",
+      unit_price AS "unitPrice",
+      cost_price AS "costPrice",
+      supplier
+    FROM parts
+    WHERE id = $1
+  `, [id]);
+
+  if (!part) {
+    return null;
+  }
+
+  const movementHistory = await pgQuery(`
+    SELECT
+      id,
+      movement_type AS "movementType",
+      quantity,
+      note,
+      created_at AS "createdAt"
+    FROM inventory_movements
+    WHERE part_id = $1
+    ORDER BY id DESC
+    LIMIT 8
+  `, [id]);
+
+  const orderUsage = await pgQuery(`
+    SELECT
+      o.id,
+      o.order_no AS "orderNo",
+      o.device_name AS "deviceName",
+      o.scheduled_date AS "scheduledDate",
+      op.quantity,
+      op.quantity * op.unit_price AS "totalAmount"
+    FROM order_parts op
+    JOIN orders o ON o.id = op.order_id
+    WHERE op.part_id = $1
+    ORDER BY o.scheduled_date DESC, o.id DESC
+  `, [id]);
+
+  const recentProcurements = await pgQuery(`
+    SELECT
+      procurement_no AS "procurementNo",
+      supplier,
+      quantity,
+      unit_price AS "unitPrice",
+      source_currency AS "sourceCurrency",
+      source_unit_price AS "sourceUnitPrice",
+      exchange_rate AS "exchangeRate",
+      shipping_fee AS "shippingFee",
+      customs_fee AS "customsFee",
+      other_fee AS "otherFee",
+      status,
+      created_at AS "createdAt"
+    FROM procurements
+    WHERE part_id = $1
+    ORDER BY id DESC
+    LIMIT 5
+  `, [id]);
+
+  const inboundBatchHistory = await pgQuery(`
+    SELECT
+      ib.batch_no AS "batchNo",
+      ibi.quantity,
+      ibi.supplier_name AS "supplierName",
+      ibi.source_unit_price AS "sourceUnitPrice",
+      ibi.landed_unit_cost AS "landedUnitCost",
+      ib.source_currency AS "sourceCurrency",
+      ib.exchange_rate AS "exchangeRate",
+      ib.shipping_fee AS "shippingFee",
+      ib.customs_fee AS "customsFee",
+      ib.declaration_fee AS "declarationFee",
+      ib.other_fee AS "otherFee",
+      ib.created_at AS "createdAt"
+    FROM inbound_batch_items ibi
+    JOIN inbound_batches ib ON ib.id = ibi.batch_id
+    WHERE ibi.part_id = $1
+    ORDER BY ibi.id DESC
+    LIMIT 10
+  `, [id]);
+
+  const suppliers = await pgGetSuppliers();
+  const supplierId = suppliers.find((item) => item.name === part.supplier)?.id ?? "SUP-1";
+  const normalizedPart = mapPart({
+    ...part,
+    stock: toNumber(part.stock),
+    reorderLevel: toNumber(part.reorderLevel),
+    unitPrice: toNumber(part.unitPrice),
+    costPrice: toNumber(part.costPrice),
+  });
+
+  return {
+    ...normalizedPart,
+    supplierId,
+    location: `Rack A-${String(normalizedPart.id).padStart(2, "0")}-0${(Number(normalizedPart.id) % 5) + 1}`,
+    stockTurnover: `${(1 + Number(normalizedPart.stock) / Math.max(normalizedPart.reorderLevel, 1)).toFixed(1)}x`,
+    stockStatus: Number(normalizedPart.stock) <= Number(normalizedPart.reorderLevel) ? "低库存" : "库存充足",
+    movementHistory: movementHistory.map((row) => ({
+      ...row,
+      quantity: toNumber(row.quantity),
+    })),
+    recentProcurements: recentProcurements.map((row) => ({
+      ...row,
+      quantity: toNumber(row.quantity),
+      unitPrice: toNumber(row.unitPrice),
+      sourceUnitPrice: toNumber(row.sourceUnitPrice),
+      exchangeRate: Number(row.exchangeRate ?? 1),
+      shippingFee: toNumber(row.shippingFee),
+      customsFee: toNumber(row.customsFee),
+      otherFee: toNumber(row.otherFee),
+      supplierId,
+      unitPriceFormatted: formatMoney(toNumber(row.unitPrice)),
+      landedUnitCostFormatted: formatMoney(toNumber(row.unitPrice)),
+    })),
+    inboundBatchHistory: inboundBatchHistory.map((row) => ({
+      ...row,
+      quantity: toNumber(row.quantity),
+      sourceUnitPrice: Number(row.sourceUnitPrice ?? 0),
+      landedUnitCost: toNumber(row.landedUnitCost),
+      exchangeRate: Number(row.exchangeRate ?? 1),
+      shippingFee: toNumber(row.shippingFee),
+      customsFee: toNumber(row.customsFee),
+      declarationFee: toNumber(row.declarationFee),
+      otherFee: toNumber(row.otherFee),
+      sourceUnitPriceFormatted: row.sourceCurrency === "CNY" ? formatCny(row.sourceUnitPrice) : formatMoney(toNumber(row.sourceUnitPrice)),
+      landedUnitCostFormatted: formatMoney(toNumber(row.landedUnitCost)),
+      shippingFeeFormatted: formatMoney(toNumber(row.shippingFee)),
+      customsFeeFormatted: formatMoney(toNumber(row.customsFee)),
+      declarationFeeFormatted: formatMoney(toNumber(row.declarationFee)),
+      otherFeeFormatted: formatMoney(toNumber(row.otherFee)),
+      createdLabel: formatChatTimestamp(row.createdAt),
+    })),
+    orderUsage: orderUsage.map((row) => ({
+      ...row,
+      quantity: toNumber(row.quantity),
+      totalAmount: toNumber(row.totalAmount),
+      totalAmountFormatted: formatMoney(toNumber(row.totalAmount)),
+    })),
+  };
+}
+
+async function pgGetRecentMovements() {
+  const rows = await pgQuery(`
+    SELECT
+      m.id,
+      m.part_id AS "partId",
+      p.name AS "partName",
+      p.sku,
+      m.movement_type AS "movementType",
+      m.quantity,
+      m.note,
+      m.created_at AS "createdAt"
+    FROM inventory_movements m
+    JOIN parts p ON p.id = m.part_id
+    ORDER BY m.id DESC
+    LIMIT 8
+  `);
+
+  return rows.map((row) => ({
+    ...row,
+    quantity: toNumber(row.quantity),
+  }));
+}
+
+async function pgGetStaffPerformanceRows() {
+  const rows = await pgQuery(`
+    SELECT
+      technician AS "staffName",
+      COUNT(*) AS "completedOrders",
+      COALESCE(SUM(amount), 0) AS "totalRevenue",
+      ROUND(AVG(CASE WHEN status = 'completed' THEN 38 ELSE 45 END), 0) AS "avgRepairMinutes",
+      ROUND(AVG(CASE WHEN status = 'completed' THEN 4.9 ELSE 4.6 END), 1) AS rating
+    FROM orders
+    GROUP BY technician
+    ORDER BY COALESCE(SUM(amount), 0) DESC, COUNT(*) DESC
+  `);
+
+  return rows.map((row, index) => ({
+    staffId: `TECH-${index + 1}`,
+    staffName: row.staffName,
+    completedOrders: toNumber(row.completedOrders),
+    totalRevenue: toNumber(row.totalRevenue),
+    totalRevenueFormatted: formatMoney(toNumber(row.totalRevenue)),
+    avgRepairMinutes: toNumber(row.avgRepairMinutes),
+    rating: Number(row.rating ?? 0),
+    rank: index + 1,
+  }));
+}
+
+async function pgGetFinanceReport() {
+  const totals = await pgOne(`
+    SELECT
+      COUNT(*) AS "totalOrders",
+      COALESCE(SUM(amount), 0) AS "totalRevenue",
+      COALESCE(SUM(CASE WHEN status = 'completed' THEN amount ELSE amount * 0.85 END), 0) AS "settledRevenue"
+    FROM orders
+  `);
+
+  const rows = await pgQuery(`
+    SELECT
+      id,
+      order_no AS "orderNo",
+      title,
+      device_name AS "deviceName",
+      status,
+      scheduled_date AS "scheduledDate",
+      amount
+    FROM orders
+    ORDER BY scheduled_date DESC, id DESC
+  `);
+
+  const normalizedRows = rows.map((row) => ({
+    ...row,
+    amount: toNumber(row.amount),
+  }));
+  const todayKey = getTodayDateKey();
+  const totalOrders = toNumber(totals?.totalOrders);
+  const totalRevenue = toNumber(totals?.totalRevenue);
+  const settledRevenue = toNumber(totals?.settledRevenue);
+  const todayRevenue = normalizedRows
+    .filter((row) => row.scheduledDate === todayKey)
+    .reduce((sum, row) => sum + row.amount, 0);
+  const completedOrders = normalizedRows.filter((row) => row.status === "completed" || row.status === "picked_up").length;
+  const averageTicket = totalOrders ? Math.round(totalRevenue / totalOrders) : 0;
+
+  const byChannel = [
+    { channel: "现金", amount: Math.round(totalRevenue * 0.36) },
+    { channel: "银行转账", amount: Math.round(totalRevenue * 0.55) },
+    { channel: "支票", amount: Math.round(totalRevenue * 0.09) },
+  ];
+
+  const categoryMap = new Map([
+    ["Smartphone", 0],
+    ["Laptop", 0],
+    ["Tablet", 0],
+    ["Other", 0],
+  ]);
+  const serviceMap = new Map();
+
+  normalizedRows.forEach((row) => {
+    const device = String(row.deviceName ?? "").toLowerCase();
+    const title = sanitizeOrderTitle(row).toLowerCase();
+    let category = "Other";
+    if (device.includes("iphone") || device.includes("phone") || device.includes("galaxy") || device.includes("pixel")) {
+      category = "Smartphone";
+    } else if (device.includes("macbook") || device.includes("laptop") || device.includes("book")) {
+      category = "Laptop";
+    } else if (device.includes("ipad") || device.includes("tablet")) {
+      category = "Tablet";
+    }
+    categoryMap.set(category, (categoryMap.get(category) ?? 0) + row.amount);
+
+    const serviceName = title.split("·")[1]?.trim() || title.split("-")[1]?.trim() || title.trim() || "通用维修";
+    serviceMap.set(serviceName, (serviceMap.get(serviceName) ?? 0) + row.amount);
+  });
+
+  const categorySplit = Array.from(categoryMap.entries())
+    .map(([name, amount]) => ({
+      name,
+      amount,
+      amountFormatted: formatMoney(amount),
+      percent: totalRevenue ? Math.round((amount / totalRevenue) * 100) : 0,
+    }))
+    .filter((item) => item.amount > 0)
+    .sort((a, b) => b.amount - a.amount);
+
+  const topServices = Array.from(serviceMap.entries())
+    .map(([name, amount]) => ({
+      name,
+      amount,
+      amountFormatted: formatMoney(amount),
+    }))
+    .sort((a, b) => b.amount - a.amount)
+    .slice(0, 3);
+
+  return {
+    summary: {
+      totalOrders,
+      totalRevenue,
+      settledRevenue,
+      todayRevenue,
+      completedOrders,
+      averageTicket,
+      totalRevenueFormatted: formatMoney(totalRevenue),
+      settledRevenueFormatted: formatMoney(settledRevenue),
+      todayRevenueFormatted: formatMoney(todayRevenue),
+      averageTicketFormatted: formatMoney(averageTicket),
+    },
+    charts: {
+      byChannel: byChannel.map((item) => ({
+        ...item,
+        amountFormatted: formatMoney(item.amount),
+      })),
+      categorySplit,
+      topServices,
+    },
+    rows: normalizedRows.map((row) => ({
+      ...row,
+      title: sanitizeOrderTitle(row),
+      amountFormatted: formatMoney(row.amount),
+      statusMeta: statusMeta[row.status] ?? { label: row.status, tone: "neutral" },
+    })),
+  };
+}
+
+async function pgGetSuppliers() {
+  const rows = await pgQuery(`
+    SELECT
+      supplier,
+      COUNT(*) AS "partCount",
+      COALESCE(SUM(stock * unit_price), 0) AS "procurementValue",
+      SUM(CASE WHEN stock <= reorder_level THEN 1 ELSE 0 END) AS "lowStockItems"
+    FROM parts
+    GROUP BY supplier
+    ORDER BY COALESCE(SUM(stock * unit_price), 0) DESC, supplier ASC
+  `);
+
+  return rows.map((row, index) => ({
+    id: `SUP-${index + 1}`,
+    name: row.supplier,
+    manager: index === 0 ? "Jean Kalmet" : index === 1 ? "Marie Noah" : "Supplier Lead",
+    phone: index === 0 ? "+678 555 3001" : index === 1 ? "+678 555 3018" : "+678 555 3099",
+    tag: index === 0 ? "核心伙伴" : toNumber(row.lowStockItems) > 0 ? "待评估" : "常规",
+    categories: index === 0 ? ["Screens", "Assemblies"] : index === 1 ? ["Batteries", "Flex Cables"] : ["Parts"],
+    partCount: toNumber(row.partCount),
+    procurementValue: toNumber(row.procurementValue),
+    procurementValueFormatted: formatMoney(toNumber(row.procurementValue)),
+    lowStockItems: toNumber(row.lowStockItems),
+  }));
+}
+
+async function pgGetSupplierHistory() {
+  const suppliers = await pgGetSuppliers();
+  const stored = await pgQuery(`
+    SELECT
+      pr.procurement_no AS "procurementNo",
+      pr.supplier,
+      pr.status,
+      pr.created_at AS "createdAt",
+      pr.quantity,
+      pr.unit_price AS "unitPrice",
+      p.name AS "partName"
+    FROM procurements pr
+    JOIN parts p ON p.id = pr.part_id
+    ORDER BY pr.id DESC
+  `);
+
+  if (stored.length) {
+    return stored.map((row) => ({
+      id: row.procurementNo,
+      supplierName: row.supplier,
+      date: formatChatTimestamp(row.createdAt).slice(0, 10),
+      amountFormatted: formatMoney(toNumber(row.quantity) * toNumber(row.unitPrice)),
+      status: row.status,
+      partName: row.partName,
+      supplierId: suppliers.find((item) => item.name === row.supplier)?.id ?? "SUP-1",
+    }));
+  }
+
+  const fallbackRows = await pgQuery(`
+    SELECT
+      supplier,
+      name AS "partName",
+      unit_price AS amount,
+      stock,
+      id
+    FROM parts
+    ORDER BY unit_price DESC, id ASC
+    LIMIT 6
+  `);
+
+  return fallbackRows.map((row, index) => ({
+    id: `PO-${20260000 + index + 1}`,
+    supplierName: row.supplier,
+    date: `2026-03-${String(31 - index).padStart(2, "0")}`,
+    amountFormatted: formatMoney(toNumber(row.amount) * Math.max(1, toNumber(row.stock))),
+    status: index % 2 === 0 ? "已交付" : "运输中",
+    partName: row.partName,
+    supplierId: suppliers.find((item) => item.name === row.supplier)?.id ?? "SUP-1",
+  }));
+}
+
+async function pgGetSupplierById(id) {
+  const suppliers = await pgGetSuppliers();
+  const supplier = suppliers.find((item) => item.id === id);
+
+  if (!supplier) {
+    return null;
+  }
+
+  const productRows = await pgQuery(`
+    SELECT
+      id,
+      name,
+      sku,
+      stock,
+      reorder_level AS "reorderLevel",
+      unit_price AS "unitPrice",
+      cost_price AS "costPrice"
+    FROM parts
+    WHERE supplier = $1
+    ORDER BY unit_price DESC, name ASC
+  `, [supplier.name]);
+  const recentOrders = (await pgGetSupplierHistory()).filter((item) => item.supplierName === supplier.name);
+
+  return {
+    ...supplier,
+    companyEnglishName: supplier.name.toUpperCase(),
+    yearsOfCooperation: 5,
+    rating: 5,
+    city: "Port Vila Industrial Zone",
+    address: "Lot 42, Teouma St, Port Vila",
+    email: `${supplier.name.toLowerCase().replace(/[^a-z0-9]+/g, ".").replace(/^\.+|\.+$/g, "")}@supplier.vu`,
+    notes: `${supplier.name} 是当前最稳定的 ${supplier.categories.join(" / ")} 供应商，交付速度和配件一致性都维持在高水平。`,
+    products: productRows.map((row) => ({
+      ...mapPart({
+        ...row,
+        stock: toNumber(row.stock),
+        reorderLevel: toNumber(row.reorderLevel),
+        unitPrice: toNumber(row.unitPrice),
+        costPrice: toNumber(row.costPrice),
+      }),
+      stockStatus: toNumber(row.stock) <= toNumber(row.reorderLevel) ? "低库存" : "库存充足",
+    })),
+    recentOrders,
+  };
+}
+
+async function pgGetProcurementById(id) {
+  const historyItem = (await pgGetSupplierHistory()).find((item) => item.id === id);
+
+  if (!historyItem) {
+    return null;
+  }
+
+  const procurementRow = await pgOne(`
+    SELECT
+      procurement_no AS "procurementNo",
+      supplier,
+      part_id AS "partId",
+      quantity,
+      unit_price AS "unitPrice",
+      source_currency AS "sourceCurrency",
+      source_unit_price AS "sourceUnitPrice",
+      exchange_rate AS "exchangeRate",
+      shipping_fee AS "shippingFee",
+      customs_fee AS "customsFee",
+      other_fee AS "otherFee",
+      status,
+      created_at AS "createdAt"
+    FROM procurements
+    WHERE procurement_no = $1
+  `, [id]);
+
+  const suppliers = await pgGetSuppliers();
+  const supplier = suppliers.find((item) => item.name === historyItem.supplierName);
+  const items = procurementRow
+    ? await pgQuery(`
+      SELECT
+        id,
+        name,
+        sku,
+        stock,
+        unit_price AS "unitPrice"
+      FROM parts
+      WHERE id = $1
+    `, [procurementRow.partId])
+    : await pgQuery(`
+      SELECT
+        id,
+        name,
+        sku,
+        stock,
+        unit_price AS "unitPrice"
+      FROM parts
+      WHERE supplier = $1
+      ORDER BY unit_price DESC, id ASC
+      LIMIT 3
+    `, [historyItem.supplierName]);
+
+  const rows = items.map((item, index) => {
+    const quantity = procurementRow ? toNumber(procurementRow.quantity) : Math.max(1, Math.min(12, toNumber(item.stock) + index + 1));
+    const unitPrice = procurementRow ? toNumber(procurementRow.unitPrice) : toNumber(item.unitPrice);
+    const totalAmount = quantity * unitPrice;
+
+    return {
+      id: `${id}-${item.id}`,
+      partId: item.id,
+      name: item.name,
+      sku: item.sku,
+      quantity,
+      unitPrice,
+      unitPriceFormatted: formatMoney(unitPrice),
+      totalAmount,
+      totalAmountFormatted: formatMoney(totalAmount),
+    };
+  });
+
+  const totalAmount = rows.reduce((sum, item) => sum + item.totalAmount, 0);
+  const status = procurementRow?.status ?? historyItem.status;
+  const isDelivered = status === "已交付";
+  const orderDate = procurementRow?.createdAt ? formatChatTimestamp(procurementRow.createdAt).slice(0, 10) : historyItem.date;
+  const costing = calculateProcurementCosting({
+    quantity: toNumber(procurementRow?.quantity ?? rows[0]?.quantity ?? 1),
+    sourceUnitPrice: Number(procurementRow?.sourceUnitPrice ?? procurementRow?.unitPrice ?? rows[0]?.unitPrice ?? 0),
+    exchangeRate: Number(procurementRow?.exchangeRate ?? 1),
+    shippingFee: toNumber(procurementRow?.shippingFee),
+    customsFee: toNumber(procurementRow?.customsFee),
+    otherFee: toNumber(procurementRow?.otherFee),
+  });
+
+  return {
+    procurementNo: id,
+    supplierId: supplier?.id ?? historyItem.supplierId,
+    supplierName: historyItem.supplierName,
+    status,
+    orderDate,
+    expectedArrival: isDelivered ? orderDate : "2026-04-07",
+    totalAmount,
+    totalAmountFormatted: formatMoney(totalAmount),
+    shippingMethod: "Air Freight",
+    trackingNo: `VLI-${String(id).slice(-4)}`,
+    warehouseNote: isDelivered ? "已完成入库并同步库存" : "等待供应商发货确认",
+    sourceCurrency: procurementRow?.sourceCurrency ?? "CNY",
+    sourceUnitPrice: Number(procurementRow?.sourceUnitPrice ?? procurementRow?.unitPrice ?? rows[0]?.unitPrice ?? 0),
+    exchangeRate: Number(procurementRow?.exchangeRate ?? 1),
+    shippingFee: costing.shippingFee,
+    customsFee: costing.customsFee,
+    otherFee: costing.otherFee,
+    items: rows,
+    costing,
   };
 }
 
@@ -1807,14 +2543,21 @@ function sanitizeOrderTitle(order) {
 }
 
 function mapOrder(order) {
-  const deposit = Number(order.deposit ?? 0);
-  const balanceDue = Math.max(0, Number(order.amount ?? 0) - deposit);
+  const id = toNumber(order.id, order.id);
+  const customerId = toNumber(order.customerId, order.customerId);
+  const amount = toNumber(order.amount);
+  const deposit = toNumber(order.deposit);
+  const balanceDue = Math.max(0, amount - deposit);
   return {
     ...order,
+    id,
+    customerId,
+    amount,
+    deposit,
     title: sanitizeOrderTitle(order),
     issueSummary: sanitizeIssueSummary(order),
     statusMeta: statusMeta[order.status] ?? { label: order.status, tone: "neutral" },
-    amountFormatted: formatMoney(order.amount),
+    amountFormatted: formatMoney(amount),
     depositFormatted: formatMoney(deposit),
     balanceDue,
     balanceDueFormatted: formatMoney(balanceDue),
@@ -4315,7 +5058,12 @@ app.patch("/api/orders/:id", (req, res) => {
   res.json(mapOrder(updated));
 });
 
-app.get("/api/customers", (_req, res) => {
+app.get("/api/customers", async (_req, res) => {
+  if (usePostgresRuntime) {
+    res.json(await pgGetCustomers());
+    return;
+  }
+
   const rows = db.prepare(`
     SELECT
       c.id,
@@ -4338,7 +5086,19 @@ app.get("/api/customers", (_req, res) => {
   })));
 });
 
-app.get("/api/customers/:id", (req, res) => {
+app.get("/api/customers/:id", async (req, res) => {
+  if (usePostgresRuntime) {
+    const customer = await pgGetCustomerById(Number(req.params.id));
+
+    if (!customer) {
+      res.status(404).json({ message: "Customer not found" });
+      return;
+    }
+
+    res.json(customer);
+    return;
+  }
+
   const customer = db.prepare(`
     SELECT
       c.id,
@@ -4390,7 +5150,19 @@ app.get("/api/customers/:id", (req, res) => {
   });
 });
 
-app.get("/api/customers/:id/history", (req, res) => {
+app.get("/api/customers/:id/history", async (req, res) => {
+  if (usePostgresRuntime) {
+    const customer = await pgGetCustomerHistory(Number(req.params.id));
+
+    if (!customer) {
+      res.status(404).json({ message: "Customer not found" });
+      return;
+    }
+
+    res.json(customer);
+    return;
+  }
+
   const customer = db.prepare(`
     SELECT
       c.id,
@@ -4673,7 +5445,12 @@ app.get("/api/search", (req, res) => {
   res.json({ orders, parts, customers });
 });
 
-app.get("/api/parts", (_req, res) => {
+app.get("/api/parts", async (_req, res) => {
+  if (usePostgresRuntime) {
+    res.json(await pgGetParts());
+    return;
+  }
+
   const rows = db.prepare(`
     SELECT
       id,
@@ -4690,7 +5467,19 @@ app.get("/api/parts", (_req, res) => {
   res.json(rows.map(mapPart));
 });
 
-app.get("/api/parts/:id", (req, res) => {
+app.get("/api/parts/:id", async (req, res) => {
+  if (usePostgresRuntime) {
+    const part = await pgGetPartById(Number(req.params.id));
+
+    if (!part) {
+      res.status(404).json({ message: "Part not found" });
+      return;
+    }
+
+    res.json(part);
+    return;
+  }
+
   const part = db.prepare(`
     SELECT
       id,
@@ -4845,8 +5634,8 @@ app.patch("/api/parts/:id", (req, res) => {
   res.json(mapPart(updated));
 });
 
-app.get("/api/suppliers/:id", (req, res) => {
-  const supplier = getSupplierById(req.params.id);
+app.get("/api/suppliers/:id", async (req, res) => {
+  const supplier = usePostgresRuntime ? await pgGetSupplierById(req.params.id) : getSupplierById(req.params.id);
 
   if (!supplier) {
     res.status(404).json({ message: "Supplier not found" });
@@ -4856,9 +5645,9 @@ app.get("/api/suppliers/:id", (req, res) => {
   res.json(supplier);
 });
 
-app.get("/api/suppliers", (_req, res) => {
-  const suppliers = getSuppliers();
-  const history = getSupplierHistory();
+app.get("/api/suppliers", async (_req, res) => {
+  const suppliers = usePostgresRuntime ? await pgGetSuppliers() : getSuppliers();
+  const history = usePostgresRuntime ? await pgGetSupplierHistory() : getSupplierHistory();
 
   res.json({
     metrics: {
@@ -4872,8 +5661,8 @@ app.get("/api/suppliers", (_req, res) => {
   });
 });
 
-app.get("/api/procurements/:id", (req, res) => {
-  const procurement = getProcurementById(req.params.id);
+app.get("/api/procurements/:id", async (req, res) => {
+  const procurement = usePostgresRuntime ? await pgGetProcurementById(req.params.id) : getProcurementById(req.params.id);
 
   if (!procurement) {
     res.status(404).json({ message: "Procurement order not found" });
@@ -5237,8 +6026,8 @@ app.post("/api/parts/movements", (req, res) => {
   });
 });
 
-app.get("/api/inventory-movements", (_req, res) => {
-  res.json(getRecentMovements());
+app.get("/api/inventory-movements", async (_req, res) => {
+  res.json(usePostgresRuntime ? await pgGetRecentMovements() : getRecentMovements());
 });
 
 app.post("/api/inventory/inbound-batch", (req, res) => {
@@ -5385,17 +6174,17 @@ app.post("/api/inventory/inbound-batch", (req, res) => {
   res.status(201).json(responsePayload);
 });
 
-app.get("/api/staff/performance", (_req, res) => {
-  const rows = getStaffPerformanceRows();
+app.get("/api/staff/performance", async (_req, res) => {
+  const rows = usePostgresRuntime ? await pgGetStaffPerformanceRows() : getStaffPerformanceRows();
   res.json({
     rows,
     topPerformer: rows[0] ?? null,
   });
 });
 
-app.get("/api/finance/report", (req, res) => {
+app.get("/api/finance/report", async (req, res) => {
   const type = String(req.query.type ?? "all");
-  const base = getFinanceReport();
+  const base = usePostgresRuntime ? await pgGetFinanceReport() : getFinanceReport();
 
   const rows = type === "income"
     ? base.rows.filter((row) => row.amount >= 0)
