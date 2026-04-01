@@ -16,10 +16,22 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const backendRoot = path.resolve(__dirname, "..");
 const frontendDistPath = path.resolve(backendRoot, "..", "frontend", "dist");
-const dbPath = path.resolve(backendRoot, process.env.DATABASE_PATH ?? "./data/stitch.sqlite");
+const isVercelRuntime = Boolean(process.env.VERCEL);
+const localDbPath = path.resolve(backendRoot, process.env.DATABASE_PATH ?? "./data/stitch.sqlite");
+const dbPath = isVercelRuntime
+  ? path.join(os.tmpdir(), "stitch-vercel.sqlite")
+  : localDbPath;
 const certsDir = path.resolve(backendRoot, "certs");
 const httpsKeyPath = path.resolve(certsDir, "localhost-key.pem");
 const httpsCertPath = path.resolve(certsDir, "localhost-cert.pem");
+
+if (isVercelRuntime && !fs.existsSync(dbPath)) {
+  fs.mkdirSync(path.dirname(dbPath), { recursive: true });
+
+  if (fs.existsSync(localDbPath)) {
+    fs.copyFileSync(localDbPath, dbPath);
+  }
+}
 
 const db = new Database(dbPath);
 db.pragma("journal_mode = WAL");
@@ -5077,35 +5089,43 @@ if (process.env.DISABLE_STATIC_FRONTEND !== "true") {
   });
 }
 
-const port = Number(process.env.PORT ?? 4100);
-const host = process.env.HOST ?? "0.0.0.0";
-const enableHttps = process.env.ENABLE_HTTPS !== "false";
+function startStandaloneServer() {
+  const port = Number(process.env.PORT ?? 4100);
+  const host = process.env.HOST ?? "0.0.0.0";
+  const enableHttps = process.env.ENABLE_HTTPS !== "false";
 
-if (enableHttps) {
-  const { key, cert, hosts } = ensureHttpsCertificate();
+  if (enableHttps) {
+    const { key, cert, hosts } = ensureHttpsCertificate();
 
-  https.createServer({ key, cert }, app).listen(port, host, () => {
-    const preferredHosts = hosts
-      .filter((value) => value === "localhost" || value === "127.0.0.1" || value.startsWith("192.168."))
-      .slice(0, 6);
+    https.createServer({ key, cert }, app).listen(port, host, () => {
+      const preferredHosts = hosts
+        .filter((value) => value === "localhost" || value === "127.0.0.1" || value.startsWith("192.168."))
+        .slice(0, 6);
 
-    console.log(`Stitch backend listening on https://${host}:${port}`);
-    console.log(`HTTPS available at: ${preferredHosts.map((value) => `https://${value}:${port}`).join(", ")}`);
-  });
+      console.log(`Stitch backend listening on https://${host}:${port}`);
+      console.log(`HTTPS available at: ${preferredHosts.map((value) => `https://${value}:${port}`).join(", ")}`);
+    });
 
-  const redirectPort = Number(process.env.HTTP_REDIRECT_PORT ?? 4080);
-  http.createServer((req, res) => {
-    const requestHost = String(req.headers.host ?? `${host}:${port}`).replace(/:\d+$/, "");
-    const redirectTarget = `https://${requestHost}:${port}${req.url ?? "/"}`;
+    const redirectPort = Number(process.env.HTTP_REDIRECT_PORT ?? 4080);
+    http.createServer((req, res) => {
+      const requestHost = String(req.headers.host ?? `${host}:${port}`).replace(/:\d+$/, "");
+      const redirectTarget = `https://${requestHost}:${port}${req.url ?? "/"}`;
 
-    res.writeHead(301, { Location: redirectTarget });
-    res.end();
-  }).listen(redirectPort, host, () => {
-    console.log(`HTTP redirect listening on http://${host}:${redirectPort}`);
-  });
-} else {
-  app.listen(port, host, () => {
-    console.log(`Stitch backend listening on http://${host}:${port}`);
-  });
+      res.writeHead(301, { Location: redirectTarget });
+      res.end();
+    }).listen(redirectPort, host, () => {
+      console.log(`HTTP redirect listening on http://${host}:${redirectPort}`);
+    });
+  } else {
+    app.listen(port, host, () => {
+      console.log(`Stitch backend listening on http://${host}:${port}`);
+    });
+  }
 }
+
+if (!isVercelRuntime) {
+  startStandaloneServer();
+}
+
+export default app;
 
