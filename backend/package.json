@@ -5,12 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "node --watch src/index.js",
-    "start": "node src/index.js",
-    "migrate:neon": "node scripts/migrate-sqlite-to-postgres.mjs"
+    "start": "node src/index.js"
   },
   "dependencies": {
-    "@vercel/blob": "^1.1.1",
-    "better-sqlite3": "^12.4.1",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",

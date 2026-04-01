@@ -108,6 +108,44 @@ function formatChannelLabel(channel = "") {
   return channel;
 }
 
+function formatCustomerTierLabel(tier = "") {
+  const normalized = String(tier ?? "").trim().toLowerCase();
+  if (normalized === "vip") return "贵宾";
+  if (normalized === "premium") return "高级";
+  if (normalized === "standard") return "标准";
+  if (normalized === "new") return "新客";
+  return normalized ? String(tier).trim() : "标准";
+}
+
+function formatWarrantyLabel(warranty = "") {
+  const normalized = String(warranty ?? "").trim();
+  if (!normalized) return "标准保修";
+  if (normalized === "Standard Warranty Applied") return "标准保修已生效";
+  return normalized;
+}
+
+function formatExecutionPhaseChipLabel(value) {
+  switch (String(value ?? "").trim().toLowerCase()) {
+    case "diag":
+    case "diagnosis":
+      return "检测";
+    case "repair":
+      return "维修";
+    case "qa":
+      return "质检";
+    case "completed":
+      return "完成";
+    default:
+      return value;
+  }
+}
+
+function formatMinutesLabel(value) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) return value;
+  return `${numeric} 分钟`;
+}
+
 function createPartQuery(part) {
   const query = new URLSearchParams();
   if (part?.id) query.set("partId", String(part.id));
@@ -316,7 +354,7 @@ function App() {
           ? "审计"
           : location.pathname.startsWith("/reviews")
             ? "评价"
-            : location.pathname.startsWith("/reports") || location.pathname.startsWith("/revenue")
+            : location.pathname.startsWith("/financial-reports") || location.pathname.startsWith("/reports") || location.pathname.startsWith("/revenue")
               ? "报表"
               : location.pathname.startsWith("/quick-order")
                 ? "快捷下单"
@@ -2344,7 +2382,7 @@ function SelectPartsPage({ parts, orders }) {
         {filtered.map((part) => (
           <div key={part.id} className="catalog-card catalog-card-rich">
             <div className="catalog-media">
-              <span className={part.needsReorder ? "catalog-badge danger" : "catalog-badge"}>{part.needsReorder ? "Low Stock" : "In Stock"}</span>
+              <span className={part.needsReorder ? "catalog-badge danger" : "catalog-badge"}>{part.needsReorder ? "低库存" : "有库存"}</span>
               <span className="material-symbols-outlined catalog-icon">{inferPartCategory(part.name) === "Batteries" ? "battery_full" : inferPartCategory(part.name) === "Screens" ? "screenshot" : "memory"}</span>
             </div>
             <h4>{part.name}</h4>
@@ -3019,7 +3057,7 @@ function AddPartsPage({ parts }) {
             <div className="repair-part-body">
               <div className="repair-part-top">
                 <strong>{part.name}</strong>
-                <span className={part.needsReorder ? "order-list-template-badge warning" : "order-list-template-badge primary"}>{part.needsReorder ? "Low Stock" : "In Stock"}</span>
+                <span className={part.needsReorder ? "order-list-template-badge warning" : "order-list-template-badge primary"}>{part.needsReorder ? "低库存" : "有库存"}</span>
               </div>
               <p>SKU: {part.sku}</p>
               <div className="repair-part-bottom">
@@ -3319,12 +3357,12 @@ function RepairExecutionPage() {
           <div className="execution-template-device-info">
           <div className="supplier-categories"><span>{statusChinese[order.status]}</span><span>#{order.orderNo}</span></div>
           <h2>{order.deviceName}</h2>
-          <p>{order.deviceMeta?.color ?? "Midnight Blue"} · {order.deviceMeta?.storage ?? "256GB"}</p>
+          <p>{order.deviceMeta?.color ?? "深空蓝"} · {order.deviceMeta?.storage ?? "256GB"}</p>
         </div>
         </div>
         <div className="execution-template-summary">
           <div><span>阶段</span><strong>{order.phaseLabel}</strong></div>
-          <div><span className="micro-label">已耗时</span><strong>{order.elapsedMinutes}m</strong></div>
+          <div><span className="micro-label">已耗时</span><strong>{formatMinutesLabel(order.elapsedMinutes)}</strong></div>
         </div>
       </section>
       <div className="execution-template-grid">
@@ -3346,9 +3384,9 @@ function RepairExecutionPage() {
           <div className="execution-template-card-head">
             <h3>维修步骤</h3>
             <div className="order-detail-template-inline-actions">
-              <button className="link-button" disabled={saving} onClick={() => saveExecution("diagnosis")} type="button">诊断</button>
-              <button className="link-button" disabled={saving} onClick={() => saveExecution("repair")} type="button">维修</button>
-              <button className="link-button" disabled={saving} onClick={() => saveExecution("qa")} type="button">质检</button>
+              <button className="link-button" disabled={saving} onClick={() => saveExecution("diagnosis")} type="button">{formatExecutionPhaseChipLabel("diagnosis")}</button>
+              <button className="link-button" disabled={saving} onClick={() => saveExecution("repair")} type="button">{formatExecutionPhaseChipLabel("repair")}</button>
+              <button className="link-button" disabled={saving} onClick={() => saveExecution("qa")} type="button">{formatExecutionPhaseChipLabel("qa")}</button>
             </div>
           </div>
           <div className="execution-template-timeline">
@@ -4167,7 +4205,9 @@ function MoreOptionsPage({ orders }) {
   const latestOrderId = latestOrder?.id ?? 1;
 
   function handleClose() {
-    if (window.history.length > 1) {
+    const referrer = document.referrer || "";
+    const hasAppReferrer = referrer.startsWith(window.location.origin) && !referrer.includes("/more-options");
+    if (window.history.length > 1 && hasAppReferrer) {
       navigate(-1);
       return;
     }
@@ -4204,7 +4244,6 @@ function MoreOptionsPage({ orders }) {
 function ProfilePage({ staffPerformance }) {
   const navigate = useNavigate();
   const top = staffPerformance?.topPerformer ?? staffPerformance?.rows?.[0];
-  const rows = staffPerformance?.rows ?? [];
   return (
     <div className="profile-page">
       <section className="profile-hero-card">
@@ -4214,9 +4253,21 @@ function ProfilePage({ staffPerformance }) {
         <span className="soft-badge">高级技师</span>
       </section>
       <section className="profile-stats-grid">
-        <MetricBox label="已完成订单" value={String(top?.completedOrders ?? 0)} icon="task_alt" tone="primary" detail="今日绩效" />
-        <MetricBox label="日营收" value={top?.totalRevenueFormatted ?? "-"} icon="payments" tone="orange" detail="实时数据" />
-        <MetricBox label="评分" value={String(top?.rating ?? "-")} icon="star" tone="green" detail="客户满意度" />
+        <div className="detail-block">
+          <p>已完成订单</p>
+          <strong>{String(top?.completedOrders ?? 0)}</strong>
+          <span>今日绩效</span>
+        </div>
+        <div className="detail-block">
+          <p>日营收</p>
+          <strong>{top?.totalRevenueFormatted ?? "-"}</strong>
+          <span>实时数据</span>
+        </div>
+        <div className="detail-block">
+          <p>评分</p>
+          <strong>{String(top?.rating ?? "-")}</strong>
+          <span>客户满意度</span>
+        </div>
       </section>
       <section className="detail-block">
         <div className="options-list profile-menu">
@@ -4228,7 +4279,7 @@ function ProfilePage({ staffPerformance }) {
         </div>
       </section>
       <button className="logout-button" onClick={() => navigate("/repairs-hub")} type="button">退出当前账号</button>
-      <p className="version-note">Vila Port Management System v2.4.0</p>
+      <p className="version-note">维拉港维修后台 v2.4.0</p>
     </div>
   );
 }
@@ -4240,7 +4291,7 @@ function AppSettingsPage({ customers }) {
       <section className="settings-template-hero">
         <div>
           <span className="micro-label">系统设置</span>
-          <h2>Vila Port Repair</h2>
+          <h2>维拉港维修中心</h2>
           <p>门店、员工、硬件与系统偏好统一管理</p>
         </div>
         <button className="icon-button" onClick={() => navigate("/settings/store")} type="button">
@@ -6186,7 +6237,7 @@ function CustomerDetailsPage() {
           <div className="customer-detail-main">
             <div>
               <h2>{customer.name}</h2>
-              <p>{customer.tier?.toUpperCase?.() ?? "STANDARD"} 客户 · 注册于 {customer.registeredSince}</p>
+              <p>{formatCustomerTierLabel(customer.tier)}客户 · 注册于 {customer.registeredSince}</p>
             </div>
             <div className="customer-detail-template-contact">
               <div><span className="material-symbols-outlined inline-icon">phone</span>{customer.phone}</div>
@@ -6244,7 +6295,7 @@ function CustomerDetailsPage() {
                   <h4>{record.orderNo}</h4>
                   <span className={`status-badge ${record.status}`}>{record.statusMeta.label}</span>
                 </div>
-                <p>{record.scheduledDate} · {record.title}</p>
+                <p>{record.scheduledDate} · {record.serviceTag ?? record.title}</p>
               </div>
             </div>
             <div className="customer-detail-template-record-right">
@@ -6528,7 +6579,7 @@ function OrderCommunicationPage() {
             <button onClick={() => setDraft((current) => `${current}${current ? "\n" : ""}[语音备注] `)} type="button"><span className="material-symbols-outlined">mic</span></button>
           </div>
           <div className="composer-input">
-            <textarea onChange={(event) => setDraft(event.target.value)} placeholder={isInternal ? "Type an internal note..." : "Type a message or note..."} value={draft} />
+            <textarea onChange={(event) => setDraft(event.target.value)} placeholder={isInternal ? "输入内部备注..." : "输入沟通内容或备注..."} value={draft} />
             <button onClick={() => setIsInternal((current) => !current)} type="button"><span className="material-symbols-outlined">{isInternal ? "lock" : "lock_open"}</span></button>
           </div>
           <button className="composer-send" disabled={sending} onClick={() => handleSend()} type="button"><span className="material-symbols-outlined">send</span></button>
@@ -6612,7 +6663,7 @@ function RepairCompletionPage() {
         </div>
         <div className="completion-warranty">
           <span className="material-symbols-outlined">verified</span>
-          <span>{data.warranty}</span>
+          <span>{formatWarrantyLabel(data.warranty)}</span>
         </div>
       </section>
       <section className="detail-block">
@@ -6720,7 +6771,7 @@ function ReceiptPage() {
         <div className="receipt-brand">
           <div className="device-icon-box"><span className="material-symbols-outlined">handyman</span></div>
           <h2>VILA PORT 维修中心</h2>
-          <p>The Precision Workshop</p>
+          <p>精修工坊</p>
         </div>
         <div className="receipt-divider" />
         <div className="receipt-meta">
@@ -7330,7 +7381,7 @@ function PdfReportDeliveryPage() {
         <div className="pdf-file-card">
           <div>
             <span>输出文件</span>
-            <strong>Repair-Report-{id}.pdf</strong>
+            <strong>维修报告-{id}.pdf</strong>
           </div>
           <div className="pdf-file-meta">
             <div><span>状态</span><strong>可立即交付</strong></div>
@@ -7386,8 +7437,8 @@ function ShareReportPage() {
           <div className="pdf-preview-brand">
             <div className="supplier-icon"><span className="material-symbols-outlined">cell_tower</span></div>
             <div>
-              <h2>Vila Repair Hub</h2>
-              <p>Port Vila, Vanuatu</p>
+              <h2>维拉港维修中心</h2>
+              <p>维拉港 · 瓦努阿图</p>
             </div>
             <div className="pdf-preview-ref">
               <span>维修报告</span>
@@ -7595,7 +7646,7 @@ function TechnicianPerformancePage({ staffPerformance }) {
     <>
       <section className="tech-kpi-grid">
         <MetricTile label="总订单数" value={rows.reduce((sum, row) => sum + row.completedOrders, 0)} icon="inventory_2" tone="primary" />
-        <MetricTile label="平均耗时" value={`${Math.round(rows.reduce((sum, row) => sum + row.avgRepairMinutes, 0) / Math.max(rows.length, 1))}m`} icon="schedule" tone="warning" />
+        <MetricTile label="平均耗时" value={formatMinutesLabel(Math.round(rows.reduce((sum, row) => sum + row.avgRepairMinutes, 0) / Math.max(rows.length, 1)))} icon="schedule" tone="warning" />
         <MetricTile label="总营收" value={top?.totalRevenueFormatted ?? "-"} icon="payments" tone="primary" />
         <MetricTile label="满意度" value={top ? `${top.rating}` : "-"} icon="star" tone="warning" />
       </section>
@@ -7614,7 +7665,7 @@ function TechnicianPerformancePage({ staffPerformance }) {
             </div>
             <div className="tech-stats">
               <div><span>完工单</span><strong>{row.completedOrders}</strong></div>
-              <div><span>平均耗时</span><strong>{row.avgRepairMinutes}m</strong></div>
+              <div><span>平均耗时</span><strong>{formatMinutesLabel(row.avgRepairMinutes)}</strong></div>
               <div><span>营收</span><strong>{row.totalRevenueFormatted}</strong></div>
             </div>
             <span className="material-symbols-outlined tech-chevron">chevron_right</span>
