@@ -9,6 +9,7 @@ import { BlobNotFoundError, head, put } from "@vercel/blob";
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
+import pg from "pg";
 import selfsigned from "selfsigned";
 
 dotenv.config();
@@ -27,6 +28,9 @@ const httpsKeyPath = path.resolve(certsDir, "localhost-key.pem");
 const httpsCertPath = path.resolve(certsDir, "localhost-cert.pem");
 const blobSnapshotPath = process.env.DB_BLOB_PATH ?? "database/stitch.sqlite";
 const blobPersistenceEnabled = isVercelRuntime && Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+const usePostgresRuntime = Boolean(process.env.DATABASE_URL);
+
+const { Pool } = pg;
 
 if (isVercelRuntime && !fs.existsSync(dbPath)) {
   fs.mkdirSync(path.dirname(dbPath), { recursive: true });
@@ -47,6 +51,29 @@ const allowedOrigins = (process.env.FRONTEND_ORIGIN ?? "")
   .split(",")
   .map((origin) => origin.trim())
   .filter(Boolean);
+
+const pgPool = usePostgresRuntime
+  ? new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+      rejectUnauthorized: false,
+    },
+  })
+  : null;
+
+async function pgQuery(text, params = []) {
+  if (!pgPool) {
+    throw new Error("Postgres runtime is not configured");
+  }
+
+  const result = await pgPool.query(text, params);
+  return result.rows;
+}
+
+async function pgOne(text, params = []) {
+  const rows = await pgQuery(text, params);
+  return rows[0] ?? null;
+}
 
 function getLocalHostnames() {
   const hosts = new Set(["localhost", "127.0.0.1"]);
@@ -1020,6 +1047,120 @@ function formatChatTimestamp(value) {
   const hours = String(date.getHours()).padStart(2, "0");
   const minutes = String(date.getMinutes()).padStart(2, "0");
   return `${year}-${month}-${day} ${hours}:${minutes}`;
+}
+
+function buildPgOrderFilters(status = "all", search = "") {
+  const clauses = [];
+  const params = [];
+
+  if (status !== "all") {
+    params.push(status);
+    clauses.push(`o.status = $${params.length}`);
+  }
+
+  if (search) {
+    params.push(`%${search}%`);
+    const ref = `$${params.length}`;
+    clauses.push(`(o.order_no ILIKE ${ref} OR o.device_name ILIKE ${ref} OR c.name ILIKE ${ref} OR c.phone ILIKE ${ref})`);
+  }
+
+  return {
+    whereClause: clauses.length ? `WHERE ${clauses.join(" AND ")}` : "",
+    params,
+  };
+}
+
+async function pgGetOrderById(id) {
+  const raw = String(id ?? "").trim();
+  if (!raw) return null;
+
+  const byOrderNo = await pgOne(`${baseOrderSelect} WHERE o.order_no = $1`, [raw]);
+  if (byOrderNo) return byOrderNo;
+
+  if (/^\d+$/.test(raw)) {
+    return pgOne(`${baseOrderSelect} WHERE o.id = $1`, [Number(raw)]);
+  }
+
+  return null;
+}
+
+async function pgGetOrderParts(orderId) {
+  return pgQuery(`
+    SELECT
+      p.id,
+      p.name,
+      p.sku,
+      op.quantity,
+      op.unit_price AS "unitPrice",
+      op.quantity * op.unit_price AS subtotal
+    FROM order_parts op
+    JOIN parts p ON p.id = op.part_id
+    WHERE op.order_id = $1
+    ORDER BY p.name ASC
+  `, [orderId]);
+}
+
+async function pgGetStoredPhotos(orderId) {
+  return pgQuery(`
+    SELECT
+      id,
+      stage,
+      image_url AS image,
+      note,
+      created_at AS "createdAt"
+    FROM order_photos
+    WHERE order_id = $1
+    ORDER BY id DESC
+  `, [orderId]);
+}
+
+async function pgGetOrderIntake(orderId) {
+  return pgOne(`
+    SELECT
+      order_id AS "orderId",
+      intake_code AS "intakeCode",
+      imei_serial AS "imeiSerial",
+      customer_signature AS "customerSignature",
+      created_at AS "createdAt"
+    FROM order_intake
+    WHERE order_id = $1
+  `, [orderId]);
+}
+
+async function pgGetRepairQueue(status = "all", search = "") {
+  const { whereClause, params } = buildPgOrderFilters(status, search);
+  const rows = await pgQuery(`${baseOrderSelect} ${whereClause} ORDER BY o.scheduled_date DESC, o.id DESC`, params);
+
+  const queueRows = rows.map((row) => {
+    const elapsedMinutes = diffMinutesFromNow(`${row.scheduledDate}T09:00:00`);
+    const priority = queuePriorityForOrder(row, elapsedMinutes);
+    const progress = queueProgressByStatus(row.status);
+    const isDone = row.status === "completed" || row.status === "picked_up";
+
+    return {
+      ...mapOrder(row),
+      elapsedMinutes,
+      elapsedLabel: isDone ? "已完成" : formatElapsedMinutes(elapsedMinutes),
+      progress,
+      priority,
+      priorityLabel: priority === "urgent" ? "加急" : priority === "high" ? "高优先级" : priority === "done" ? "已完成" : "普通",
+      footerText: row.status === "pending"
+        ? `已分配: ${row.technician}`
+        : isDone
+          ? `完结技师: ${row.technician}`
+          : `在店时长: ${formatElapsedMinutes(elapsedMinutes)}`,
+    };
+  });
+
+  return {
+    metrics: {
+      active: queueRows.filter((item) => item.status === "in_progress").length,
+      pending: queueRows.filter((item) => item.status === "pending").length,
+      urgent: queueRows.filter((item) => item.priority === "urgent").length,
+      revenueEstimate: formatMoney(queueRows.reduce((sum, item) => sum + Number(item.amount), 0)),
+    },
+    rows: queueRows,
+  };
 }
 
 function getOrderParts(orderId) {
@@ -2679,7 +2820,45 @@ app.delete("/api/order-form-options/:collection/:id", (req, res) => {
   res.json(getOrderFormOptions());
 });
 
-app.get("/api/dashboard", (_req, res) => {
+app.get("/api/dashboard", async (_req, res) => {
+  if (usePostgresRuntime) {
+    const metrics = await pgOne(`
+      SELECT
+        COUNT(*)::int AS "totalOrders",
+        SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END)::int AS "pendingOrders",
+        SUM(CASE WHEN status = 'in_progress' THEN 1 ELSE 0 END)::int AS "inProgressOrders",
+        SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END)::int AS "completedOrders",
+        COALESCE(SUM(amount), 0)::int AS "totalRevenue"
+      FROM orders
+    `);
+    const todayKey = getTodayDateKey();
+    const todayOrders = (await pgOne(`SELECT COUNT(*)::int AS count FROM orders WHERE scheduled_date = $1`, [todayKey]))?.count ?? 0;
+    const inventoryValue = (await pgOne(`SELECT COALESCE(SUM(stock * unit_price), 0)::int AS total FROM parts`))?.total ?? 0;
+    const pendingProcurements = (await pgOne(`SELECT COUNT(*)::int AS count FROM procurements WHERE status != '已交付'`))?.count ?? 0;
+    const readyForPickup = (await pgOne(`SELECT COUNT(*)::int AS count FROM orders WHERE status = 'completed'`))?.count ?? 0;
+    const urgentOrders = (await pgGetRepairQueue("all", "")).metrics.urgent;
+    const lowStockParts = await pgQuery(`
+      SELECT id, name, sku, stock, reorder_level AS "reorderLevel", unit_price AS "unitPrice", supplier
+      FROM parts
+      WHERE stock <= reorder_level
+      ORDER BY stock ASC, name ASC
+      LIMIT 4
+    `);
+
+    res.json({
+      metrics: {
+        ...metrics,
+        todayOrders,
+        inventoryValue,
+        pendingProcurements,
+        readyForPickup,
+        urgentOrders,
+      },
+      lowStockParts: lowStockParts.map(mapPart),
+    });
+    return;
+  }
+
   const metrics = db.prepare(`
     SELECT
       COUNT(*) AS totalOrders,
@@ -2722,8 +2901,14 @@ app.get("/api/dashboard", (_req, res) => {
   });
 });
 
-app.get("/api/orders", (req, res) => {
+app.get("/api/orders", async (req, res) => {
   const { status = "all", search = "" } = req.query;
+  if (usePostgresRuntime) {
+    const { whereClause, params } = buildPgOrderFilters(String(status), String(search));
+    const rows = await pgQuery(`${baseOrderSelect} ${whereClause} ORDER BY o.scheduled_date DESC, o.id DESC`, params);
+    res.json(rows.map(mapOrder));
+    return;
+  }
   const clauses = [];
   const params = {};
 
@@ -2742,14 +2927,18 @@ app.get("/api/orders", (req, res) => {
   res.json(rows.map(mapOrder));
 });
 
-app.get("/api/repair-queue", (req, res) => {
+app.get("/api/repair-queue", async (req, res) => {
   const status = String(req.query.status ?? "all");
   const search = String(req.query.search ?? "");
+  if (usePostgresRuntime) {
+    res.json(await pgGetRepairQueue(status, search));
+    return;
+  }
   res.json(getRepairQueue(status, search));
 });
 
-app.post("/api/repair-queue/:id/action", (req, res) => {
-  const order = getOrderById(req.params.id);
+app.post("/api/repair-queue/:id/action", async (req, res) => {
+  const order = usePostgresRuntime ? await pgGetOrderById(req.params.id) : getOrderById(req.params.id);
 
   if (!order) {
     res.status(404).json({ message: "Order not found" });
@@ -2766,25 +2955,54 @@ app.post("/api/repair-queue/:id/action", (req, res) => {
   const nextStatus = action === "complete" ? "completed" : action === "accept" || action === "start" ? "in_progress" : order.status;
   const nextPhase = action === "complete" ? "completed" : action === "start" ? "repair" : "diagnosis";
 
-  db.transaction(() => {
-    db.prepare("UPDATE orders SET status = ? WHERE id = ?").run(nextStatus, order.id);
+  if (usePostgresRuntime) {
+    const execution = await pgOne(`
+      SELECT
+        order_id AS "orderId",
+        phase,
+        checklist_json AS "checklistJson",
+        elapsed_minutes AS "elapsedMinutes",
+        updated_at AS "updatedAt"
+      FROM order_execution
+      WHERE order_id = $1
+    `, [order.id]);
 
-    const execution = getOrderExecutionRecord(order.id);
-    db.prepare(`
+    await pgQuery(`UPDATE orders SET status = $1 WHERE id = $2`, [nextStatus, order.id]);
+    await pgQuery(`
       INSERT INTO order_execution (order_id, phase, checklist_json, elapsed_minutes, updated_at)
-      VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
-      ON CONFLICT(order_id) DO UPDATE SET
-        phase = excluded.phase,
-        updated_at = CURRENT_TIMESTAMP
-    `).run(
+      VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
+      ON CONFLICT (order_id) DO UPDATE
+      SET phase = EXCLUDED.phase,
+          checklist_json = EXCLUDED.checklist_json,
+          elapsed_minutes = EXCLUDED.elapsed_minutes,
+          updated_at = CURRENT_TIMESTAMP
+    `, [
       order.id,
       nextPhase,
       execution?.checklistJson ?? JSON.stringify(getDefaultExecutionChecklist()),
       execution?.elapsedMinutes ?? 45,
-    );
-  })();
+    ]);
+  } else {
+    db.transaction(() => {
+      db.prepare("UPDATE orders SET status = ? WHERE id = ?").run(nextStatus, order.id);
 
-  const updatedOrder = getOrderById(order.id);
+      const execution = getOrderExecutionRecord(order.id);
+      db.prepare(`
+        INSERT INTO order_execution (order_id, phase, checklist_json, elapsed_minutes, updated_at)
+        VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
+        ON CONFLICT(order_id) DO UPDATE SET
+          phase = excluded.phase,
+          updated_at = CURRENT_TIMESTAMP
+      `).run(
+        order.id,
+        nextPhase,
+        execution?.checklistJson ?? JSON.stringify(getDefaultExecutionChecklist()),
+        execution?.elapsedMinutes ?? 45,
+      );
+    })();
+  }
+
+  const updatedOrder = usePostgresRuntime ? await pgGetOrderById(order.id) : getOrderById(order.id);
   appendAuditLog({
     actor: updatedOrder.technician,
     type: "Queue Action",
@@ -2801,20 +3019,21 @@ app.post("/api/repair-queue/:id/action", (req, res) => {
   });
 });
 
-app.get("/api/orders/:id", (req, res) => {
-  const order = getOrderById(req.params.id);
+app.get("/api/orders/:id", async (req, res) => {
+  const order = usePostgresRuntime ? await pgGetOrderById(req.params.id) : getOrderById(req.params.id);
 
   if (!order) {
     res.status(404).json({ message: "Order not found" });
     return;
   }
 
-  const parts = getOrderParts(req.params.id);
+  const parts = usePostgresRuntime ? await pgGetOrderParts(order.id) : getOrderParts(req.params.id);
   const partsTotal = parts.reduce((sum, item) => sum + item.subtotal, 0);
   const laborTotal = Math.max(0, order.amount - partsTotal);
   const balanceDue = Math.max(0, order.amount - Number(order.deposit ?? 0));
-  const intakePhotos = getStoredPhotosByStages(order.id, ["手机正面", "手机背面", "客户照片"]);
-  const intake = getOrderIntake(order.id);
+  const storedPhotos = usePostgresRuntime ? await pgGetStoredPhotos(order.id) : getStoredPhotos(order.id);
+  const intakePhotos = storedPhotos.filter((photo) => ["手机正面", "手机背面", "客户照片"].includes(photo.stage));
+  const intake = usePostgresRuntime ? await pgGetOrderIntake(order.id) : getOrderIntake(order.id);
 
   const deviceSerial = intake?.imeiSerial || `SN-${String(order.id).padStart(4, "0")}-${order.deviceName.replace(/[^A-Za-z0-9]/g, "").slice(0, 6).toUpperCase()}`;
   const batteryHealth = order.deviceName.toLowerCase().includes("iphone") ? "92%" : order.deviceName.toLowerCase().includes("macbook") ? "86%" : "89%";
@@ -3997,9 +4216,9 @@ app.post("/api/orders/:id/pickup", (req, res) => {
   });
 });
 
-app.patch("/api/orders/:id/status", (req, res) => {
+app.patch("/api/orders/:id/status", async (req, res) => {
   const { status } = req.body;
-  const order = getOrderById(req.params.id);
+  const order = usePostgresRuntime ? await pgGetOrderById(req.params.id) : getOrderById(req.params.id);
 
   if (!statusMeta[status]) {
     res.status(400).json({ message: "Unsupported status" });
@@ -4011,8 +4230,12 @@ app.patch("/api/orders/:id/status", (req, res) => {
     return;
   }
 
-  db.prepare("UPDATE orders SET status = ? WHERE id = ?").run(status, order.id);
-  const updated = getOrderById(order.id);
+  if (usePostgresRuntime) {
+    await pgQuery(`UPDATE orders SET status = $1 WHERE id = $2`, [status, order.id]);
+  } else {
+    db.prepare("UPDATE orders SET status = ? WHERE id = ?").run(status, order.id);
+  }
+  const updated = usePostgresRuntime ? await pgGetOrderById(order.id) : getOrderById(order.id);
   res.json(mapOrder(updated));
 });
 

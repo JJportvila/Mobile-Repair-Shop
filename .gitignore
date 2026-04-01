@@ -10,3 +10,5 @@ backend/data/*.sqlite-wal
 .env.local
 .DS_Store
 Thumbs.db
+
+.env*.local
