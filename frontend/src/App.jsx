@@ -2189,15 +2189,23 @@ function OrderDetailPage({ customers, onStatusChange }) {
                   <p>定金 {order.depositFormatted ?? "0 VUV"} · 尾款 {order.balanceDueFormatted ?? order.amountFormatted}</p>
                 </div>
               </div>
-              <div className="sheet-grid">
-                <Field label="客户姓名"><input value={manageForm.customerName} onChange={(e) => setManageForm((current) => ({ ...current, customerName: e.target.value }))} /></Field>
-                <Field label="客户电话"><input value={manageForm.customerPhone} onChange={(e) => setManageForm((current) => ({ ...current, customerPhone: e.target.value }))} /></Field>
-                <Field label="技师"><input value={manageForm.technician} onChange={(e) => setManageForm((current) => ({ ...current, technician: e.target.value }))} /></Field>
-                <Field label="预约日期"><input type="date" value={manageForm.scheduledDate} onChange={(e) => setManageForm((current) => ({ ...current, scheduledDate: e.target.value }))} /></Field>
-                <Field label="报价"><input type="number" value={manageForm.amount} onChange={(e) => setManageForm((current) => ({ ...current, amount: e.target.value }))} /></Field>
-                <Field label="定金"><input type="number" value={manageForm.deposit} onChange={(e) => setManageForm((current) => ({ ...current, deposit: e.target.value }))} /></Field>
-                <Field label="问题描述" full><textarea value={manageForm.issueSummary} onChange={(e) => setManageForm((current) => ({ ...current, issueSummary: e.target.value }))} /></Field>
-                <Field label="维修备注" full><textarea value={manageForm.notes} onChange={(e) => setManageForm((current) => ({ ...current, notes: e.target.value }))} /></Field>
+              <div className="order-detail-compact-form">
+                <div className="order-detail-compact-grid">
+                  <Field label="客户姓名"><input value={manageForm.customerName} onChange={(e) => setManageForm((current) => ({ ...current, customerName: e.target.value }))} /></Field>
+                  <Field label="客户电话"><input value={manageForm.customerPhone} onChange={(e) => setManageForm((current) => ({ ...current, customerPhone: e.target.value }))} /></Field>
+                  <Field label="客户邮箱"><input type="email" value={manageForm.customerEmail} onChange={(e) => setManageForm((current) => ({ ...current, customerEmail: e.target.value }))} /></Field>
+                  <Field label="IMEI / 序列号"><input value={manageForm.imeiSerial} onChange={(e) => setManageForm((current) => ({ ...current, imeiSerial: e.target.value }))} /></Field>
+                  <Field label="电池健康度"><input value={manageForm.batteryHealth} onChange={(e) => setManageForm((current) => ({ ...current, batteryHealth: e.target.value }))} /></Field>
+                  <Field label="存储容量"><input value={manageForm.storageCapacity} onChange={(e) => setManageForm((current) => ({ ...current, storageCapacity: e.target.value }))} /></Field>
+                  <Field label="技师"><input value={manageForm.technician} onChange={(e) => setManageForm((current) => ({ ...current, technician: e.target.value }))} /></Field>
+                  <Field label="预约日期"><input type="date" value={manageForm.scheduledDate} onChange={(e) => setManageForm((current) => ({ ...current, scheduledDate: e.target.value }))} /></Field>
+                  <Field label="报价"><input type="number" value={manageForm.amount} onChange={(e) => setManageForm((current) => ({ ...current, amount: e.target.value }))} /></Field>
+                  <Field label="定金"><input type="number" value={manageForm.deposit} onChange={(e) => setManageForm((current) => ({ ...current, deposit: e.target.value }))} /></Field>
+                </div>
+                <div className="order-detail-compact-stack">
+                  <Field label="问题描述" full><textarea value={manageForm.issueSummary} onChange={(e) => setManageForm((current) => ({ ...current, issueSummary: e.target.value }))} /></Field>
+                  <Field label="维修备注" full><textarea value={manageForm.notes} onChange={(e) => setManageForm((current) => ({ ...current, notes: e.target.value }))} /></Field>
+                </div>
               </div>
               <div className="action-row">
                 <button className="wide-action primary" disabled={saving} onClick={handleSaveOrder} type="button">{saving ? "保存中..." : "保存订单详情"}</button>
@@ -6758,6 +6766,19 @@ function ProcurementDetailsPage() {
   if (error) return <div className="message-banner error">{error}</div>;
   if (!procurement) return <div className="empty-card">未找到采购单。</div>;
 
+  const delivery = procurement.delivery ?? {};
+  const supplierName = procurement.supplier?.name ?? procurement.supplierName ?? procurement.supplierId ?? "-";
+  const procurementId = procurement.id ?? procurement.procurementNo ?? id;
+  const statusLabel = procurement.statusLabel ?? procurement.status ?? "-";
+  const totalAmountLabel = procurement.amountFormatted ?? procurement.totalAmountFormatted ?? formatCurrency(procurement.totalAmount ?? 0);
+  const paymentMethodLabel = procurement.paymentMethod ?? procurement.shippingMethod ?? "待确认";
+  const currencyLabel = procurement.currency ?? procurement.sourceCurrency ?? procurement.costing?.sourceCurrency ?? "-";
+  const operatorLabel = procurement.operator ?? procurement.createdBy ?? "系统同步";
+  const courierLabel = delivery.courier ?? procurement.shippingMethod ?? "待确认";
+  const trackingLabel = delivery.trackingNumber ?? procurement.trackingNo ?? "-";
+  const deliveryTimeLabel = delivery.deliveryTime ?? procurement.expectedArrival ?? procurement.orderDate ?? "-";
+  const deliveryLocationLabel = delivery.location ?? procurement.warehouseNote ?? "等待物流更新";
+
   return (
     <div className="procurement-template-page">
       {success ? <div className="message-banner success">{success}</div> : null}
@@ -6766,25 +6787,25 @@ function ProcurementDetailsPage() {
           <div className="procurement-template-head">
             <div>
               <p>采购单状态</p>
-              <span className={procurement.status === "已交付" ? "status-success" : "status-warning"}>{procurement.statusLabel}</span>
+              <span className={procurement.status === "已交付" ? "status-success" : "status-warning"}>{statusLabel}</span>
             </div>
             <div className="procurement-id-wrap">
               <p>订单编号</p>
-              <strong>{procurement.id}</strong>
+              <strong>{procurementId}</strong>
             </div>
           </div>
           <div className="procurement-template-meta-grid">
-            <div><span>供应商</span><strong>{procurement.supplier?.name ?? "-"}</strong></div>
+            <div><span>供应商</span><strong>{supplierName}</strong></div>
             <div><span>下单日期</span><strong>{procurement.orderDate}</strong></div>
-            <div><span>操作人</span><strong>{procurement.operator}</strong></div>
-            <div><span>币种</span><strong>{procurement.currency}</strong></div>
+            <div><span>操作人</span><strong>{operatorLabel}</strong></div>
+            <div><span>币种</span><strong>{currencyLabel}</strong></div>
           </div>
         </div>
         <div className="procurement-template-amount">
           <span className="material-symbols-outlined">account_balance_wallet</span>
           <p>总金额</p>
-          <strong>{procurement.amountFormatted}</strong>
-          <small>{procurement.paymentMethod}</small>
+          <strong>{totalAmountLabel}</strong>
+          <small>{paymentMethodLabel}</small>
           {procurement.status !== "已交付" ? (
             <button className="wide-action" onClick={handleReceive} type="button" disabled={working}>
               {working ? "Receiving..." : "确认入库"}
@@ -6861,23 +6882,23 @@ function ProcurementDetailsPage() {
           <h4>物流与入库信息</h4>
         </div>
         <div className="procurement-template-logistics-grid">
-          <InfoTile label="承运商" value={procurement.delivery.courier} />
-          <InfoTile label="物流单号" value={procurement.delivery.trackingNumber} />
-          <InfoTile label="到达时间" value={procurement.delivery.deliveryTime} />
+          <InfoTile label="承运商" value={courierLabel} />
+          <InfoTile label="物流单号" value={trackingLabel} />
+          <InfoTile label="到达时间" value={deliveryTimeLabel} />
         </div>
         <div className="procurement-template-timeline">
           <div className="timeline-step active">
             <span className="material-symbols-outlined">inventory_2</span>
             <div>
               <strong>{procurement.status === "已交付" ? "已入库" : "运输途中"}</strong>
-              <p>{procurement.delivery.location}</p>
+              <p>{deliveryLocationLabel}</p>
             </div>
           </div>
           <div className="timeline-step">
             <span className="material-symbols-outlined">local_shipping</span>
             <div>
               <strong>物流签收</strong>
-              <p>{procurement.delivery.trackingNumber}</p>
+              <p>{trackingLabel}</p>
             </div>
           </div>
         </div>
