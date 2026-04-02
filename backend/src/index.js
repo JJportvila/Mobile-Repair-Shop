@@ -133,6 +133,65 @@ async function pgWithTransaction(callback) {
 
 async function ensurePostgresSchema() {
   await pgQuery(`
+    ALTER TABLE settings_store
+    ADD COLUMN IF NOT EXISTS company_name TEXT NOT NULL DEFAULT ''
+  `);
+
+  await pgQuery(`
+    ALTER TABLE settings_store
+    ADD COLUMN IF NOT EXISTS company_address TEXT NOT NULL DEFAULT ''
+  `);
+
+  await pgQuery(`
+    ALTER TABLE settings_store
+    ADD COLUMN IF NOT EXISTS company_phone TEXT NOT NULL DEFAULT ''
+  `);
+
+  await pgQuery(`
+    ALTER TABLE settings_store
+    ADD COLUMN IF NOT EXISTS bank_accounts TEXT NOT NULL DEFAULT ''
+  `);
+
+  await pgQuery(`
+    ALTER TABLE settings_store
+    ADD COLUMN IF NOT EXISTS quote_tax_inclusive BOOLEAN NOT NULL DEFAULT TRUE
+  `);
+
+  await pgQuery(`
+    ALTER TABLE settings_store
+    ADD COLUMN IF NOT EXISTS quote_tax_rate NUMERIC NOT NULL DEFAULT 15
+  `);
+
+  await pgQuery(`
+    ALTER TABLE settings_store
+    ADD COLUMN IF NOT EXISTS tin_number TEXT NOT NULL DEFAULT ''
+  `);
+
+  await pgQuery(`
+    UPDATE settings_store
+    SET
+      company_name = CASE WHEN COALESCE(TRIM(company_name), '') = '' THEN store_name ELSE company_name END,
+      company_address = CASE WHEN COALESCE(TRIM(company_address), '') = '' THEN address ELSE company_address END,
+      company_phone = CASE WHEN COALESCE(TRIM(company_phone), '') = '' THEN phone ELSE company_phone END,
+      bank_accounts = CASE
+        WHEN COALESCE(TRIM(bank_accounts), '') = '' THEN
+          'BSP Vanuatu | A/C: 001-245678-01 | VilaPort Cyan' || E'\n' ||
+          'NBVI | A/C: 200-556688-02 | VilaPort Cyan'
+        ELSE bank_accounts
+      END,
+      quote_tax_rate = CASE
+        WHEN quote_tax_rate IS NULL OR quote_tax_rate <= 0 THEN 15
+        ELSE quote_tax_rate
+      END
+    WHERE id = 1
+  `);
+
+  await pgQuery(`
+    ALTER TABLE customers
+    ADD COLUMN IF NOT EXISTS address TEXT NOT NULL DEFAULT ''
+  `);
+
+  await pgQuery(`
     ALTER TABLE order_intake
     ADD COLUMN IF NOT EXISTS battery_health TEXT
   `);
@@ -184,10 +243,22 @@ async function ensurePostgresSchema() {
       subtotal INTEGER NOT NULL DEFAULT 0,
       vat_amount INTEGER NOT NULL DEFAULT 0,
       total_amount INTEGER NOT NULL DEFAULT 0,
+      tax_rate NUMERIC NOT NULL DEFAULT 15,
+      tax_inclusive BOOLEAN NOT NULL DEFAULT TRUE,
       status TEXT NOT NULL DEFAULT 'draft',
       created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
     )
+  `);
+
+  await pgQuery(`
+    ALTER TABLE quotes
+    ADD COLUMN IF NOT EXISTS tax_inclusive BOOLEAN NOT NULL DEFAULT TRUE
+  `);
+
+  await pgQuery(`
+    ALTER TABLE quotes
+    ADD COLUMN IF NOT EXISTS tax_rate NUMERIC NOT NULL DEFAULT 15
   `);
 
   await pgQuery(`
@@ -210,6 +281,7 @@ async function ensurePostgresSchema() {
       id SERIAL PRIMARY KEY,
       sale_no TEXT NOT NULL UNIQUE,
       customer_id INTEGER REFERENCES customers(id) ON DELETE SET NULL,
+      source_quote_no TEXT DEFAULT NULL,
       customer_name TEXT NOT NULL DEFAULT '',
       customer_phone TEXT NOT NULL DEFAULT '',
       subtotal INTEGER NOT NULL DEFAULT 0,
@@ -221,6 +293,11 @@ async function ensurePostgresSchema() {
       created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
     )
+  `);
+
+  await pgQuery(`
+    ALTER TABLE pos_sales
+    ADD COLUMN IF NOT EXISTS source_quote_no TEXT
   `);
 
   await pgQuery(`
@@ -384,6 +461,23 @@ async function getQuoteByIdentifier(identifier) {
     WHERE quote_id = $1
     ORDER BY id ASC
   `, [quote.id]);
+  const storeSettings = await pgGetStoreSettings(pgOne);
+  const taxRate = Number(quote.tax_rate ?? storeSettings?.quoteTaxRate ?? 15);
+  const taxInclusive = Boolean(quote.tax_inclusive);
+  let subtotal = Number(quote.subtotal ?? 0);
+  let vatAmount = Number(quote.vat_amount ?? 0);
+  let totalAmount = Number(quote.total_amount ?? 0);
+  if (taxRate > 0 && (!vatAmount || vatAmount < 0)) {
+    if (taxInclusive) {
+      totalAmount = totalAmount || subtotal;
+      vatAmount = Math.round(totalAmount * (taxRate / (100 + taxRate)));
+      subtotal = totalAmount;
+    } else {
+      subtotal = subtotal || Math.max(0, totalAmount - vatAmount);
+      vatAmount = Math.round(subtotal * (taxRate / 100));
+      totalAmount = subtotal + vatAmount;
+    }
+  }
   return {
     id: quote.id,
     quoteNo: quote.quote_no,
@@ -395,12 +489,14 @@ async function getQuoteByIdentifier(identifier) {
     serviceType: quote.service_type,
     validUntil: String(quote.valid_until ?? "").slice(0, 10),
     notes: quote.notes,
-    subtotal: Number(quote.subtotal ?? 0),
-    subtotalFormatted: formatMoney(quote.subtotal ?? 0),
-    vatAmount: Number(quote.vat_amount ?? 0),
-    vatAmountFormatted: formatMoney(quote.vat_amount ?? 0),
-    totalAmount: Number(quote.total_amount ?? 0),
-    totalAmountFormatted: formatMoney(quote.total_amount ?? 0),
+    subtotal,
+    subtotalFormatted: formatMoney(subtotal),
+    vatAmount,
+    vatAmountFormatted: formatMoney(vatAmount),
+    totalAmount,
+    totalAmountFormatted: formatMoney(totalAmount),
+    taxInclusive,
+    taxRate,
     createdAt: quote.created_at,
     status: quote.status,
     items: items.map((item) => ({
@@ -435,6 +531,7 @@ async function getPosSaleByIdentifier(identifier) {
   return {
     id: sale.id,
     saleNo: sale.sale_no,
+    sourceQuoteNo: sale.source_quote_no,
     customerId: sale.customer_id,
     customerName: sale.customer_name,
     customerPhone: sale.customer_phone,
@@ -2297,6 +2394,36 @@ app.get("/api/customers", async (_req, res) => {
   res.json(await readModels.pgGetCustomers());
 });
 
+app.post("/api/customers", async (req, res) => {
+  const name = String(req.body?.name ?? "").trim();
+  const phone = String(req.body?.phone ?? "").trim();
+  const email = String(req.body?.email ?? "").trim();
+  const address = String(req.body?.address ?? "").trim();
+
+  if (!name || !phone) {
+    res.status(400).json({ message: "客户姓名和电话不能为空" });
+    return;
+  }
+
+  const created = await pgOne(`
+    INSERT INTO customers (
+      name, phone, email, address, tier
+    )
+    VALUES ($1, $2, $3, $4, 'new')
+    RETURNING id
+  `, [name, phone, email, address]);
+
+  appendAuditLog({
+    actor: "Front Desk",
+    type: "Customer",
+    tone: "success",
+    message: `Created customer ${name}`,
+    meta: phone,
+  });
+
+  res.status(201).json(await readModels.pgGetCustomerById(created.id));
+});
+
 app.get("/api/customers/:id", async (req, res) => {
   const customer = await readModels.pgGetCustomerById(Number(req.params.id));
   if (!customer) {
@@ -3211,6 +3338,7 @@ app.post("/api/quotes", async (req, res) => {
     serviceType = "",
     validUntil = "",
     notes = "",
+    taxInclusive = true,
     items = [],
   } = req.body ?? {};
 
@@ -3236,17 +3364,24 @@ app.post("/api/quotes", async (req, res) => {
   }
 
   const subtotal = normalizedItems.reduce((sum, item) => sum + Math.round(item.quantity * item.unitPrice), 0);
-  const vatAmount = 0;
-  const totalAmount = subtotal + vatAmount;
+  const storeSettings = await pgGetStoreSettings(pgOne);
+  const taxRate = Math.max(0, Number(storeSettings?.quoteTaxRate ?? 15));
+  const resolvedTaxInclusive = taxInclusive !== false;
+  const vatAmount = taxRate > 0
+    ? (resolvedTaxInclusive
+      ? Math.round(subtotal * (taxRate / (100 + taxRate)))
+      : Math.round(subtotal * (taxRate / 100)))
+    : 0;
+  const totalAmount = resolvedTaxInclusive ? subtotal : subtotal + vatAmount;
   const quoteNo = await getNextSequenceCode("quotes", "quote_no", "QT");
 
   const payload = await pgWithTransaction(async (client) => {
     const inserted = await client.query(`
       INSERT INTO quotes (
         quote_no, customer_id, customer_name, customer_phone, customer_email,
-        device_name, service_type, valid_until, notes, subtotal, vat_amount, total_amount, status, updated_at
+        device_name, service_type, valid_until, notes, subtotal, vat_amount, total_amount, tax_rate, tax_inclusive, status, updated_at
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, NULLIF($8, '')::date, $9, $10, $11, $12, 'draft', CURRENT_TIMESTAMP)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, NULLIF($8, '')::date, $9, $10, $11, $12, $13, $14, 'draft', CURRENT_TIMESTAMP)
       RETURNING id
     `, [
       quoteNo,
@@ -3261,6 +3396,8 @@ app.post("/api/quotes", async (req, res) => {
       subtotal,
       vatAmount,
       totalAmount,
+      taxRate,
+      resolvedTaxInclusive,
     ]);
 
     const quoteId = inserted.rows[0]?.id;
@@ -3321,6 +3458,7 @@ app.post("/api/pos/sales", async (req, res) => {
     customerPhone = "",
     paymentMethod = "Cash",
     note = "",
+    sourceQuoteNo = "",
     items = [],
   } = req.body ?? {};
 
@@ -3344,49 +3482,113 @@ app.post("/api/pos/sales", async (req, res) => {
   const vatAmount = 0;
   const totalAmount = subtotal + vatAmount;
   const saleNo = await getNextSequenceCode("pos_sales", "sale_no", "POS");
+  const normalizedSourceQuoteNo = String(sourceQuoteNo ?? "").trim();
 
-  const saleId = await pgWithTransaction(async (client) => {
-    const inserted = await client.query(`
-      INSERT INTO pos_sales (
-        sale_no, customer_id, customer_name, customer_phone, subtotal, vat_amount,
-        total_amount, payment_method, note, status, updated_at
-      )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'paid', CURRENT_TIMESTAMP)
-      RETURNING id
-    `, [
-      saleNo,
-      customerId ? Number(customerId) : null,
-      customerName || "门店散客",
-      customerPhone,
-      subtotal,
-      vatAmount,
-      totalAmount,
-      paymentMethod,
-      note,
-    ]);
+  try {
+    const saleId = await pgWithTransaction(async (client) => {
+      let linkedQuote = null;
+      if (normalizedSourceQuoteNo) {
+        linkedQuote = await client.query(`
+          SELECT id, quote_no, status
+          FROM quotes
+          WHERE quote_no = $1 OR id::text = $1
+          LIMIT 1
+        `, [normalizedSourceQuoteNo]);
+        if (!linkedQuote.rows[0]) {
+          const quoteError = new Error("关联报价单不存在");
+          quoteError.status = 404;
+          throw quoteError;
+        }
+      }
 
-    const insertedId = inserted.rows[0]?.id;
-    for (const item of normalizedItems) {
-      const totalPrice = Math.round(item.quantity * item.unitPrice);
-      await client.query(`
-        INSERT INTO pos_sale_items (
-          sale_id, part_id, category, name, description, quantity, unit_price, total_price
+      for (const item of normalizedItems) {
+        if (!item.partId) continue;
+        const stockRow = await client.query(`
+          SELECT id, name, stock
+          FROM parts
+          WHERE id = $1
+          LIMIT 1
+        `, [item.partId]);
+        const part = stockRow.rows[0];
+        if (!part) {
+          const missingError = new Error(`配件不存在: ${item.name}`);
+          missingError.status = 404;
+          throw missingError;
+        }
+        if (Number(part.stock ?? 0) < Number(item.quantity ?? 0)) {
+          const stockError = new Error(`${part.name} 库存不足，当前仅剩 ${part.stock} 件`);
+          stockError.status = 400;
+          throw stockError;
+        }
+      }
+
+      const inserted = await client.query(`
+        INSERT INTO pos_sales (
+          sale_no, customer_id, source_quote_no, customer_name, customer_phone, subtotal, vat_amount,
+          total_amount, payment_method, note, status, updated_at
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-      `, [insertedId, item.partId, item.category, item.name, item.description, item.quantity, item.unitPrice, totalPrice]);
-    }
-    return insertedId;
-  });
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'paid', CURRENT_TIMESTAMP)
+        RETURNING id
+      `, [
+        saleNo,
+        customerId ? Number(customerId) : null,
+        normalizedSourceQuoteNo || null,
+        customerName || "门店散客",
+        customerPhone,
+        subtotal,
+        vatAmount,
+        totalAmount,
+        paymentMethod,
+        note,
+      ]);
 
-  appendAuditLog({
-    actor: "POS Cashier",
-    type: "POS",
-    tone: "success",
-    message: `Completed POS sale ${saleNo}`,
-    meta: `${normalizedItems.length} 项 · ${formatMoney(totalAmount)}`,
-  });
+      const insertedId = inserted.rows[0]?.id;
+      for (const item of normalizedItems) {
+        const totalPrice = Math.round(item.quantity * item.unitPrice);
+        await client.query(`
+          INSERT INTO pos_sale_items (
+            sale_id, part_id, category, name, description, quantity, unit_price, total_price
+          )
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        `, [insertedId, item.partId, item.category, item.name, item.description, item.quantity, item.unitPrice, totalPrice]);
 
-  res.status(201).json(await getPosSaleByIdentifier(String(saleId)));
+        if (item.partId) {
+          await client.query(`
+            UPDATE parts
+            SET stock = stock - $1
+            WHERE id = $2
+          `, [item.quantity, item.partId]);
+
+          await client.query(`
+            INSERT INTO inventory_movements (part_id, movement_type, quantity, note)
+            VALUES ($1, 'out', $2, $3)
+          `, [item.partId, item.quantity, `POS sale ${saleNo}${normalizedSourceQuoteNo ? ` · Quote ${normalizedSourceQuoteNo}` : ""}`]);
+        }
+      }
+
+      if (linkedQuote?.rows?.[0]) {
+        await client.query(`
+          UPDATE quotes
+          SET status = 'converted', updated_at = CURRENT_TIMESTAMP
+          WHERE id = $1
+        `, [linkedQuote.rows[0].id]);
+      }
+
+      return insertedId;
+    });
+
+    appendAuditLog({
+      actor: "POS Cashier",
+      type: "POS",
+      tone: "success",
+      message: `Completed POS sale ${saleNo}`,
+      meta: `${normalizedItems.length} 项 · ${formatMoney(totalAmount)}${normalizedSourceQuoteNo ? ` · 来自 ${normalizedSourceQuoteNo}` : ""}`,
+    });
+
+    res.status(201).json(await getPosSaleByIdentifier(String(saleId)));
+  } catch (error) {
+    res.status(error.status ?? 500).json({ message: error.message ?? "POS 收银失败" });
+  }
 });
 
 app.get("/api/pos/sales/:id", async (req, res) => {

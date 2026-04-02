@@ -6,7 +6,12 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      "/api": "http://localhost:4100",
+      // The local backend defaults to HTTPS on port 4100 with a self-signed cert.
+      "/api": {
+        target: "https://localhost:4100",
+        changeOrigin: true,
+        secure: false,
+      },
     },
   },
 });

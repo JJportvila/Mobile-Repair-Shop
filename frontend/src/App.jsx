@@ -30,35 +30,28 @@ function formatDateLabel(value) {
   return date.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
 }
 
-function createQuoteDraft(customers = [], parts = []) {
+function createQuoteDraft(customers = [], parts = [], options = {}) {
+  const firstBrandId = String(options.brands?.[0]?.id ?? "");
+  const firstModelId = String(
+    options.models?.find((model) => String(model.brandId) === firstBrandId)?.id ?? "",
+  );
+  const firstIssueTemplateId = String(options.issueTemplates?.[0]?.id ?? "");
   return {
     customerId: String(customers[0]?.id ?? ""),
     customerName: customers[0]?.name ?? "",
     customerPhone: customers[0]?.phone ?? "",
     customerEmail: customers[0]?.email ?? "",
-    deviceName: "",
-    serviceType: "",
+    brandId: firstBrandId,
+    modelId: firstModelId,
+    issueTemplateId: firstIssueTemplateId,
+    deviceName: [options.brands?.[0]?.name, options.models?.find((model) => String(model.id) === firstModelId)?.name]
+      .filter(Boolean)
+      .join(" "),
+    serviceType: options.issueTemplates?.[0]?.title ?? "",
     validUntil: getTodayInputDate(),
     notes: "",
-    items: [
-      parts[0]
-        ? {
-          itemType: "part",
-          partId: String(parts[0].id),
-          name: parts[0].name,
-          description: "报价配件",
-          quantity: 1,
-          unitPrice: Number(parts[0].unitPrice ?? 0),
-        }
-        : {
-          itemType: "labor",
-          partId: "",
-          name: "维修工费",
-          description: "人工服务",
-          quantity: 1,
-          unitPrice: 0,
-        },
-    ],
+    taxInclusive: true,
+    items: [],
   };
 }
 
@@ -4578,7 +4571,21 @@ function AppSettingsPage({ customers }) {
 }
 
 function EditStorePage() {
-  const [form, setForm] = useState({ storeName: "", storeCode: "", phone: "", email: "", address: "", coverImage: "" });
+  const [form, setForm] = useState({
+    storeName: "",
+    storeCode: "",
+    phone: "",
+    email: "",
+    address: "",
+    companyName: "",
+    companyAddress: "",
+    companyPhone: "",
+    bankAccounts: "",
+    quoteTaxInclusive: true,
+    quoteTaxRate: 15,
+    tinNumber: "",
+    coverImage: "",
+  });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
@@ -4648,6 +4655,30 @@ function EditStorePage() {
           <Field label="门店编号"><input value={form.storeCode} onChange={(event) => setForm((current) => ({ ...current, storeCode: event.target.value }))} /></Field>
           <Field label="联系电话"><input value={form.phone} onChange={(event) => setForm((current) => ({ ...current, phone: event.target.value }))} /></Field>
           <Field label="联系邮箱" full><input value={form.email} onChange={(event) => setForm((current) => ({ ...current, email: event.target.value }))} /></Field>
+          <Field label="公司名称" full><input value={form.companyName} onChange={(event) => setForm((current) => ({ ...current, companyName: event.target.value }))} /></Field>
+          <Field label="公司电话"><input value={form.companyPhone} onChange={(event) => setForm((current) => ({ ...current, companyPhone: event.target.value }))} /></Field>
+          <Field label="银行账号信息" full><textarea value={form.bankAccounts} onChange={(event) => setForm((current) => ({ ...current, bankAccounts: event.target.value }))} /></Field>
+          <Field label="报价默认含税">
+            <label className="toggle-field">
+              <input
+                checked={Boolean(form.quoteTaxInclusive)}
+                onChange={(event) => setForm((current) => ({ ...current, quoteTaxInclusive: event.target.checked }))}
+                type="checkbox"
+              />
+              <span>{form.quoteTaxInclusive ? "默认含税报价" : "默认不含税报价"}</span>
+            </label>
+          </Field>
+          <Field label="报价税率(%)">
+            <input
+              min="0"
+              step="0.1"
+              type="number"
+              value={form.quoteTaxRate ?? 15}
+              onChange={(event) => setForm((current) => ({ ...current, quoteTaxRate: Number(event.target.value || 0) }))}
+            />
+          </Field>
+          <Field label="TIN 税号"><input value={form.tinNumber} onChange={(event) => setForm((current) => ({ ...current, tinNumber: event.target.value }))} /></Field>
+          <Field label="公司地址" full><textarea value={form.companyAddress} onChange={(event) => setForm((current) => ({ ...current, companyAddress: event.target.value }))} /></Field>
           <Field label="封面图" full><input value={form.coverImage} onChange={(event) => setForm((current) => ({ ...current, coverImage: event.target.value }))} /></Field>
           <Field label="门店地址" full><textarea value={form.address} onChange={(event) => setForm((current) => ({ ...current, address: event.target.value }))} /></Field>
           <button className="primary-submit" disabled={saving} onClick={handleSave} type="button">{saving ? "保存中..." : "保存门店信息"}</button>
@@ -8078,20 +8109,62 @@ function TechnicianPerformancePage({ staffPerformance }) {
   );
 }
 
-function CreateQuotePage({ customers, parts }) {
+function CreateQuotePage({ customers, parts, orderFormOptions }) {
   const navigate = useNavigate();
-  const [draft, setDraft] = useState(() => createQuoteDraft(customers, parts));
+  const [customerOptions, setCustomerOptions] = useState(customers);
+  const [draft, setDraft] = useState(() => createQuoteDraft(customers, parts, orderFormOptions));
+  const [storeSettings, setStoreSettings] = useState(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [creatingCustomer, setCreatingCustomer] = useState(false);
+  const [newCustomer, setNewCustomer] = useState({ name: "", phone: "", email: "", address: "" });
+
+  useEffect(() => {
+    setCustomerOptions(customers);
+  }, [customers]);
+
+  useEffect(() => {
+    let active = true;
+    fetchJson("/api/settings/store")
+      .then((result) => {
+        if (!active) return;
+        setStoreSettings(result);
+        setDraft((current) => ({
+          ...current,
+          taxInclusive: result?.quoteTaxInclusive !== false,
+        }));
+      })
+      .catch(() => {
+        // keep local default when settings cannot be loaded
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     setDraft((current) => {
-      if (current.customerId || !customers.length) return current;
-      return createQuoteDraft(customers, parts);
+      if (current.customerId || !customerOptions.length) return current;
+      return {
+        ...createQuoteDraft(customerOptions, parts, orderFormOptions),
+        taxInclusive: storeSettings?.quoteTaxInclusive !== false,
+      };
     });
-  }, [customers, parts]);
+  }, [customerOptions, parts, orderFormOptions, storeSettings]);
 
-  const selectedCustomer = customers.find((item) => String(item.id) === String(draft.customerId));
+  const selectedCustomer = customerOptions.find((item) => String(item.id) === String(draft.customerId));
+  const availableModels = useMemo(
+    () => orderFormOptions.models.filter((model) => String(model.brandId) === String(draft.brandId)),
+    [draft.brandId, orderFormOptions.models],
+  );
+  const selectedBrand = useMemo(
+    () => orderFormOptions.brands.find((brand) => String(brand.id) === String(draft.brandId)) ?? null,
+    [draft.brandId, orderFormOptions.brands],
+  );
+  const selectedModel = useMemo(
+    () => orderFormOptions.models.find((model) => String(model.id) === String(draft.modelId)) ?? null,
+    [draft.modelId, orderFormOptions.models],
+  );
   const subtotal = draft.items.reduce((sum, item) => sum + Number(item.quantity || 0) * Number(item.unitPrice || 0), 0);
   const totalItems = draft.items.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
 
@@ -8136,6 +8209,60 @@ function CreateQuotePage({ customers, parts }) {
     }));
   }
 
+  async function handleCreateCustomer() {
+    try {
+      setCreatingCustomer(true);
+      setError("");
+      const created = await fetchJson("/api/customers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newCustomer),
+      });
+      setCustomerOptions((current) => [created, ...current]);
+      setDraft((current) => ({
+        ...current,
+        customerId: String(created.id),
+        customerName: created.name,
+        customerPhone: created.phone ?? "",
+        customerEmail: created.email ?? "",
+      }));
+      setNewCustomer({ name: "", phone: "", email: "", address: "" });
+    } catch (createError) {
+      setError(createError.message);
+    } finally {
+      setCreatingCustomer(false);
+    }
+  }
+
+  function updateBrand(brandId) {
+    const firstModel = orderFormOptions.models.find((model) => String(model.brandId) === String(brandId));
+    const brand = orderFormOptions.brands.find((item) => String(item.id) === String(brandId));
+    setDraft((current) => ({
+      ...current,
+      brandId,
+      modelId: String(firstModel?.id ?? ""),
+      deviceName: [brand?.name, firstModel?.name].filter(Boolean).join(" "),
+    }));
+  }
+
+  function updateModel(modelId) {
+    const model = orderFormOptions.models.find((item) => String(item.id) === String(modelId));
+    setDraft((current) => ({
+      ...current,
+      modelId,
+      deviceName: [selectedBrand?.name, model?.name].filter(Boolean).join(" "),
+    }));
+  }
+
+  function updateIssueTemplate(issueTemplateId) {
+    const template = orderFormOptions.issueTemplates.find((item) => String(item.id) === String(issueTemplateId));
+    setDraft((current) => ({
+      ...current,
+      issueTemplateId,
+      serviceType: template?.title ?? "",
+    }));
+  }
+
   async function handleSubmit() {
     try {
       setSaving(true);
@@ -8146,6 +8273,7 @@ function CreateQuotePage({ customers, parts }) {
         customerName: selectedCustomer?.name ?? draft.customerName,
         customerPhone: selectedCustomer?.phone ?? draft.customerPhone,
         customerEmail: selectedCustomer?.email ?? draft.customerEmail,
+        taxInclusive: draft.taxInclusive !== false,
         items: draft.items.map((item) => ({
           itemType: item.itemType,
           partId: item.partId ? Number(item.partId) : null,
@@ -8191,20 +8319,45 @@ function CreateQuotePage({ customers, parts }) {
           </article>
           <article className="quote-template-hero-card">
             <span>设备信息</span>
-            <strong>{draft.deviceName || "待填写设备型号"}</strong>
-            <p>{draft.serviceType || "待填写服务类型"}</p>
+            <strong>{draft.deviceName || "待选择品牌型号"}</strong>
+            <p>{draft.serviceType || "待选择维修问题"}</p>
           </article>
         </div>
       </section>
       <section className="quote-template-section">
         <h3>客户信息</h3>
+        <div className="quick-create-card">
+          <div className="quote-template-title-row compact">
+            <h3>快速新增客户</h3>
+            <span className="soft-badge">创建后自动选中</span>
+          </div>
+          <div className="quote-form-grid compact">
+            <label>
+              <span>客户姓名</span>
+              <input value={newCustomer.name} onChange={(event) => setNewCustomer((current) => ({ ...current, name: event.target.value }))} />
+            </label>
+            <label>
+              <span>联系电话</span>
+              <input value={newCustomer.phone} onChange={(event) => setNewCustomer((current) => ({ ...current, phone: event.target.value }))} />
+            </label>
+            <label>
+              <span>邮箱</span>
+              <input type="email" value={newCustomer.email} onChange={(event) => setNewCustomer((current) => ({ ...current, email: event.target.value }))} />
+            </label>
+          </div>
+          <label className="quote-template-section-label">
+            <span>地址</span>
+            <input value={newCustomer.address} onChange={(event) => setNewCustomer((current) => ({ ...current, address: event.target.value }))} />
+          </label>
+          <button className="wide-action secondary" disabled={creatingCustomer} onClick={handleCreateCustomer} type="button">{creatingCustomer ? "创建中..." : "新增客户并选中"}</button>
+        </div>
         <div className="quote-form-grid">
           <label>
             <span>选择客户</span>
             <select
               value={draft.customerId}
               onChange={(event) => {
-                const customer = customers.find((item) => String(item.id) === event.target.value);
+                const customer = customerOptions.find((item) => String(item.id) === event.target.value);
                 setDraft((current) => ({
                   ...current,
                   customerId: event.target.value,
@@ -8215,16 +8368,29 @@ function CreateQuotePage({ customers, parts }) {
               }}
             >
               <option value="">选择客户</option>
-              {customers.map((customer) => <option key={customer.id} value={customer.id}>{customer.name}</option>)}
+              {customerOptions.map((customer) => <option key={customer.id} value={customer.id}>{customer.name}</option>)}
             </select>
           </label>
           <label>
-            <span>设备 / 型号</span>
-            <input value={draft.deviceName} onChange={(event) => setDraft((current) => ({ ...current, deviceName: event.target.value }))} placeholder="例如 iPhone 14 Pro Max" />
+            <span>手机品牌</span>
+            <select value={draft.brandId} onChange={(event) => updateBrand(event.target.value)}>
+              <option value="">选择品牌</option>
+              {orderFormOptions.brands.map((brand) => <option key={brand.id} value={brand.id}>{brand.name}</option>)}
+            </select>
+          </label>
+          <label>
+            <span>手机型号</span>
+            <select value={draft.modelId} onChange={(event) => updateModel(event.target.value)}>
+              <option value="">选择型号</option>
+              {availableModels.map((model) => <option key={model.id} value={model.id}>{model.name}</option>)}
+            </select>
           </label>
           <label>
             <span>服务类型</span>
-            <input value={draft.serviceType} onChange={(event) => setDraft((current) => ({ ...current, serviceType: event.target.value }))} placeholder="例如 屏幕更换" />
+            <select value={draft.issueTemplateId} onChange={(event) => updateIssueTemplate(event.target.value)}>
+              <option value="">选择维修问题</option>
+              {orderFormOptions.issueTemplates.map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}
+            </select>
           </label>
           <label>
             <span>有效期至</span>
@@ -8294,7 +8460,7 @@ function CreateQuotePage({ customers, parts }) {
       </section>
       <section className="quote-template-summary">
         <div>
-          <span>报价合计</span>
+          <span>{draft.taxInclusive ? "报价合计（含税）" : "报价合计（不含税）"}</span>
           <strong>{formatCurrency(subtotal)}</strong>
         </div>
         <button className="wide-action primary" disabled={saving} onClick={handleSubmit} type="button">{saving ? "保存中..." : "生成报价单"}</button>
@@ -8308,13 +8474,20 @@ function QuotePreviewPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [data, setData] = useState(null);
+  const [storeSettings, setStoreSettings] = useState(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
     let active = true;
-    fetchJson(`/api/quotes/${id}`)
-      .then((result) => {
-        if (active) setData(result);
+    Promise.all([
+      fetchJson(`/api/quotes/${id}`),
+      fetchJson("/api/settings/store"),
+    ])
+      .then(([quoteResult, storeResult]) => {
+        if (active) {
+          setData(quoteResult);
+          setStoreSettings(storeResult);
+        }
       })
       .catch((loadError) => {
         if (active) setError(loadError.message);
@@ -8327,57 +8500,135 @@ function QuotePreviewPage() {
   if (!data && !error) return <LoadingState label="正在加载报价单..." />;
   if (error) return <EmptyState title="报价单加载失败" message={error} />;
 
+  const companyName = storeSettings?.companyName || storeSettings?.storeName || "维拉港维修中心";
+  const companyAddress = storeSettings?.companyAddress || storeSettings?.address || "维拉港 · 瓦努阿图";
+  const companyPhone = storeSettings?.companyPhone || storeSettings?.phone || "待补充公司电话";
+  const companyEmail = storeSettings?.email || "待补充邮箱";
+  const companyLogo = storeSettings?.coverImage || "";
+  const bankAccounts = String(storeSettings?.bankAccounts || "").trim();
+  const taxInclusive = data?.taxInclusive !== false;
+  const taxRate = Number(data?.taxRate ?? storeSettings?.quoteTaxRate ?? 15);
+  const companyInitials = companyName
+    .replace(/\s+/g, "")
+    .slice(0, 2)
+    .toUpperCase();
+
+  function handleConvertToPos() {
+    navigate("/pos/checkout", {
+      state: {
+        customerId: data.customerId ? String(data.customerId) : "",
+        customerName: data.customerName,
+        customerPhone: data.customerPhone,
+        sourceQuoteNo: data.quoteNo,
+        note: data.notes ? `报价转单：${data.notes}` : `由报价单 ${data.quoteNo} 转收银`,
+        cart: data.items.map((item) => ({
+          partId: item.partId,
+          category: item.itemType === "labor" ? "Service" : "",
+          name: item.name,
+          description: item.description,
+          quantity: Number(item.quantity ?? 0),
+          unitPrice: Number(item.unitPrice ?? 0),
+        })),
+      },
+    });
+  }
+
+  const quoteActions = (
+    <>
+      <button className="wide-action primary" onClick={handleConvertToPos} type="button">转到 POS 收银</button>
+      <button className="wide-action secondary" onClick={() => window.print()} type="button">打印报价</button>
+      <button className="wide-action secondary" onClick={() => navigate("/documents")} type="button">文档中心</button>
+    </>
+  );
+
   return (
     <div className="document-template-page">
-      <section className="document-template-toolbar">
-        <button className="icon-button" onClick={() => navigate(-1)} type="button"><span className="material-symbols-outlined">arrow_back</span></button>
-        <div className="document-template-toolbar-copy">
-          <h2>报价单预览</h2>
-          <p>Quote Preview</p>
+      <section className="document-sheet-page">
+        <div className="document-sheet-topbar">
+          <button className="icon-button" onClick={() => navigate(-1)} type="button"><span className="material-symbols-outlined">arrow_back</span></button>
+          <div className="document-sheet-topbar-actions">
+            {quoteActions}
+          </div>
         </div>
-        <div className="document-template-toolbar-actions">
-          <button className="wide-action secondary" onClick={() => window.print()} type="button">打印报价</button>
-          <button className="wide-action secondary" onClick={() => navigate("/documents")} type="button">文档中心</button>
-        </div>
-      </section>
-      <section className="quote-preview-card">
-        <div className="quote-preview-head">
-          <div className="document-brand-lockup">
-            <div className="document-brand-mark">
-              <span className="material-symbols-outlined">build</span>
+
+        <section className="document-sheet-card quote-sheet-card">
+          <div className="document-sheet-header quote-sheet-header">
+            <div className="document-sheet-code">
+              <span>报价编号</span>
+              <strong>{data.quoteNo}</strong>
+              <p>有效期至 {formatDateLabel(data.validUntil)}</p>
             </div>
-            <div>
-              <div className="soft-badge">报价预览</div>
-              <p className="document-brand-name">Vila Repair Hub</p>
-            </div>
-          </div>
-          <div className="quote-preview-title">
-            <h3>{data.quoteNo}</h3>
-            <p>{data.deviceName}</p>
-          </div>
-          <div className="quote-preview-meta">
-            <p>客户: <strong>{data.customerName}</strong></p>
-            <p>有效期至: <strong>{formatDateLabel(data.validUntil)}</strong></p>
-          </div>
-        </div>
-        <div className="document-line-items">
-          {data.items.map((item) => (
-            <div key={item.id} className="document-line-row">
-              <div>
-                <strong>{item.name}</strong>
-                <p>{item.description}</p>
+            <div className="document-sheet-brand document-sheet-brand-extended quote-sheet-brand-right">
+              {companyLogo ? (
+                <div className="document-brand-logo">
+                  <img alt="公司 Logo" src={companyLogo} />
+                </div>
+              ) : (
+                <div className="document-brand-fallback">
+                  <strong>{companyInitials}</strong>
+                </div>
+              )}
+              <div className="document-brand-copy">
+                <span className="micro-label">报价单</span>
+                <p className="document-brand-name">{companyName}</p>
+                <p className="document-sheet-subline">{companyAddress}</p>
+                <p className="document-sheet-subline">{companyPhone}</p>
+                <p className="document-sheet-subline">{companyEmail}</p>
               </div>
-              <span>{item.quantity}</span>
-              <span>{item.unitPriceFormatted}</span>
-              <strong>{item.totalPriceFormatted}</strong>
             </div>
-          ))}
-        </div>
-        <div className="document-total-box">
-          <div><span>小计</span><strong>{data.subtotalFormatted}</strong></div>
-          <div><span>税额</span><strong>{data.vatAmountFormatted}</strong></div>
-          <div className="grand"><span>报价总额</span><strong>{data.totalAmountFormatted}</strong></div>
-        </div>
+          </div>
+
+          <div className="document-sheet-meta-grid quote-meta-grid">
+            <div className="document-sheet-meta-card">
+              <span>客户信息</span>
+              <strong>{data.customerName || "门店客户"}</strong>
+              <p>{data.customerPhone || "待补充联系电话"}</p>
+            </div>
+            <div className="document-sheet-meta-card">
+              <span>设备与服务</span>
+              <strong>{data.deviceName || "未填写设备"}</strong>
+              <p>{data.serviceType || "维修报价"}</p>
+            </div>
+          </div>
+
+          <div className="document-sheet-table">
+            <div className="document-sheet-table-head">
+              <span>项目</span>
+              <span>数量</span>
+              <span>单价</span>
+              <span>金额</span>
+            </div>
+            {data.items.map((item) => (
+              <div key={item.id} className="document-sheet-table-row">
+                <div>
+                  <strong>{item.name}</strong>
+                  <p>{item.description || "报价项目"}</p>
+                </div>
+                <span>{item.quantity}</span>
+                <span>{item.unitPriceFormatted}</span>
+                <strong>{item.totalPriceFormatted}</strong>
+              </div>
+            ))}
+          </div>
+
+          <div className="document-sheet-footer-grid">
+            <div className="document-footer-left">
+              <div className="document-sheet-note">
+                <span>报价备注</span>
+                <p>{data.notes?.trim() || "本报价仅供维修前确认，最终费用以实际检测结果和客户确认内容为准。"}</p>
+              </div>
+              <div className="document-bank-inline footer">
+                <span>银行账号信息</span>
+                <p>{bankAccounts || "请在门店设置中填写银行名称、账号、账户名等信息。"}</p>
+              </div>
+            </div>
+            <div className="document-total-box">
+              <div><span>小计</span><strong>{data.subtotalFormatted}</strong></div>
+              <div><span>{taxInclusive ? `税额（已含 ${taxRate}%）` : `税额（${taxRate}%）`}</span><strong>{data.vatAmountFormatted}</strong></div>
+              <div className="grand"><span>{taxInclusive ? "报价总额（含税）" : "报价总额（不含税）"}</span><strong>{data.totalAmountFormatted}</strong></div>
+            </div>
+          </div>
+        </section>
       </section>
     </div>
   );
@@ -8385,9 +8636,30 @@ function QuotePreviewPage() {
 
 function PosRegisterPage({ parts, customers }) {
   const navigate = useNavigate();
+  const [customerOptions, setCustomerOptions] = useState(customers);
+  const [storeSettings, setStoreSettings] = useState(null);
   const [category, setCategory] = useState("All");
   const [search, setSearch] = useState("");
   const [cart, setCart] = useState([]);
+  const [customerId, setCustomerId] = useState(String(customers[0]?.id ?? ""));
+  const [creatingCustomer, setCreatingCustomer] = useState(false);
+  const [newCustomer, setNewCustomer] = useState({ name: "", phone: "", email: "", address: "" });
+
+  useEffect(() => {
+    setCustomerOptions(customers);
+  }, [customers]);
+
+  useEffect(() => {
+    let active = true;
+    fetchJson("/api/settings/store")
+      .then((result) => {
+        if (active) setStoreSettings(result);
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const visibleParts = parts.filter((part) => {
     const matchesCategory = category === "All" || part.category === category;
@@ -8420,14 +8692,26 @@ function PosRegisterPage({ parts, customers }) {
     });
   }
 
+  function updateCartQuantity(partId, delta) {
+    setCart((current) => current
+      .map((item) => String(item.partId) === String(partId)
+        ? { ...item, quantity: Math.max(0, Number(item.quantity ?? 0) + delta) }
+        : item)
+      .filter((item) => Number(item.quantity ?? 0) > 0));
+  }
+
+  function removeFromCart(partId) {
+    setCart((current) => current.filter((item) => String(item.partId) !== String(partId)));
+  }
+
   return (
     <div className="pos-template-page">
       <section className="pos-template-head">
         <div>
           <h2>POS 收银台</h2>
-          <p>按原模板网格快速加购并结账。</p>
+          <p>{storeSettings?.companyName || storeSettings?.storeName || "维拉港维修中心"} · {storeSettings?.companyPhone || storeSettings?.phone || "待补充联系电话"}</p>
         </div>
-        <button className="wide-action secondary" onClick={() => navigate("/pos/checkout", { state: { cart, customerId: customers[0]?.id ?? "" } })} type="button">去结账</button>
+        <button className="wide-action secondary" onClick={() => navigate("/pos/checkout", { state: { cart, customerId } })} type="button">去结账</button>
       </section>
       <section className="pos-template-overview">
         <article className="pos-overview-card accent">
@@ -8442,9 +8726,48 @@ function PosRegisterPage({ parts, customers }) {
         </article>
         <article className="pos-overview-card">
           <span>默认客户</span>
-          <strong>{customers[0]?.name ?? "门店散客"}</strong>
+          <strong>{customerOptions.find((item) => String(item.id) === String(customerId))?.name ?? "门店散客"}</strong>
           <p>结账时可切换客户</p>
         </article>
+      </section>
+      <section className="quote-template-section">
+        <div className="quote-form-grid compact">
+          <label>
+            <span>收银客户</span>
+            <select value={customerId} onChange={(event) => setCustomerId(event.target.value)}>
+              <option value="">门店散客</option>
+              {customerOptions.map((customer) => <option key={customer.id} value={customer.id}>{customer.name}</option>)}
+            </select>
+          </label>
+        </div>
+        <div className="quick-create-inline">
+          <input placeholder="客户姓名" value={newCustomer.name} onChange={(event) => setNewCustomer((current) => ({ ...current, name: event.target.value }))} />
+          <input placeholder="联系电话" value={newCustomer.phone} onChange={(event) => setNewCustomer((current) => ({ ...current, phone: event.target.value }))} />
+          <button
+            className="wide-action secondary"
+            disabled={creatingCustomer}
+            onClick={async () => {
+              try {
+                setCreatingCustomer(true);
+                const created = await fetchJson("/api/customers", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(newCustomer),
+                });
+                setCustomerOptions((current) => [created, ...current]);
+                setCustomerId(String(created.id));
+                setNewCustomer({ name: "", phone: "", email: "", address: "" });
+              } catch (createError) {
+                alert(createError.message);
+              } finally {
+                setCreatingCustomer(false);
+              }
+            }}
+            type="button"
+          >
+            {creatingCustomer ? "创建中..." : "新增客户"}
+          </button>
+        </div>
       </section>
       <section className="pos-template-search">
         <div className="search-shell"><span className="material-symbols-outlined">search</span><input placeholder="搜索配件 / SKU" value={search} onChange={(event) => setSearch(event.target.value)} /></div>
@@ -8471,13 +8794,41 @@ function PosRegisterPage({ parts, customers }) {
           </article>
         ))}
       </section>
+      {cart.length ? (
+        <section className="pos-cart-list">
+          <div className="quote-template-title-row compact">
+            <h3>已选商品</h3>
+            <span className="soft-badge">{cartCount} 件</span>
+          </div>
+          <div className="document-line-items">
+            {cart.map((item) => (
+              <div key={`${item.partId}-${item.name}`} className="document-line-row pos-cart-line">
+                <div>
+                  <strong>{item.name}</strong>
+                  <p>{item.description || formatPartCategory(item.category)}</p>
+                </div>
+                <div className="pos-qty-stepper">
+                  <button onClick={() => updateCartQuantity(item.partId, -1)} type="button">-</button>
+                  <span>{item.quantity}</span>
+                  <button onClick={() => updateCartQuantity(item.partId, 1)} type="button">+</button>
+                </div>
+                <span>{formatCurrency(item.unitPrice)}</span>
+                <div className="pos-cart-line-total">
+                  <strong>{formatCurrency(item.quantity * item.unitPrice)}</strong>
+                  <button className="link-button danger" onClick={() => removeFromCart(item.partId)} type="button">移除</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null}
       <section className="pos-cart-bar">
         <div>
           <span>应付合计</span>
           <strong>{formatCurrency(cartTotal)}</strong>
           <p>{cartCount ? `已选 ${cartCount} 件商品` : "请选择商品后再结账"}</p>
         </div>
-        <button className="wide-action primary" onClick={() => navigate("/pos/checkout", { state: { cart, customerId: customers[0]?.id ?? "" } })} type="button">结账</button>
+        <button className="wide-action primary" onClick={() => navigate("/pos/checkout", { state: { cart, customerId } })} type="button">结账</button>
       </section>
     </div>
   );
@@ -8488,15 +8839,55 @@ function PosCheckoutPage({ customers }) {
   const location = useLocation();
   const incomingCart = location.state?.cart ?? [];
   const incomingCustomerId = String(location.state?.customerId ?? customers[0]?.id ?? "");
+  const [customerOptions, setCustomerOptions] = useState(customers);
+  const [storeSettings, setStoreSettings] = useState(null);
   const [draft, setDraft] = useState(() => ({
     ...createPosDraft(customers),
     customerId: incomingCustomerId,
+    customerName: location.state?.customerName ?? customers[0]?.name ?? "",
+    customerPhone: location.state?.customerPhone ?? customers[0]?.phone ?? "",
+    sourceQuoteNo: location.state?.sourceQuoteNo ?? "",
+    note: location.state?.note ?? "",
     items: incomingCart,
   }));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const selectedCustomer = customers.find((item) => String(item.id) === String(draft.customerId));
+  const [creatingCustomer, setCreatingCustomer] = useState(false);
+  const [newCustomer, setNewCustomer] = useState({ name: "", phone: "", email: "", address: "" });
+  const selectedCustomer = customerOptions.find((item) => String(item.id) === String(draft.customerId));
   const subtotal = draft.items.reduce((sum, item) => sum + Number(item.quantity || 0) * Number(item.unitPrice || 0), 0);
+
+  useEffect(() => {
+    setCustomerOptions(customers);
+  }, [customers]);
+
+  useEffect(() => {
+    let active = true;
+    fetchJson("/api/settings/store")
+      .then((result) => {
+        if (active) setStoreSettings(result);
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  function updateDraftItem(index, patch) {
+    setDraft((current) => ({
+      ...current,
+      items: current.items
+        .map((item, itemIndex) => (itemIndex === index ? { ...item, ...patch } : item))
+        .filter((item) => Number(item.quantity ?? 0) > 0),
+    }));
+  }
+
+  function removeDraftItem(index) {
+    setDraft((current) => ({
+      ...current,
+      items: current.items.filter((_, itemIndex) => itemIndex !== index),
+    }));
+  }
 
   async function handleCheckout() {
     try {
@@ -8511,6 +8902,7 @@ function PosCheckoutPage({ customers }) {
           customerPhone: selectedCustomer?.phone ?? draft.customerPhone,
           paymentMethod: draft.paymentMethod,
           note: draft.note,
+          sourceQuoteNo: draft.sourceQuoteNo,
           items: draft.items,
         }),
       });
@@ -8526,7 +8918,10 @@ function PosCheckoutPage({ customers }) {
     <div className="document-template-page">
       <section className="document-template-toolbar">
         <button className="icon-button" onClick={() => navigate("/pos/register")} type="button"><span className="material-symbols-outlined">arrow_back</span></button>
-        <h2>POS 收银结账</h2>
+        <div className="document-template-toolbar-copy">
+          <h2>POS 收银结账</h2>
+          <p>{draft.sourceQuoteNo ? `来源报价 ${draft.sourceQuoteNo}` : "门店直接收银"} · {storeSettings?.companyName || storeSettings?.storeName || "维拉港维修中心"}</p>
+        </div>
       </section>
       <div className="checkout-template-grid">
         <section className="quote-template-section">
@@ -8535,7 +8930,7 @@ function PosCheckoutPage({ customers }) {
               <span>客户</span>
               <select value={draft.customerId} onChange={(event) => setDraft((current) => ({ ...current, customerId: event.target.value }))}>
                 <option value="">门店散客</option>
-                {customers.map((customer) => <option key={customer.id} value={customer.id}>{customer.name}</option>)}
+                {customerOptions.map((customer) => <option key={customer.id} value={customer.id}>{customer.name}</option>)}
               </select>
             </label>
             <label>
@@ -8547,6 +8942,46 @@ function PosCheckoutPage({ customers }) {
               </select>
             </label>
           </div>
+          <div className="quick-create-inline">
+            <input placeholder="客户姓名" value={newCustomer.name} onChange={(event) => setNewCustomer((current) => ({ ...current, name: event.target.value }))} />
+            <input placeholder="联系电话" value={newCustomer.phone} onChange={(event) => setNewCustomer((current) => ({ ...current, phone: event.target.value }))} />
+            <button
+              className="wide-action secondary"
+              disabled={creatingCustomer}
+              onClick={async () => {
+                try {
+                  setCreatingCustomer(true);
+                  setError("");
+                  const created = await fetchJson("/api/customers", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(newCustomer),
+                  });
+                  setCustomerOptions((current) => [created, ...current]);
+                  setDraft((current) => ({
+                    ...current,
+                    customerId: String(created.id),
+                    customerName: created.name,
+                    customerPhone: created.phone ?? "",
+                  }));
+                  setNewCustomer({ name: "", phone: "", email: "", address: "" });
+                } catch (createError) {
+                  setError(createError.message);
+                } finally {
+                  setCreatingCustomer(false);
+                }
+              }}
+              type="button"
+            >
+              {creatingCustomer ? "创建中..." : "新增客户"}
+            </button>
+          </div>
+          {draft.sourceQuoteNo ? (
+            <div className="checkout-source-badge">
+              <span className="soft-badge">报价转单</span>
+              <strong>{draft.sourceQuoteNo}</strong>
+            </div>
+          ) : null}
           <label className="quote-template-section-label">
             <span>备注</span>
             <textarea value={draft.note} onChange={(event) => setDraft((current) => ({ ...current, note: event.target.value }))} />
@@ -8562,9 +8997,16 @@ function PosCheckoutPage({ customers }) {
                   <strong>{item.name}</strong>
                   <p>{item.description || formatPartCategory(item.category)}</p>
                 </div>
-                <span>{item.quantity}</span>
+                <div className="pos-qty-stepper">
+                  <button onClick={() => updateDraftItem(index, { quantity: Math.max(0, Number(item.quantity || 0) - 1) })} type="button">-</button>
+                  <span>{item.quantity}</span>
+                  <button onClick={() => updateDraftItem(index, { quantity: Number(item.quantity || 0) + 1 })} type="button">+</button>
+                </div>
                 <span>{formatCurrency(item.unitPrice)}</span>
-                <strong>{formatCurrency(item.quantity * item.unitPrice)}</strong>
+                <div className="pos-cart-line-total">
+                  <strong>{formatCurrency(item.quantity * item.unitPrice)}</strong>
+                  <button className="link-button danger" onClick={() => removeDraftItem(index)} type="button">移除</button>
+                </div>
               </div>
             ))}
           </div>
@@ -8601,13 +9043,20 @@ function PosReceipt80mmPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [data, setData] = useState(null);
+  const [storeSettings, setStoreSettings] = useState(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
     let active = true;
-    fetchJson(`/api/pos/sales/${id}`)
-      .then((result) => {
-        if (active) setData(result);
+    Promise.all([
+      fetchJson(`/api/pos/sales/${id}`),
+      fetchJson("/api/settings/store"),
+    ])
+      .then(([saleResult, storeResult]) => {
+        if (active) {
+          setData(saleResult);
+          setStoreSettings(storeResult);
+        }
       })
       .catch((loadError) => {
         if (active) setError(loadError.message);
@@ -8631,14 +9080,16 @@ function PosReceipt80mmPage() {
           <div className="document-brand-mark thermal">
             <span className="material-symbols-outlined">build</span>
           </div>
-          <strong>Vila Port POS</strong>
-          <p>80mm 收银小票</p>
+          <strong>{storeSettings?.companyName || storeSettings?.storeName || "维拉港维修中心"}</strong>
+          <p>{storeSettings?.companyAddress || storeSettings?.address || "维拉港 · 瓦努阿图"}</p>
         </div>
         <div className="receipt-divider" />
         <div className="receipt-meta">
           <div><span>收银单号</span><strong>{data.saleNo}</strong></div>
           <div><span>客户</span><strong>{data.customerName || "门店散客"}</strong></div>
           <div><span>支付方式</span><strong>{formatChannelLabel(data.paymentMethod)}</strong></div>
+          <div><span>收银状态</span><strong>已完成</strong></div>
+          <div><span>联系电话</span><strong>{storeSettings?.companyPhone || storeSettings?.phone || "-"}</strong></div>
         </div>
         <div className="receipt-divider" />
         <div className="receipt-items">
@@ -8658,6 +9109,10 @@ function PosReceipt80mmPage() {
           <div><span>税额</span><strong>{data.vatAmountFormatted}</strong></div>
           <div className="receipt-grand-total"><span>合计金额</span><strong>{data.totalAmountFormatted}</strong></div>
         </div>
+        <div className="thermal-footer-note">
+          <span className="soft-badge">POS 已收款</span>
+          <p>请妥善保管此票据，作为售后和发票关联凭证。</p>
+        </div>
       </div>
     </div>
   );
@@ -8667,13 +9122,20 @@ function OfficialInvoicePage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [data, setData] = useState(null);
+  const [storeSettings, setStoreSettings] = useState(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
     let active = true;
-    fetchJson(`/api/invoices/${id}`)
-      .then((result) => {
-        if (active) setData(result);
+    Promise.all([
+      fetchJson(`/api/invoices/${id}`),
+      fetchJson("/api/settings/store"),
+    ])
+      .then(([invoiceResult, storeResult]) => {
+        if (active) {
+          setData(invoiceResult);
+          setStoreSettings(storeResult);
+        }
       })
       .catch((loadError) => {
         if (active) setError(loadError.message);
@@ -8686,69 +9148,102 @@ function OfficialInvoicePage() {
   if (!data && !error) return <LoadingState label="正在加载正式发票..." />;
   if (error) return <EmptyState title="发票加载失败" message={error} />;
 
+  const companyName = storeSettings?.companyName || storeSettings?.storeName || "维拉港维修中心";
+  const companyAddress = storeSettings?.companyAddress || storeSettings?.address || "维拉港 · 瓦努阿图";
+  const companyPhone = storeSettings?.companyPhone || storeSettings?.phone || "待补充公司电话";
+  const companyEmail = storeSettings?.email || "待补充邮箱";
+  const companyLogo = storeSettings?.coverImage || "";
+  const companyInitials = companyName
+    .replace(/\s+/g, "")
+    .slice(0, 2)
+    .toUpperCase();
+
   return (
     <div className="document-template-page">
-      <section className="document-template-toolbar">
-        <div className="document-template-toolbar-copy">
-          <h2>正式发票</h2>
-          <p>Official Tax Invoice</p>
-        </div>
-        <div className="document-template-toolbar-actions">
-          <button className="wide-action primary" onClick={() => window.print()} type="button">打印发票</button>
-          <button className="wide-action secondary" onClick={() => navigate(`/pos/sales/${data.saleNo}/receipt`)} type="button">查看小票</button>
-        </div>
-      </section>
-      <section className="invoice-template-card">
-        <div className="invoice-template-head">
-          <div className="document-brand-lockup">
-            <div className="document-brand-mark invoice">
-              <span className="material-symbols-outlined">receipt_long</span>
-            </div>
-            <div>
-              <span className="micro-label">Official Tax Invoice</span>
-              <p className="document-brand-name">Vila Port POS</p>
-            </div>
-          </div>
-          <div className="invoice-template-title">
-            <h2>INVOICE #{data.invoiceNo}</h2>
-            <div className="soft-badge">PAID</div>
-          </div>
-          <div className="invoice-template-meta">
-            <strong>Vila Repair Hub</strong>
-            <p>Port Vila, Efate</p>
-            <p>Issue Date: {formatDateLabel(data.issueDate)}</p>
+      <section className="document-sheet-page">
+        <div className="document-sheet-topbar">
+          <button className="icon-button" onClick={() => navigate("/documents")} type="button"><span className="material-symbols-outlined">arrow_back</span></button>
+          <div className="document-sheet-topbar-actions">
+            <button className="wide-action secondary" onClick={() => navigate(`/pos/sales/${data.saleNo}/receipt`)} type="button">查看小票</button>
+            <button className="wide-action primary" onClick={() => window.print()} type="button">打印发票</button>
           </div>
         </div>
-        <div className="invoice-template-grid">
-          <div>
-            <span className="micro-label">Billed To</span>
-            <strong>{data.customerName}</strong>
-            <p>{data.customerPhone || "门店散客"}</p>
-          </div>
-          <div>
-            <span className="micro-label">Payment Details</span>
-            <strong>{formatChannelLabel(data.paymentMethod)}</strong>
-            <p>Reference: {data.saleNo}</p>
-          </div>
-        </div>
-        <div className="document-line-items invoice">
-          {data.items.map((item) => (
-            <div key={item.id} className="document-line-row invoice">
-              <div>
-                <strong>{item.name}</strong>
-                <p>{item.description || formatPartCategory(item.category)}</p>
+
+        <section className="document-sheet-card invoice invoice-sheet-card">
+          <div className="document-sheet-header">
+            <div className="document-sheet-brand document-sheet-brand-extended">
+              {companyLogo ? (
+                <div className="document-brand-logo invoice">
+                  <img alt="公司 Logo" src={companyLogo} />
+                </div>
+              ) : (
+                <div className="document-brand-fallback invoice">
+                  <strong>{companyInitials}</strong>
+                </div>
+              )}
+              <div className="document-brand-copy">
+                <span className="micro-label">正式发票</span>
+                <p className="document-brand-name">{companyName}</p>
+                <p className="document-sheet-subline">{companyAddress}</p>
+                <p className="document-sheet-subline">{companyPhone}</p>
+                <p className="document-sheet-subline">{companyEmail}</p>
+                <p className="document-sheet-subline">TIN 税号：{storeSettings?.tinNumber || "-"}</p>
               </div>
-              <span>{item.quantity}</span>
-              <span>{item.unitPriceFormatted}</span>
-              <strong>{item.totalPriceFormatted}</strong>
             </div>
-          ))}
-        </div>
-        <div className="document-total-box invoice">
-          <div><span>Subtotal</span><strong>{data.subtotalFormatted}</strong></div>
-          <div><span>VAT</span><strong>{data.vatAmountFormatted}</strong></div>
-          <div className="grand"><span>Total Amount</span><strong>{data.totalAmountFormatted}</strong></div>
-        </div>
+            <div className="document-sheet-code">
+              <span>发票编号</span>
+              <strong>{data.invoiceNo}</strong>
+              <p>开票日期 {formatDateLabel(data.issueDate)}</p>
+            </div>
+          </div>
+
+          <div className="document-sheet-meta-card invoice-summary-card">
+            <div className="invoice-summary-grid">
+              <div>
+                <span>客户付款信息</span>
+                <strong>{formatChannelLabel(data.paymentMethod)}</strong>
+                <p>收银单号 {data.saleNo}</p>
+              </div>
+              <div>
+                <span>发票总额</span>
+                <strong>{data.totalAmountFormatted}</strong>
+                <p>状态 {data.statusLabel || "已支付"}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="document-sheet-table">
+            <div className="document-sheet-table-head">
+              <span>项目</span>
+              <span>数量</span>
+              <span>单价</span>
+              <span>金额</span>
+            </div>
+            {data.items.map((item) => (
+              <div key={item.id} className="document-sheet-table-row">
+                <div>
+                  <strong>{item.name}</strong>
+                  <p>{item.description || formatPartCategory(item.category)}</p>
+                </div>
+                <span>{item.quantity}</span>
+                <span>{item.unitPriceFormatted}</span>
+                <strong>{item.totalPriceFormatted}</strong>
+              </div>
+            ))}
+          </div>
+
+          <div className="document-sheet-footer-grid">
+            <div className="document-sheet-note">
+              <span>票据说明</span>
+              <p>本发票为门店收银完成后的正式付款凭证，可与 80mm 小票一并用于对账、售后和客户留存。</p>
+            </div>
+            <div className="document-total-box invoice">
+              <div><span>小计</span><strong>{data.subtotalFormatted}</strong></div>
+              <div><span>税额</span><strong>{data.vatAmountFormatted}</strong></div>
+              <div className="grand"><span>发票总额</span><strong>{data.totalAmountFormatted}</strong></div>
+            </div>
+          </div>
+        </section>
       </section>
     </div>
   );
@@ -8797,7 +9292,7 @@ function DocumentManagementPage() {
       <section className="document-template-toolbar">
         <div className="document-template-toolbar-copy">
           <h2>文档中心</h2>
-          <p>Quotes & Invoices</p>
+          <p>报价单与发票总览</p>
         </div>
         <div className="search-shell document-search-shell"><span className="material-symbols-outlined">search</span><input placeholder="按编号或客户搜索..." value={search} onChange={(event) => setSearch(event.target.value)} /></div>
         <div className="pos-template-tabs document-tabs">
@@ -8818,11 +9313,18 @@ function DocumentManagementPage() {
                   <strong>{row.code}</strong>
                   <p>{row.customerName}</p>
                 </div>
-                <span className={`soft-badge ${row.status === "paid" ? "" : row.status === "overdue" ? "soft-badge-warn" : ""}`}>{row.typeLabel}</span>
+                <div className="document-activity-badges">
+                  <span className={`soft-badge ${row.status === "paid" ? "" : row.status === "overdue" ? "soft-badge-warn" : ""}`}>{row.typeLabel}</span>
+                  <span className={`soft-badge subtle ${row.status === "paid" ? "" : row.status === "overdue" ? "soft-badge-warn" : ""}`}>{row.statusLabel || "处理中"}</span>
+                </div>
               </div>
               <div className="document-activity-meta">
                 <span>{formatDateLabel(row.createdAt)}</span>
                 <strong>{row.amountFormatted}</strong>
+              </div>
+              <div className="document-activity-foot">
+                <span>{row.type === "quote" ? "查看报价详情" : "查看发票详情"}</span>
+                <span className="material-symbols-outlined">north_east</span>
               </div>
             </div>
             <span className="material-symbols-outlined">chevron_right</span>

@@ -56,6 +56,13 @@ export async function pgGetStoreSettings(pgOne) {
       phone,
       email,
       address,
+      company_name AS "companyName",
+      company_address AS "companyAddress",
+      company_phone AS "companyPhone",
+      bank_accounts AS "bankAccounts",
+      quote_tax_inclusive AS "quoteTaxInclusive",
+      quote_tax_rate AS "quoteTaxRate",
+      tin_number AS "tinNumber",
       cover_image AS "coverImage",
       updated_at AS "updatedAt"
     FROM settings_store
@@ -191,6 +198,13 @@ export async function pgUpdateStoreSettings(pgQuery, payload) {
   const phone = String(payload?.phone ?? "").trim();
   const email = String(payload?.email ?? "").trim();
   const address = String(payload?.address ?? "").trim();
+  const companyName = String(payload?.companyName ?? "").trim();
+  const companyAddress = String(payload?.companyAddress ?? "").trim();
+  const companyPhone = String(payload?.companyPhone ?? "").trim();
+  const bankAccounts = String(payload?.bankAccounts ?? "").trim();
+  const quoteTaxInclusive = payload?.quoteTaxInclusive === false ? 0 : 1;
+  const quoteTaxRate = Math.max(0, Number(payload?.quoteTaxRate ?? 15));
+  const tinNumber = String(payload?.tinNumber ?? "").trim();
   const coverImage = String(payload?.coverImage ?? "").trim();
 
   if (!storeName || !storeCode || !phone || !email || !address) {
@@ -199,9 +213,25 @@ export async function pgUpdateStoreSettings(pgQuery, payload) {
 
   await pgQuery(`
     UPDATE settings_store
-    SET store_name = $1, store_code = $2, phone = $3, email = $4, address = $5, cover_image = $6, updated_at = CURRENT_TIMESTAMP
+    SET store_name = $1, store_code = $2, phone = $3, email = $4, address = $5,
+        company_name = $6, company_address = $7, company_phone = $8, bank_accounts = $9, quote_tax_inclusive = $10, quote_tax_rate = $11, tin_number = $12,
+        cover_image = $13, updated_at = CURRENT_TIMESTAMP
     WHERE id = 1
-  `, [storeName, storeCode, phone, email, address, coverImage]);
+  `, [
+    storeName,
+    storeCode,
+    phone,
+    email,
+    address,
+    companyName || storeName,
+    companyAddress || address,
+    companyPhone || phone,
+    bankAccounts,
+    quoteTaxInclusive,
+    quoteTaxRate,
+    tinNumber,
+    coverImage,
+  ]);
 
   return { data: await pgGetStoreSettings((text, params) => pgQuery(text, params).then((rows) => rows[0] ?? null)), storeName };
 }
