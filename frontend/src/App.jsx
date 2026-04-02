@@ -120,6 +120,38 @@ const iconByDevice = {
   watch: "watch",
 };
 
+const primaryNavItems = [
+  { to: "/repairs-hub", icon: "dashboard", label: "工作台" },
+  { to: "/repair-queue", icon: "build", label: "维修" },
+  { to: "/inventory", icon: "inventory_2", label: "库存" },
+  { to: "/customers", icon: "group", label: "客户" },
+  { to: "/pos/register", icon: "point_of_sale", label: "POS" },
+  { to: "/financial-reports", icon: "payments", label: "财务" },
+];
+
+function useIsMobileViewport(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window === "undefined") return true;
+    return window.innerWidth < breakpoint;
+  });
+
+  useEffect(() => {
+    if (typeof window === "undefined") return undefined;
+
+    const mediaQuery = window.matchMedia(`(max-width: ${breakpoint - 1}px)`);
+    const syncViewport = (event) => setIsMobile(event.matches);
+
+    setIsMobile(mediaQuery.matches);
+    mediaQuery.addEventListener("change", syncViewport);
+
+    return () => {
+      mediaQuery.removeEventListener("change", syncViewport);
+    };
+  }, [breakpoint]);
+
+  return isMobile;
+}
+
 function inferPartCategory(partName = "") {
   const name = partName.toLowerCase();
   if (name.includes("screen") || name.includes("display") || name.includes("digitizer") || name.includes("oled")) return "Screens";
@@ -304,6 +336,7 @@ function getOrderRouteId(orderLike, fallback = "1") {
 function App() {
   const location = useLocation();
   const navigate = useNavigate();
+  const isMobile = useIsMobileViewport();
   const [dashboard, setDashboard] = useState(null);
   const [orders, setOrders] = useState([]);
   const [customers, setCustomers] = useState([]);
@@ -589,8 +622,43 @@ function App() {
     onStatusChange: handleStatusChange,
   };
 
+  function handlePrimaryAction() {
+    if (location.pathname.startsWith("/inventory")) {
+      setShowMovementForm(true);
+      return;
+    }
+
+    setOrderForm(createDefaultOrderForm(orderFormOptions));
+    setShowOrderForm(true);
+  }
+
   return (
-    <div className="template-shell">
+    <div className={`template-shell ${isMobile ? "mobile-shell" : "desktop-shell"}`}>
+      {!isMobile ? (
+        <aside className="desktop-sidebar">
+          <div className="desktop-brand">
+            <div className="desktop-brand-mark">VP</div>
+            <div className="desktop-brand-copy">
+              <strong>Vila Port Repair</strong>
+              <span>Desktop / Tablet Workspace</span>
+            </div>
+          </div>
+          <nav className="desktop-nav">
+            {primaryNavItems.map((item) => (
+              <NavLink key={item.to} className={({ isActive }) => (isActive ? "desktop-nav-item active" : "desktop-nav-item")} to={item.to}>
+                <span className="material-symbols-outlined">{item.icon}</span>
+                <span>{item.label}</span>
+              </NavLink>
+            ))}
+          </nav>
+          <div className="desktop-sidebar-footer">
+            <button className="wide-action secondary" onClick={() => navigate("/more-options")} type="button">更多功能</button>
+          </div>
+        </aside>
+      ) : null}
+
+      <div className={isMobile ? "template-frame" : "desktop-frame"}>
+      {isMobile ? (
       <header className="mobile-topbar">
         <div className="topbar-title">
           <button className="icon-button" onClick={() => navigate("/more-options")} type="button">
@@ -604,20 +672,25 @@ function App() {
         <button
           className="icon-button primary"
           type="button"
-          onClick={() => {
-            if (location.pathname.startsWith("/inventory")) {
-              setShowMovementForm(true);
-              return;
-            }
-            setOrderForm(createDefaultOrderForm(orderFormOptions));
-            setShowOrderForm(true);
-          }}
+          onClick={handlePrimaryAction}
         >
           <span className="material-symbols-outlined">add_circle</span>
         </button>
       </header>
+      ) : (
+        <header className="desktop-topbar">
+          <div className="desktop-topbar-copy">
+            <p>电脑 / 平板工作区</p>
+            <h1>{currentSectionTitle}</h1>
+          </div>
+          <div className="desktop-topbar-actions">
+            <button className="wide-action secondary" onClick={() => navigate("/documents")} type="button">文档中心</button>
+            <button className="wide-action primary" onClick={handlePrimaryAction} type="button">快速新建</button>
+          </div>
+        </header>
+      )}
 
-      <main className="template-main">
+      <main className={`template-main ${isMobile ? "mobile-main" : "desktop-main"}`}>
         {error ? <div className="message-banner error">{error}</div> : null}
         {success ? <div className="message-banner success">{success}</div> : null}
 
@@ -803,8 +876,9 @@ function App() {
           <Route path="/supply_order_details/:id" element={<SupplyOrderDetailsAlias />} />
         </Routes>
       </main>
+      </div>
 
-      <BottomNav />
+      {isMobile ? <BottomNav /> : null}
 
       {showOrderForm ? (
         <Drawer title="新增订单" onClose={() => setShowOrderForm(false)}>
@@ -1085,6 +1159,7 @@ function LegacyWorkbenchPage({ dashboard, orders, financeReport }) {
 
 function RepairsHubPage({ orders, dashboard, financeReport, loading, selectedStatus, search, setSearch, setSelectedStatus, refresh, openOrderForm }) {
   const navigate = useNavigate();
+  const isMobile = useIsMobileViewport();
   const selectedStatusLabel = statusTabs.find((tab) => tab.value === selectedStatus)?.label ?? "全部";
   const todayOrders = dashboard?.metrics?.todayOrders ?? 0;
   const pendingCount = dashboard?.metrics?.pendingOrders ?? 0;
@@ -1102,6 +1177,123 @@ function RepairsHubPage({ orders, dashboard, financeReport, loading, selectedSta
     setSelectedStatus(nextStatus);
     refresh(nextStatus, search);
     navigate("/repair-queue", { state: { presetStatus: nextStatus, presetPriority: options.priority ?? "" } });
+  }
+
+  if (!isMobile) {
+    return (
+      <div className="workbench-desktop-page">
+        <section className="workbench-desktop-hero">
+          <div className="workbench-desktop-hero-copy">
+            <span className="micro-label">Desktop Operations</span>
+            <h2>综合维修管理工作台</h2>
+            <p>聚焦当日工单、营收与交付状态，适合电脑和平板连续操作。</p>
+          </div>
+          <div className="workbench-desktop-hero-actions">
+            <button className="wide-action secondary" onClick={() => navigate("/notifications")} type="button">通知中心</button>
+            <button className="wide-action primary" onClick={openOrderForm} type="button">新增订单</button>
+          </div>
+        </section>
+
+        <section className="workbench-desktop-controls">
+          <div className="repairs-template-search">
+            <span className="material-symbols-outlined">search</span>
+            <input onChange={(event) => setSearch(event.target.value)} placeholder="搜索设备、客户、订单号..." type="text" value={search} />
+          </div>
+          <nav className="repairs-template-filters desktop">
+            {statusTabs.map((tab) => (
+              <button
+                key={tab.value}
+                className={selectedStatus === tab.value ? "repairs-template-filter active" : "repairs-template-filter"}
+                onClick={() => {
+                  setSelectedStatus(tab.value);
+                  refresh(tab.value, search);
+                }}
+                type="button"
+              >
+                {tab.label}
+              </button>
+            ))}
+          </nav>
+        </section>
+
+        <section className="workbench-desktop-metrics">
+          <button className="workbench-desktop-metric-card" onClick={() => openWorkbenchFilter(selectedStatus === "all" ? "pending" : selectedStatus)} type="button">
+            <span>工单总览</span>
+            <strong>{selectedStatus === "all" ? todayOrders : visibleCount}</strong>
+            <p>{selectedStatus === "all" ? "今日新增工单" : `${selectedStatusLabel} 筛选结果`}</p>
+          </button>
+          <button className="workbench-desktop-metric-card warning" onClick={() => openWorkbenchFilter(selectedStatus === "all" ? "in_progress" : "all", selectedStatus === "all" ? {} : { priority: "urgent" })} type="button">
+            <span>维修关注</span>
+            <strong>{selectedStatus === "all" ? pendingCount : visibleUrgent}</strong>
+            <p>{selectedStatus === "all" ? `${inProgressCount} 单维修中` : "当前加急关注项"}</p>
+          </button>
+          <div className="workbench-desktop-metric-card success">
+            <span>营收表现</span>
+            <strong>{selectedStatus === "all" ? todayRevenue : visibleRevenue.toLocaleString("en-US")}</strong>
+            <p>{selectedStatus === "all" ? `${readyCount} 单可交付` : `${visibleReady} 单已完工 / 可交付`}</p>
+          </div>
+          <button className="workbench-desktop-metric-card info" onClick={() => navigate("/supplier-management")} type="button">
+            <span>采购跟进</span>
+            <strong>{pendingProcurements}</strong>
+            <p>待跟进采购单</p>
+          </button>
+        </section>
+
+        <section className="workbench-desktop-grid">
+          <div className="workbench-desktop-panel">
+            <div className="workbench-desktop-panel-head">
+              <h3>{selectedStatus === "all" ? "重点工单" : `${selectedStatusLabel} 工单`}</h3>
+              <button className="link-button" onClick={() => navigate("/repair-queue")} type="button">查看全部</button>
+            </div>
+            <div className="workbench-desktop-order-list">
+              {loading ? <div className="empty-card">数据同步中...</div> : null}
+              {!loading && !activeOrders.length ? <div className="empty-card">当前筛选下暂无工单。</div> : null}
+              {activeOrders.map((order) => (
+                <button key={order.id} className="workbench-desktop-order-row" onClick={() => navigate(`/orders/${getOrderRouteId(order)}`)} type="button">
+                  <div className="workbench-desktop-order-main">
+                    <div className="workbench-desktop-order-icon">
+                      <span className="material-symbols-outlined">{resolveDeviceIcon(order.deviceName)}</span>
+                    </div>
+                    <div>
+                      <strong>{order.title}</strong>
+                      <p>{order.customerName} · {order.orderNo}</p>
+                    </div>
+                  </div>
+                  <div className="workbench-desktop-order-meta">
+                    <span className={`mini-state ${order.status}`}>{statusChinese[order.status] ?? order.status}</span>
+                    <strong>{order.amountFormatted}</strong>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="workbench-desktop-side">
+            <div className="workbench-desktop-panel">
+              <div className="workbench-desktop-panel-head">
+                <h3>快捷操作</h3>
+              </div>
+              <div className="workbench-desktop-actions">
+                <button className="wide-action secondary" onClick={() => navigate(`/orders/${orders[0]?.id ?? 1}/receipt`)} type="button">打印票据</button>
+                <button className="wide-action secondary" onClick={() => navigate("/scanner")} type="button">扫码登记</button>
+                <button className="wide-action secondary" onClick={() => navigate("/quotes/new")} type="button">新增报价</button>
+                <button className="wide-action secondary" onClick={() => navigate("/documents")} type="button">报价与发票</button>
+              </div>
+            </div>
+            <div className="workbench-desktop-panel accent">
+              <div className="workbench-desktop-panel-head">
+                <h3>交付提醒</h3>
+              </div>
+              <div className="workbench-desktop-delivery">
+                <strong>{readyCount}</strong>
+                <p>当前待取机 / 待送还设备</p>
+                <button className="wide-action primary" onClick={() => openWorkbenchFilter("completed")} type="button">查看交付队列</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    );
   }
 
   return (
@@ -1251,6 +1443,7 @@ function RepairsHubPage({ orders, dashboard, financeReport, loading, selectedSta
 function RepairQueuePage({ selectedStatus, search, setSearch, setSelectedStatus, openOrderForm }) {
   const location = useLocation();
   const navigate = useNavigate();
+  const isMobile = useIsMobileViewport();
   const [data, setData] = useState({ metrics: null, rows: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -1316,6 +1509,108 @@ function RepairQueuePage({ selectedStatus, search, setSearch, setSelectedStatus,
     } finally {
       setWorkingId("");
     }
+  }
+
+  if (!isMobile) {
+    return (
+      <div className="repair-queue-desktop-page">
+        <section className="repair-queue-desktop-header">
+          <div>
+            <span className="micro-label">Desktop Queue</span>
+            <h2>维修队列看板</h2>
+          </div>
+          <button className="wide-action primary" onClick={openOrderForm} type="button">新建工单</button>
+        </section>
+
+        <section className="repair-queue-desktop-toolbar">
+          <div className="repairs-template-search">
+            <span className="material-symbols-outlined">search</span>
+            <input onChange={(event) => setSearch(event.target.value)} placeholder="搜索订单、设备或客户..." type="text" value={search} />
+          </div>
+          <div className="repair-queue-desktop-priority">
+            <button className={priorityFilter === "" ? "status-chip active" : "status-chip"} onClick={() => { setPriorityFilter(""); loadQueue(selectedStatus, search, ""); }} type="button">全部优先级</button>
+            <button className={priorityFilter === "urgent" ? "status-chip active" : "status-chip"} onClick={() => { setPriorityFilter("urgent"); loadQueue("all", search, "urgent"); setSelectedStatus("all"); }} type="button">仅加急</button>
+          </div>
+        </section>
+
+        <div className="repair-queue-template-filters desktop">
+          {statusTabs.map((tab) => (
+            <button
+              key={tab.value}
+              className={selectedStatus === tab.value ? "repairs-template-filter active" : "repairs-template-filter"}
+              onClick={() => {
+                setSelectedStatus(tab.value);
+                loadQueue(tab.value, search);
+              }}
+              type="button"
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <section className="repair-queue-desktop-metrics">
+          <div className="repair-queue-desktop-metric"><span>处理中</span><strong>{data.metrics?.active ?? "-"}</strong></div>
+          <div className="repair-queue-desktop-metric"><span>待处理</span><strong>{data.metrics?.pending ?? "-"}</strong></div>
+          <div className="repair-queue-desktop-metric danger"><span>加急单</span><strong>{data.metrics?.urgent ?? "-"}</strong></div>
+          <div className="repair-queue-desktop-metric success"><span>预估产值</span><strong>{data.metrics?.revenueEstimate ?? "-"}</strong></div>
+        </section>
+
+        <section className="repair-queue-desktop-table-wrap">
+          {loading ? <div className="empty-card">数据同步中...</div> : null}
+          {error ? <div className="message-banner error">{error}</div> : null}
+          {!loading && !data.rows.length ? <div className="empty-card">当前筛选下没有订单。</div> : null}
+          {data.rows.length ? (
+            <div className="repair-queue-desktop-table">
+              <div className="repair-queue-desktop-head">
+                <span>设备 / 订单</span>
+                <span>客户</span>
+                <span>状态</span>
+                <span>进度</span>
+                <span>金额</span>
+                <span>操作</span>
+              </div>
+              {data.rows.map((order) => (
+                <div key={order.id} className="repair-queue-desktop-row">
+                  <button className="repair-queue-desktop-device" onClick={() => navigate(`/orders/${getOrderRouteId(order)}`)} type="button">
+                    <span className="material-symbols-outlined">{resolveDeviceIcon(order.deviceName)}</span>
+                    <div>
+                      <strong>{order.deviceName}</strong>
+                      <p>{order.orderNo} · {order.elapsedLabel}</p>
+                    </div>
+                  </button>
+                  <div className="repair-queue-desktop-cell">
+                    <strong>{order.customerName}</strong>
+                    <p>{order.footerText}</p>
+                  </div>
+                  <div className="repair-queue-desktop-cell">
+                    <span className={`mini-state ${order.status === "in_progress" ? "active" : order.priorityLabel?.includes("加急") ? "urgent" : order.status}`}>{order.priorityLabel}</span>
+                  </div>
+                  <div className="repair-queue-desktop-cell">
+                    <div className="repair-queue-desktop-progress">
+                      <div><span style={{ width: `${order.progress}%` }} /></div>
+                      <strong>{order.progress}%</strong>
+                    </div>
+                  </div>
+                  <div className="repair-queue-desktop-cell">
+                    <strong>{order.amountFormatted}</strong>
+                  </div>
+                  <div className="repair-queue-desktop-actions">
+                    {order.status === "pending" ? (
+                      <button disabled={workingId === `${order.id}:accept`} onClick={() => handleQueueAction(order.id, "accept")} type="button">接单</button>
+                    ) : null}
+                    {order.status === "in_progress" ? (
+                      <button disabled={workingId === `${order.id}:complete`} onClick={() => handleQueueAction(order.id, "complete")} type="button">完工</button>
+                    ) : null}
+                    <button className="primary" onClick={() => navigate(`/orders/${getOrderRouteId(order)}`)} type="button">详情</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : null}
+        </section>
+      </div>
+    );
   }
 
   return (
@@ -1440,6 +1735,7 @@ function RepairQueuePage({ selectedStatus, search, setSearch, setSelectedStatus,
 
 function OrderListPage({ orders, loading, selectedStatus, search, setSearch, setSelectedStatus, refresh, openOrderForm }) {
   const navigate = useNavigate();
+  const isMobile = useIsMobileViewport();
 
   function resolveAmountLabel(order) {
     if (order.status === "completed") return "最终金额";
@@ -1458,6 +1754,112 @@ function OrderListPage({ orders, loading, selectedStatus, search, setSearch, set
     if (order.status === "in_progress") return "primary";
     if (order.status === "completed") return "success";
     return "neutral";
+  }
+
+  const listMetrics = useMemo(() => ({
+    all: orders.length,
+    pending: orders.filter((order) => order.status === "pending").length,
+    inProgress: orders.filter((order) => order.status === "in_progress").length,
+    completed: orders.filter((order) => order.status === "completed").length,
+    pickedUp: orders.filter((order) => order.status === "picked_up").length,
+  }), [orders]);
+
+  if (!isMobile) {
+    return (
+      <div className="order-list-desktop-page">
+        <section className="order-list-desktop-hero">
+          <div>
+            <span className="micro-label">订单总览</span>
+            <h2>维修订单列表</h2>
+            <p>按状态筛选工单、快速搜索设备与客户，并直接进入收据或详情流程。</p>
+          </div>
+          <div className="desktop-topbar-actions">
+            <button className="wide-action secondary" onClick={() => refresh(selectedStatus, search)} type="button">刷新列表</button>
+            <button className="wide-action" onClick={openOrderForm} type="button">新建工单</button>
+          </div>
+        </section>
+
+        <section className="order-list-desktop-metrics">
+          <div className="metric-tile"><div><p>全部订单</p><strong>{listMetrics.all}</strong></div></div>
+          <div className="metric-tile warning"><div><p>待维修</p><strong>{listMetrics.pending}</strong></div></div>
+          <div className="metric-tile"><div><p>维修中</p><strong>{listMetrics.inProgress}</strong></div></div>
+          <div className="metric-tile success"><div><p>已修复</p><strong>{listMetrics.completed + listMetrics.pickedUp}</strong></div></div>
+        </section>
+
+        <section className="order-list-desktop-toolbar">
+          <div className="repairs-template-search">
+            <span className="material-symbols-outlined">search</span>
+            <input onChange={(event) => setSearch(event.target.value)} placeholder="搜索设备、客户或订单号..." type="text" value={search} />
+          </div>
+          <nav className="order-list-desktop-filters">
+            <button className={selectedStatus === "all" ? "repairs-template-filter active" : "repairs-template-filter"} onClick={() => { setSelectedStatus("all"); refresh("all", search); }} type="button">全部</button>
+            <button className={selectedStatus === "pending" ? "repairs-template-filter active" : "repairs-template-filter"} onClick={() => { setSelectedStatus("pending"); refresh("pending", search); }} type="button">待维修</button>
+            <button className={selectedStatus === "in_progress" ? "repairs-template-filter active" : "repairs-template-filter"} onClick={() => { setSelectedStatus("in_progress"); refresh("in_progress", search); }} type="button">维修中</button>
+            <button className={selectedStatus === "completed" ? "repairs-template-filter active" : "repairs-template-filter"} onClick={() => { setSelectedStatus("completed"); refresh("completed", search); }} type="button">已修复</button>
+            <button className={selectedStatus === "picked_up" ? "repairs-template-filter active" : "repairs-template-filter"} onClick={() => { setSelectedStatus("picked_up"); refresh("picked_up", search); }} type="button">已取件</button>
+          </nav>
+        </section>
+
+        <div className="order-list-desktop-grid">
+          <section className="order-list-desktop-panel">
+            {loading ? <div className="empty-card">数据同步中...</div> : null}
+            <div className="order-list-desktop-table">
+              <div className="order-list-desktop-head">
+                <span>设备 / 订单号</span>
+                <span>客户</span>
+                <span>状态</span>
+                <span>日期</span>
+                <span>金额</span>
+                <span />
+              </div>
+              {orders.map((order) => {
+                const tone = resolveTone(order);
+                return (
+                  <button key={order.id} className={`order-list-desktop-row ${tone}`} onClick={() => navigate(`/orders/${getOrderRouteId(order)}`)} type="button">
+                    <div className="order-list-desktop-device">
+                      <div className={`order-list-template-icon ${tone}`}>
+                        <span className="material-symbols-outlined">{resolveDeviceIcon(order.deviceName)}</span>
+                      </div>
+                      <div>
+                        <strong>{order.deviceName}</strong>
+                        <p>订单号 {order.orderNo}</p>
+                      </div>
+                    </div>
+                    <div className="order-list-desktop-meta">
+                      <strong>{order.customerName}</strong>
+                      <p>{order.technician || "待分配技师"}</p>
+                    </div>
+                    <span className={`order-list-template-badge ${tone}`}>{order.statusMeta?.label ?? order.status}</span>
+                    <div className="order-list-desktop-meta">
+                      <strong>{order.scheduledDate}</strong>
+                      <p>{resolveDateLabel(order)}</p>
+                    </div>
+                    <div className="order-list-desktop-meta">
+                      <strong>{order.amountFormatted}</strong>
+                      <p>{resolveAmountLabel(order)}</p>
+                    </div>
+                    <span className="material-symbols-outlined">chevron_right</span>
+                  </button>
+                );
+              })}
+            </div>
+            {!orders.length && !loading ? <div className="empty-card">当前筛选下没有订单。</div> : null}
+          </section>
+
+          <aside className="order-list-desktop-side">
+            <div className="template-card">
+              <h3>快捷入口</h3>
+              <p>继续常用工作流，减少来回切换。</p>
+              <div className="stacked-actions">
+                <button className="wide-action" onClick={openOrderForm} type="button">新建维修单</button>
+                <button className="wide-action secondary" onClick={() => navigate(`/orders/${orders[0]?.id ?? 1}/receipt`)} type="button">打印最近收据</button>
+                <button className="wide-action secondary" onClick={() => navigate("/repair-queue")} type="button">查看维修队列</button>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -1532,6 +1934,7 @@ function OrderListPage({ orders, loading, selectedStatus, search, setSearch, set
 
 function OrderDetailPage({ customers, onStatusChange }) {
   const navigate = useNavigate();
+  const isMobile = useIsMobileViewport();
   const { id } = useParams();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -1744,6 +2147,140 @@ function OrderDetailPage({ customers, onStatusChange }) {
   const detailStatusLabel = order.statusMeta?.label ?? statusChinese[order.status] ?? order.status;
   const detailBadgeTone = order.status === "completed" || order.status === "picked_up" ? "success" : order.status === "in_progress" ? "primary" : "warning";
   const devicePhotos = order.devicePhotos ?? order.intakePhotos ?? [];
+
+  if (!isMobile) {
+    return (
+      <div className="order-detail-desktop-page">
+        {saveMessage ? <div className="message-banner success">{saveMessage}</div> : null}
+        <section className="order-detail-desktop-hero">
+          <div>
+            <span className="micro-label">Desktop Order Detail</span>
+            <h2>{order.title}</h2>
+            <p>订单号 #{order.orderNo} · {detailStatusLabel} · 技师 {order.technician || "-"}</p>
+          </div>
+          <div className="order-detail-desktop-hero-actions">
+            <span className={`mini-state ${detailBadgeTone === "warning" ? "urgent" : detailBadgeTone}`}>{detailStatusLabel}</span>
+            <button className="wide-action secondary" onClick={() => navigate(`/orders/${getOrderRouteId(order)}/execution`)} type="button">执行页</button>
+            <button className="wide-action primary" onClick={() => onStatusChange(order.id, order.status === "pending" ? "in_progress" : order.status === "in_progress" ? "completed" : order.status)} type="button">推进状态</button>
+          </div>
+        </section>
+
+        <section className="order-detail-desktop-grid">
+          <div className="order-detail-desktop-main">
+            <section className="detail-block">
+              <div className="detail-block-head">
+                <h4>客户与设备</h4>
+                <button className="link-button" onClick={() => navigate(`/customers/${order.customerId}`)} type="button">客户详情</button>
+              </div>
+              <div className="order-detail-desktop-summary">
+                <div>
+                  <span>客户</span>
+                  <strong>{selectedCustomer?.name ?? manageForm.customerName ?? "-"}</strong>
+                  <p>{selectedCustomer?.phone ?? manageForm.customerPhone ?? "-"}</p>
+                </div>
+                <div>
+                  <span>设备</span>
+                  <strong>{order.deviceMeta?.model ?? order.deviceName}</strong>
+                  <p>IMEI / 序列号 {order.deviceMeta?.serialNumber ?? manageForm.imeiSerial ?? "-"}</p>
+                </div>
+                <div>
+                  <span>价格</span>
+                  <strong>{order.grandTotalFormatted ?? order.amountFormatted}</strong>
+                  <p>定金 {order.depositFormatted ?? "0 VUV"} · 尾款 {order.balanceDueFormatted ?? order.amountFormatted}</p>
+                </div>
+              </div>
+              <div className="sheet-grid">
+                <Field label="客户姓名"><input value={manageForm.customerName} onChange={(e) => setManageForm((current) => ({ ...current, customerName: e.target.value }))} /></Field>
+                <Field label="客户电话"><input value={manageForm.customerPhone} onChange={(e) => setManageForm((current) => ({ ...current, customerPhone: e.target.value }))} /></Field>
+                <Field label="技师"><input value={manageForm.technician} onChange={(e) => setManageForm((current) => ({ ...current, technician: e.target.value }))} /></Field>
+                <Field label="预约日期"><input type="date" value={manageForm.scheduledDate} onChange={(e) => setManageForm((current) => ({ ...current, scheduledDate: e.target.value }))} /></Field>
+                <Field label="报价"><input type="number" value={manageForm.amount} onChange={(e) => setManageForm((current) => ({ ...current, amount: e.target.value }))} /></Field>
+                <Field label="定金"><input type="number" value={manageForm.deposit} onChange={(e) => setManageForm((current) => ({ ...current, deposit: e.target.value }))} /></Field>
+                <Field label="问题描述" full><textarea value={manageForm.issueSummary} onChange={(e) => setManageForm((current) => ({ ...current, issueSummary: e.target.value }))} /></Field>
+                <Field label="维修备注" full><textarea value={manageForm.notes} onChange={(e) => setManageForm((current) => ({ ...current, notes: e.target.value }))} /></Field>
+              </div>
+              <div className="action-row">
+                <button className="wide-action primary" disabled={saving} onClick={handleSaveOrder} type="button">{saving ? "保存中..." : "保存订单详情"}</button>
+              </div>
+            </section>
+
+            <section className="detail-block">
+              <div className="detail-block-head">
+                <h4>配件明细</h4>
+                <button className="link-button" onClick={() => navigate(`/orders/${getOrderRouteId(order)}/add-parts`)} type="button">添加配件</button>
+              </div>
+              <div className="document-line-items">
+                {partsForm.map((part) => (
+                  <div key={part.partId} className="document-line-row">
+                    <div>
+                      <strong>{part.name}</strong>
+                      <p>订单配件</p>
+                    </div>
+                    <div className="pos-qty-stepper">
+                      <button onClick={() => setPartsForm((current) => current.map((item) => item.partId === part.partId ? { ...item, quantity: String(Math.max(1, Number(item.quantity || 1) - 1)) } : item))} type="button">-</button>
+                      <span>{part.quantity}</span>
+                      <button onClick={() => setPartsForm((current) => current.map((item) => item.partId === part.partId ? { ...item, quantity: String(Number(item.quantity || 0) + 1) } : item))} type="button">+</button>
+                    </div>
+                    <span>{formatCurrency(part.unitPrice)}</span>
+                    <div className="pos-cart-line-total">
+                      <strong>{formatCurrency((Number(part.quantity) || 0) * (Number(part.unitPrice) || 0))}</strong>
+                      <button className="link-button danger" onClick={() => handleDeletePart(part.partId)} type="button">移除</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="action-row">
+                <button className="wide-action secondary" onClick={() => navigate(`/orders/${getOrderRouteId(order)}/parts-usage`)} type="button">使用明细</button>
+                <button className="wide-action primary" disabled={partsSaving} onClick={handleSaveParts} type="button">{partsSaving ? "保存中..." : "保存配件"}</button>
+              </div>
+            </section>
+          </div>
+
+          <aside className="order-detail-desktop-side">
+            <section className="detail-block">
+              <div className="detail-block-head">
+                <h4>设备照片</h4>
+              </div>
+              <div className="repair-photo-template-strip">
+                {devicePhotos.length ? devicePhotos.map((photo, index) => (
+                  <button key={`${photo.url ?? photo}-${index}`} className="repair-photo-card" onClick={() => setActivePhoto(photo.url ?? photo)} type="button">
+                    <img alt={`设备照片 ${index + 1}`} src={photo.url ?? photo} />
+                  </button>
+                )) : <div className="empty-card">暂无设备照片</div>}
+              </div>
+            </section>
+
+            <section className="detail-block">
+              <div className="detail-block-head">
+                <h4>内部备注</h4>
+              </div>
+              <label className="quote-template-section-label">
+                <span>新增内部备注</span>
+                <textarea value={internalNote} onChange={(e) => setInternalNote(e.target.value)} />
+              </label>
+              <button className="wide-action primary" disabled={saving || !internalNote.trim()} onClick={handleInternalNote} type="button">写入内部备注</button>
+              <div className="order-detail-template-note-history">
+                <div className="order-detail-template-note-history-list">
+                  {internalMessages.length ? internalMessages.map((message) => (
+                    <div key={message.id} className="order-detail-template-note-history-item">
+                      <span className="order-detail-template-note-history-time">{message.createdAtLabel ?? message.createdAt}</span>
+                      <p>{message.body}</p>
+                    </div>
+                  )) : <div className="empty-card">暂无内部备注</div>}
+                </div>
+              </div>
+            </section>
+          </aside>
+        </section>
+
+        {activePhoto ? (
+          <Drawer title="设备照片" onClose={() => setActivePhoto(null)}>
+            <img alt="设备照片预览" src={activePhoto} style={{ width: "100%", borderRadius: "18px" }} />
+          </Drawer>
+        ) : null}
+      </div>
+    );
+  }
 
   return (
     <div className="order-detail-template-page">
@@ -2018,6 +2555,7 @@ function OrderDetailPage({ customers, onStatusChange }) {
 
 function InventoryPage({ dashboard, parts, movements, openMovementForm, refresh }) {
   const navigate = useNavigate();
+  const isMobile = useIsMobileViewport();
   const lowStockParts = dashboard?.lowStockParts ?? [];
   const outboundThisMonth = useMemo(() => movements.filter((movement) => movement.movementType === "out").reduce((sum, movement) => sum + movement.quantity, 0), [movements]);
   const pendingOrders = dashboard?.metrics?.pendingOrders ?? 0;
@@ -2042,6 +2580,95 @@ function InventoryPage({ dashboard, parts, movements, openMovementForm, refresh 
   const lowStockVisible = lowStockParts.slice(0, 2);
   const latestMovement = movements[0];
   const heroHint = latestMovement ? `最近同步 ${movements.length} 条库存流水` : "库存状态已与后台实时同步";
+
+  if (!isMobile) {
+    return (
+      <div className="inventory-desktop-page">
+        <section className="inventory-desktop-hero">
+          <div>
+            <span className="micro-label">Desktop Inventory</span>
+            <h2>{dashboard?.metrics.inventoryValueFormatted ?? "-"}</h2>
+            <p>{heroHint}</p>
+          </div>
+          <div className="inventory-desktop-hero-actions">
+            <button className="wide-action primary" onClick={() => navigate("/inventory/inbound")} type="button">入库登记</button>
+            <button className="wide-action secondary" onClick={() => navigate("/inventory/audit-session")} type="button">库存盘点</button>
+          </div>
+        </section>
+
+        <section className="inventory-desktop-metrics">
+          <button className="inventory-desktop-metric" onClick={() => navigate("/parts-catalog")} type="button"><span>配件总数</span><strong>{parts.length}</strong></button>
+          <button className="inventory-desktop-metric warning" onClick={() => navigate("/low-stock-alerts")} type="button"><span>低库存</span><strong>{lowStockParts.length}</strong></button>
+          <button className="inventory-desktop-metric" onClick={() => navigate("/repair-queue")} type="button"><span>待处理工单</span><strong>{String(pendingOrders).padStart(2, "0")}</strong></button>
+          <div className="inventory-desktop-metric success"><span>本月出库</span><strong>{outboundThisMonth}</strong></div>
+        </section>
+
+        <section className="inventory-desktop-grid">
+          <div className="inventory-desktop-panel">
+            <div className="inventory-desktop-panel-head">
+              <h3>低库存预警</h3>
+              <button className="link-button" onClick={() => navigate("/low-stock-alerts")} type="button">查看全部</button>
+            </div>
+            <div className="inventory-desktop-low-stock-list">
+              {lowStockVisible.map((part) => (
+                <button key={part.id} className="inventory-desktop-low-stock-row" onClick={() => navigate(`/parts/${part.id}`)} type="button">
+                  <div className="inventory-desktop-low-stock-main">
+                    <span className="material-symbols-outlined">{inferPartCategory(part.name) === "Batteries" ? "battery_charging_full" : inferPartCategory(part.name) === "Screens" ? "screenshot" : "inventory_2"}</span>
+                    <div>
+                      <strong>{part.name}</strong>
+                      <p>SKU: {part.sku}</p>
+                    </div>
+                  </div>
+                  <div className="inventory-desktop-low-stock-meta">
+                    <span className={part.stock <= 2 ? "inventory-template-state danger" : "inventory-template-state warning"}>{part.stock <= 2 ? "紧急" : "预警"}</span>
+                    <strong>{part.stock} / {part.reorderLevel}</strong>
+                  </div>
+                </button>
+              ))}
+              {!lowStockVisible.length ? <div className="empty-card">当前没有低库存配件。</div> : null}
+            </div>
+          </div>
+
+          <div className="inventory-desktop-side">
+            <div className="inventory-desktop-panel">
+              <div className="inventory-desktop-panel-head">
+                <h3>分类拆分</h3>
+              </div>
+              <div className="inventory-template-breakdown-card desktop">
+                <div className="inventory-template-breakdown-bar">
+                  {categoryStats.map((item) => (
+                    <div key={item.key} style={{ width: `${item.percent}%`, background: item.color }} title={item.label} />
+                  ))}
+                </div>
+                <div className="inventory-template-breakdown-grid">
+                  {categoryStats.map((item) => (
+                    <button key={item.key} className="inventory-template-breakdown-item" onClick={() => navigate(`/parts-catalog?category=${encodeURIComponent(item.key)}`)} type="button">
+                      <span className="inventory-template-dot" style={{ background: item.color }} />
+                      <div>
+                        <p>{item.label}</p>
+                        <span>{item.percent}% · {item.count} 项</span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="inventory-desktop-panel accent">
+              <div className="inventory-desktop-panel-head">
+                <h3>库存快捷操作</h3>
+              </div>
+              <div className="inventory-desktop-actions">
+                <button className="wide-action secondary" onClick={() => navigate("/inventory/loss")} type="button">配件报损</button>
+                <button className="wide-action secondary" onClick={() => navigate("/parts-catalog")} type="button">查看配件目录</button>
+                <button className="wide-action secondary" onClick={openMovementForm} type="button">记录库存流水</button>
+                <button className="wide-action primary" onClick={() => refresh()} type="button">刷新库存数据</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="inventory-template-page">
@@ -4233,6 +4860,7 @@ function InventoryAuditSessionPage({ parts, refresh }) {
 
 function CustomerCenterPage({ customers, orders }) {
   const navigate = useNavigate();
+  const isMobile = useIsMobileViewport();
   const [search, setSearch] = useState("");
 
   const filteredCustomers = useMemo(() => {
@@ -4254,6 +4882,87 @@ function CustomerCenterPage({ customers, orders }) {
     const satisfaction = orders.length ? Math.round((completedOrders / orders.length) * 100) : 0;
     return { totalCustomers, activeCustomers, todayAppointments, satisfaction };
   }, [customers, orders]);
+
+  if (!isMobile) {
+    return (
+      <div className="customer-center-desktop-page">
+        <section className="customer-center-desktop-hero">
+          <div>
+            <span className="micro-label">客户关系</span>
+            <h2>客户中心</h2>
+            <p>查看客户活跃度、预约表现和维修关系，按联系方式快速检索。</p>
+          </div>
+          <div className="desktop-topbar-actions">
+            <button className="wide-action secondary" onClick={() => navigate("/more-options")} type="button">更多操作</button>
+            <button className="wide-action" onClick={() => navigate("/repairs-hub")} type="button">新增客户</button>
+          </div>
+        </section>
+
+        <section className="customer-center-desktop-metrics">
+          <div className="customer-center-template-metric">
+            <p>总客户数</p>
+            <strong>{metrics.totalCustomers}</strong>
+          </div>
+          <div className="customer-center-template-metric">
+            <p>活跃客户</p>
+            <strong>{metrics.activeCustomers}</strong>
+          </div>
+          <div className="customer-center-template-metric warning">
+            <p>今日预约</p>
+            <strong>{metrics.todayAppointments}</strong>
+          </div>
+          <div className="customer-center-template-metric success">
+            <p>满意度</p>
+            <strong>{metrics.satisfaction}%</strong>
+          </div>
+        </section>
+
+        <div className="customer-center-desktop-grid">
+          <section className="customer-center-desktop-panel">
+            <div className="customer-center-template-search">
+              <span className="material-symbols-outlined">search</span>
+              <input onChange={(event) => setSearch(event.target.value)} placeholder="快速搜索客户名称或联系电话..." type="text" value={search} />
+            </div>
+
+            <div className="customer-center-desktop-list">
+              {filteredCustomers.map((customer) => (
+                <button key={customer.id} className="customer-center-desktop-row" onClick={() => navigate(`/customers/${customer.id}`)} type="button">
+                  <div className="customer-center-template-card-left">
+                    <CustomerAvatar customer={customer} className="customer-center-template-icon" />
+                    <div>
+                      <h3>{customer.name}</h3>
+                      <div className="customer-center-template-meta">
+                        <span><span className="material-symbols-outlined inline-icon">call</span>{customer.phone}</span>
+                        <span className="dot" />
+                        <span>{customer.address || customer.email}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="customer-center-desktop-right">
+                    <div className="customer-pill">维修次数: {customer.orderCount}</div>
+                    <strong>{formatCustomerTierLabel(customer.tier)}</strong>
+                    <span className="material-symbols-outlined customer-chevron">chevron_right</span>
+                  </div>
+                </button>
+              ))}
+              {!filteredCustomers.length ? <div className="empty-card">没有匹配到客户。</div> : null}
+            </div>
+          </section>
+
+          <aside className="customer-center-desktop-side">
+            <div className="template-card">
+              <h3>今日重点</h3>
+              <div className="stacked-list">
+                <div className="summary-pill">活跃客户 {metrics.activeCustomers}</div>
+                <div className="summary-pill">预约客户 {metrics.todayAppointments}</div>
+                <div className="summary-pill">满意度 {metrics.satisfaction}%</div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="customer-center-template-page">
@@ -6179,6 +6888,7 @@ function ProcurementDetailsPage() {
 
 function PartDetailsPage() {
   const navigate = useNavigate();
+  const isMobile = useIsMobileViewport();
   const { id } = useParams();
   const [part, setPart] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -6286,6 +6996,67 @@ function PartDetailsPage() {
   if (error) return <div className="message-banner error">{error}</div>;
   if (!part) return <div className="empty-card">未找到配件。</div>;
   const partQuery = createPartQuery(part);
+
+  if (!isMobile) {
+    return (
+      <div className="part-detail-desktop-page">
+        {success ? <div className="message-banner success">{success}</div> : null}
+        <section className="part-detail-desktop-hero">
+          <div className="part-image">
+            <span className="material-symbols-outlined">{part.name.toLowerCase().includes("battery") ? "battery_charging_full" : part.name.toLowerCase().includes("screen") || part.name.toLowerCase().includes("display") || part.name.toLowerCase().includes("digitizer") || part.name.toLowerCase().includes("oled") ? "screenshot" : "inventory_2"}</span>
+          </div>
+          <div className="part-detail-desktop-copy">
+            <span className="micro-label">Desktop Part Detail</span>
+            <h2>{part.name}</h2>
+            <p>SKU: {part.sku} · 供应商: {part.supplier}</p>
+          </div>
+          <div className="part-detail-desktop-actions">
+            <button className="wide-action primary" onClick={() => navigate(`/inventory/inbound${partQuery}`)} type="button">入库登记</button>
+            <button className="wide-action secondary" disabled={reordering} onClick={handleReorder} type="button">{reordering ? "创建中..." : "快速补货"}</button>
+          </div>
+        </section>
+
+        <section className="part-detail-desktop-grid">
+          <section className="detail-block">
+            <div className="part-stat-grid">
+              <div><span>当前库存</span><strong>{part.stock} 件</strong></div>
+              <div><span>单价</span><strong>{part.unitPriceFormatted}</strong></div>
+              <div><span>成本价</span><strong>{part.costPriceFormatted}</strong></div>
+              <div><span>安全阈值</span><strong>{part.reorderLevel} 件</strong></div>
+              <div><span>库存状态</span><strong>{part.stockStatus}</strong></div>
+              <div><span>库位</span><strong>{part.location}</strong></div>
+            </div>
+            <div className="sheet-grid">
+              <Field label="补货阈值"><input min="0" type="number" value={settingsForm.reorderLevel} onChange={(event) => setSettingsForm((current) => ({ ...current, reorderLevel: event.target.value }))} /></Field>
+              <Field label="单价 (VUV)"><input min="0" type="number" value={settingsForm.unitPrice} onChange={(event) => setSettingsForm((current) => ({ ...current, unitPrice: event.target.value }))} /></Field>
+              <Field label="供应商" full><input value={settingsForm.supplier} onChange={(event) => setSettingsForm((current) => ({ ...current, supplier: event.target.value }))} /></Field>
+            </div>
+            <div className="action-row">
+              <button className="wide-action secondary" onClick={() => navigate(`/inventory/adjustment${partQuery}`)} type="button">手动调整</button>
+              <button className="wide-action primary" disabled={saving} onClick={handleSaveSettings} type="button">{saving ? "保存中..." : "保存库存设置"}</button>
+            </div>
+          </section>
+
+          <aside className="detail-block">
+            <div className="detail-block-head">
+              <h4>快速出入库</h4>
+            </div>
+            <div className="sheet-grid">
+              <Field label="操作类型" full>
+                <select value={movementForm.movementType} onChange={(event) => setMovementForm((current) => ({ ...current, movementType: event.target.value }))}>
+                  <option value="in">入库</option>
+                  <option value="out">出库</option>
+                </select>
+              </Field>
+              <Field label="数量"><input min="1" type="number" value={movementForm.quantity} onChange={(event) => setMovementForm((current) => ({ ...current, quantity: event.target.value }))} /></Field>
+              <Field label="备注" full><textarea value={movementForm.note} onChange={(event) => setMovementForm((current) => ({ ...current, note: event.target.value }))} /></Field>
+            </div>
+            <button className="wide-action primary" disabled={movementSaving} onClick={handleQuickMovement} type="button">{movementSaving ? "提交中..." : "确认库存变动"}</button>
+          </aside>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="part-detail-page">
@@ -6460,6 +7231,7 @@ function PartDetailsPage() {
 
 function CustomerDetailsPage() {
   const navigate = useNavigate();
+  const isMobile = useIsMobileViewport();
   const { id } = useParams();
   const [customer, setCustomer] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -6533,6 +7305,86 @@ function CustomerDetailsPage() {
   if (!customer) return <div className="empty-card">未找到客户。</div>;
 
   const whatsappLink = buildWhatsAppLink(customer.phone);
+
+  if (!isMobile) {
+    return (
+      <div className="customer-detail-desktop-page">
+        {actionMessage ? <div className="message-banner success">{actionMessage}</div> : null}
+        <section className="customer-detail-desktop-hero">
+          <div className="customer-detail-template-profile">
+            <div className="customer-avatar-wrap">
+              <CustomerAvatar customer={customer} className="customer-avatar-large" />
+            </div>
+            <div className="customer-detail-main">
+              <div>
+                <span className="micro-label">Desktop Customer Detail</span>
+                <h2>{customer.name}</h2>
+                <p>{formatCustomerTierLabel(customer.tier)}客户 · 注册于 {customer.registeredSince}</p>
+              </div>
+              <div className="customer-detail-template-contact">
+                <div><span className="material-symbols-outlined inline-icon">phone</span>{customer.phone}</div>
+                <div><span className="material-symbols-outlined inline-icon">mail</span>{customer.email}</div>
+                <div><span className="material-symbols-outlined inline-icon">location_on</span>{customer.address}</div>
+              </div>
+            </div>
+          </div>
+          <div className="customer-detail-template-stats">
+            <div className="customer-detail-template-stats-top">
+              <span>总消费额</span>
+              <strong>{customer.customerRank}</strong>
+            </div>
+            <div>
+              <div className="customer-detail-template-total">{customer.lifetimeValueFormatted}</div>
+              <p>共 {customer.orderCount} 次维修记录</p>
+            </div>
+          </div>
+        </section>
+
+        <section className="customer-detail-desktop-grid">
+          <section className="detail-block">
+            <div className="detail-block-head">
+              <h4>快捷联系</h4>
+            </div>
+            <div className="customer-detail-template-quick-grid">
+              <button onClick={() => { window.location.href = `tel:${customer.phone}`; }} type="button"><span className="material-symbols-outlined">call</span><span>语音通话</span></button>
+              <button onClick={() => { window.location.href = `sms:${customer.phone}`; }} type="button"><span className="material-symbols-outlined">sms</span><span>发送短信</span></button>
+              {whatsappLink ? <button onClick={() => { window.open(whatsappLink, "_blank", "noopener,noreferrer"); }} type="button"><span className="material-symbols-outlined">forum</span><span>WhatsApp</span></button> : null}
+              <button onClick={() => { window.location.href = `mailto:${customer.email}`; }} type="button"><span className="material-symbols-outlined">mail</span><span>电子邮件</span></button>
+              <button onClick={handleShareCard} type="button"><span className="material-symbols-outlined">share</span><span>分享名片</span></button>
+            </div>
+          </section>
+
+          <section className="detail-block">
+            <div className="detail-block-head">
+              <h4>历史维修记录</h4>
+              <button className="link-button" onClick={() => navigate(`/customers/${customer.id}/history`)} type="button">查看全部</button>
+            </div>
+            <div className="page-section">
+              {customer.records.map((record) => (
+                <button key={record.id} className="customer-detail-template-record-card" onClick={() => navigate(`/orders/${getOrderRouteId(record)}`)} type="button">
+                  <div className="customer-detail-template-record-left">
+                    <div className="customer-detail-template-record-icon">
+                      <span className="material-symbols-outlined">{resolveDeviceIcon(record.deviceName)}</span>
+                    </div>
+                    <div>
+                      <div className="customer-detail-template-record-top">
+                        <h4>{record.orderNo}</h4>
+                        <span className={`status-badge ${record.status}`}>{record.statusMeta.label}</span>
+                      </div>
+                      <p>{record.scheduledDate} · {record.serviceTag ?? record.title}</p>
+                    </div>
+                  </div>
+                  <div className="customer-detail-template-record-right">
+                    <strong>{record.amountFormatted}</strong>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </section>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="customer-detail-template-page">
@@ -8636,6 +9488,7 @@ function QuotePreviewPage() {
 
 function PosRegisterPage({ parts, customers }) {
   const navigate = useNavigate();
+  const isMobile = useIsMobileViewport();
   const [customerOptions, setCustomerOptions] = useState(customers);
   const [storeSettings, setStoreSettings] = useState(null);
   const [category, setCategory] = useState("All");
@@ -8702,6 +9555,116 @@ function PosRegisterPage({ parts, customers }) {
 
   function removeFromCart(partId) {
     setCart((current) => current.filter((item) => String(item.partId) !== String(partId)));
+  }
+
+  if (!isMobile) {
+    return (
+      <div className="pos-desktop-page">
+        <section className="pos-desktop-header">
+          <div>
+            <span className="micro-label">Desktop POS</span>
+            <h2>POS 收银工作台</h2>
+            <p>{storeSettings?.companyName || storeSettings?.storeName || "维拉港维修中心"} · {storeSettings?.companyPhone || storeSettings?.phone || "待补充联系电话"}</p>
+          </div>
+          <div className="pos-desktop-header-actions">
+            <button className="wide-action secondary" onClick={() => navigate("/pos/checkout", { state: { cart, customerId } })} type="button">去结账</button>
+          </div>
+        </section>
+
+        <section className="pos-desktop-overview">
+          <article className="pos-overview-card accent">
+            <span>购物车合计</span>
+            <strong>{formatCurrency(cartTotal)}</strong>
+            <p>{cartCount} 件商品待结账</p>
+          </article>
+          <article className="pos-overview-card">
+            <span>可售商品</span>
+            <strong>{visibleParts.length}</strong>
+            <p>{lowStockCount} 件低库存提醒</p>
+          </article>
+          <article className="pos-overview-card">
+            <span>默认客户</span>
+            <strong>{customerOptions.find((item) => String(item.id) === String(customerId))?.name ?? "门店散客"}</strong>
+            <p>结账时可切换客户</p>
+          </article>
+        </section>
+
+        <section className="pos-desktop-grid">
+          <div className="pos-desktop-catalog">
+            <section className="quote-template-section">
+              <div className="quote-form-grid compact">
+                <label>
+                  <span>收银客户</span>
+                  <select value={customerId} onChange={(event) => setCustomerId(event.target.value)}>
+                    <option value="">门店散客</option>
+                    {customerOptions.map((customer) => <option key={customer.id} value={customer.id}>{customer.name}</option>)}
+                  </select>
+                </label>
+              </div>
+              <section className="pos-template-search">
+                <div className="search-shell"><span className="material-symbols-outlined">search</span><input placeholder="搜索配件 / SKU" value={search} onChange={(event) => setSearch(event.target.value)} /></div>
+              </section>
+              <section className="pos-template-tabs">
+                {["All", "Screens", "Batteries", "Small Parts", "Others"].map((item) => (
+                  <button key={item} className={category === item ? "active" : ""} onClick={() => setCategory(item)} type="button">{formatPartCategory(item)}</button>
+                ))}
+              </section>
+              <section className="pos-template-grid desktop">
+                {visibleParts.map((part) => (
+                  <article key={part.id} className="pos-product-card">
+                    <div className="pos-product-media">
+                      <span className={`soft-badge ${part.needsReorder ? "soft-badge-warn" : ""}`}>{part.needsReorder ? "低库存" : "有库存"}</span>
+                    </div>
+                    <div className="pos-product-copy">
+                      <strong>{part.name}</strong>
+                      <p>{part.subtitle ?? formatPartCategory(part.category)}</p>
+                    </div>
+                    <div className="pos-product-footer">
+                      <strong>{part.unitPriceFormatted}</strong>
+                      <button onClick={() => addToCart(part)} type="button"><span className="material-symbols-outlined">add</span></button>
+                    </div>
+                  </article>
+                ))}
+              </section>
+            </section>
+          </div>
+
+          <aside className="pos-desktop-cart quote-template-summary checkout-summary-panel">
+            <div className="checkout-summary-head">
+              <h3>购物车</h3>
+              <p>{cartCount} 件商品</p>
+            </div>
+            {cart.length ? (
+              <div className="document-line-items">
+                {cart.map((item) => (
+                  <div key={`${item.partId}-${item.name}`} className="document-line-row pos-cart-line">
+                    <div>
+                      <strong>{item.name}</strong>
+                      <p>{item.description || formatPartCategory(item.category)}</p>
+                    </div>
+                    <div className="pos-qty-stepper">
+                      <button onClick={() => updateCartQuantity(item.partId, -1)} type="button">-</button>
+                      <span>{item.quantity}</span>
+                      <button onClick={() => updateCartQuantity(item.partId, 1)} type="button">+</button>
+                    </div>
+                    <span>{formatCurrency(item.unitPrice)}</span>
+                    <div className="pos-cart-line-total">
+                      <strong>{formatCurrency(item.quantity * item.unitPrice)}</strong>
+                      <button className="link-button danger" onClick={() => removeFromCart(item.partId)} type="button">移除</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="empty-card">请选择商品后再结账</div>
+            )}
+            <div className="document-total-box">
+              <div><span>应付合计</span><strong>{formatCurrency(cartTotal)}</strong></div>
+            </div>
+          </aside>
+        </section>
+      </div>
+    );
   }
 
   return (
@@ -8837,6 +9800,7 @@ function PosRegisterPage({ parts, customers }) {
 function PosCheckoutPage({ customers }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const isMobile = useIsMobileViewport();
   const incomingCart = location.state?.cart ?? [];
   const incomingCustomerId = String(location.state?.customerId ?? customers[0]?.id ?? "");
   const [customerOptions, setCustomerOptions] = useState(customers);
@@ -8912,6 +9876,103 @@ function PosCheckoutPage({ customers }) {
     } finally {
       setSaving(false);
     }
+  }
+
+  if (!isMobile) {
+    return (
+      <div className="pos-checkout-desktop-page">
+        <section className="pos-checkout-desktop-header">
+          <div>
+            <span className="micro-label">Desktop Checkout</span>
+            <h2>POS 收银结账</h2>
+            <p>{draft.sourceQuoteNo ? `来源报价 ${draft.sourceQuoteNo}` : "门店直接收银"} · {storeSettings?.companyName || storeSettings?.storeName || "维拉港维修中心"}</p>
+          </div>
+          <div className="pos-checkout-desktop-header-actions">
+            <button className="wide-action secondary" onClick={() => navigate("/pos/register")} type="button">返回收银台</button>
+            <button className="wide-action primary" disabled={saving || !draft.items.length} onClick={handleCheckout} type="button">{saving ? "收银中..." : "完成收银"}</button>
+          </div>
+        </section>
+
+        <section className="pos-checkout-desktop-grid">
+          <section className="quote-template-section">
+            <div className="quote-form-grid">
+              <label>
+                <span>客户</span>
+                <select value={draft.customerId} onChange={(event) => setDraft((current) => ({ ...current, customerId: event.target.value }))}>
+                  <option value="">门店散客</option>
+                  {customerOptions.map((customer) => <option key={customer.id} value={customer.id}>{customer.name}</option>)}
+                </select>
+              </label>
+              <label>
+                <span>支付方式</span>
+                <select value={draft.paymentMethod} onChange={(event) => setDraft((current) => ({ ...current, paymentMethod: event.target.value }))}>
+                  <option value="Cash">现金</option>
+                  <option value="Bank Transfer">银行转账</option>
+                  <option value="Check">支票</option>
+                </select>
+              </label>
+            </div>
+            {draft.sourceQuoteNo ? (
+              <div className="checkout-source-badge">
+                <span className="soft-badge">报价转单</span>
+                <strong>{draft.sourceQuoteNo}</strong>
+              </div>
+            ) : null}
+            <label className="quote-template-section-label">
+              <span>备注</span>
+              <textarea value={draft.note} onChange={(event) => setDraft((current) => ({ ...current, note: event.target.value }))} />
+            </label>
+            <div className="quote-template-title-row compact">
+              <h3>桌面购物清单</h3>
+              <span className="soft-badge">{draft.items.length} 项</span>
+            </div>
+            <div className="document-line-items">
+              {draft.items.map((item, index) => (
+                <div key={`${item.name}-${index}`} className="document-line-row">
+                  <div>
+                    <strong>{item.name}</strong>
+                    <p>{item.description || formatPartCategory(item.category)}</p>
+                  </div>
+                  <div className="pos-qty-stepper">
+                    <button onClick={() => updateDraftItem(index, { quantity: Math.max(0, Number(item.quantity || 0) - 1) })} type="button">-</button>
+                    <span>{item.quantity}</span>
+                    <button onClick={() => updateDraftItem(index, { quantity: Number(item.quantity || 0) + 1 })} type="button">+</button>
+                  </div>
+                  <span>{formatCurrency(item.unitPrice)}</span>
+                  <div className="pos-cart-line-total">
+                    <strong>{formatCurrency(item.quantity * item.unitPrice)}</strong>
+                    <button className="link-button danger" onClick={() => removeDraftItem(index)} type="button">移除</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <aside className="quote-template-summary checkout-summary-panel desktop">
+            <div className="checkout-summary-head">
+              <h3>收银摘要</h3>
+              <p>{selectedCustomer?.name ?? "门店散客"}</p>
+            </div>
+            <div className="document-total-box">
+              <div><span>商品小计</span><strong>{formatCurrency(subtotal)}</strong></div>
+              <div><span>税额</span><strong>{formatCurrency(0)}</strong></div>
+              <div className="grand"><span>应付总额</span><strong>{formatCurrency(subtotal)}</strong></div>
+            </div>
+            <div className="checkout-summary-notes">
+              <div className="info-mini">
+                <span>支付方式</span>
+                <strong>{formatChannelLabel(draft.paymentMethod)}</strong>
+              </div>
+              <div className="info-mini">
+                <span>客户电话</span>
+                <strong>{selectedCustomer?.phone ?? draft.customerPhone ?? "现场收银"}</strong>
+              </div>
+            </div>
+            {error ? <p className="inline-error">{error}</p> : null}
+          </aside>
+        </section>
+      </div>
+    );
   }
 
   return (
@@ -9338,6 +10399,7 @@ function DocumentManagementPage() {
 
 function FinancialReportsPage() {
   const navigate = useNavigate();
+  const isMobile = useIsMobileViewport();
   const [financeReport, setFinanceReport] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -9367,6 +10429,131 @@ function FinancialReportsPage() {
   const summary = financeReport?.summary;
   const channels = financeReport?.channels ?? [];
   const rows = financeReport?.rows ?? [];
+
+  if (!isMobile) {
+    return (
+      <div className="finance-desktop-page">
+        <section className="finance-desktop-hero">
+          <div className="finance-template-hero-main">
+            <p>本月总收入 (VUV)</p>
+            <h2>{summary?.totalRevenueFormatted ?? "-"}</h2>
+            <div className="finance-growth">
+              <span className="material-symbols-outlined">trending_up</span>
+              <span>{summary?.growthRate ?? "-"}</span>
+            </div>
+          </div>
+          <div className="finance-desktop-actions">
+            <button className={type === "all" ? "status-chip active" : "status-chip"} onClick={() => setType("all")} type="button">全部</button>
+            <button className={type === "income" ? "status-chip active" : "status-chip"} onClick={() => setType("income")} type="button">收入</button>
+            <button className={type === "expense" ? "status-chip active" : "status-chip"} onClick={() => setType("expense")} type="button">支出</button>
+          </div>
+        </section>
+
+        <section className="finance-desktop-summary">
+          <div className="finance-template-mini-card">
+            <p>今日收入</p>
+            <strong>{summary?.todayRevenueFormatted ?? "-"}</strong>
+            <div className="finance-mini-state success"><span className="material-symbols-outlined">check_circle</span><span>{summary?.transactionCount ?? 0} 笔交易</span></div>
+          </div>
+          <div className="finance-template-mini-card">
+            <p>待结余额</p>
+            <strong>{summary?.pendingBalanceFormatted ?? "-"}</strong>
+            <div className="finance-mini-state warning"><span className="material-symbols-outlined">schedule</span><span>{summary?.completedOrders ?? 0} 单已完结</span></div>
+          </div>
+          <div className="metric-tile">
+            <div>
+              <p>收入渠道</p>
+              <strong>{channels.length}</strong>
+            </div>
+          </div>
+          <div className="metric-tile success">
+            <div>
+              <p>近期流水</p>
+              <strong>{rows.length}</strong>
+            </div>
+          </div>
+        </section>
+
+        <div className="finance-desktop-grid">
+          <section className="finance-template-chart-card">
+            <div className="finance-template-head">
+              <h3>收入趋势分析</h3>
+              <button className="link-button" onClick={() => navigate("/financial-reports/drill-down")} type="button">下钻明细</button>
+            </div>
+            <div className="finance-template-bars">
+              {rows.slice(0, 7).map((row, index) => {
+                const absAmount = Math.abs(row.amount);
+                const max = Math.max(...rows.slice(0, 7).map((item) => Math.abs(item.amount)), 1);
+                const height = Math.max(30, Math.round((absAmount / max) * 100));
+                return (
+                  <div key={row.id} className="finance-template-bar-col">
+                    <div className={`finance-template-bar ${index === 2 ? "active" : ""}`} style={{ height: `${height}%` }} />
+                    <span>{row.subtitle.split("·")[0].trim().slice(5)}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
+          <aside className="finance-desktop-side">
+            <section className="finance-template-channel-section">
+              <div className="finance-template-head">
+                <h3>收支来源分布</h3>
+                <button className="link-button" onClick={() => navigate("/revenue-breakdown")} type="button">更多图表</button>
+              </div>
+              <div className="finance-template-channel-grid">
+                {channels.map((channel) => (
+                  <div key={channel.channel} className="finance-template-channel-card">
+                    <div className={`finance-template-channel-icon ${channel.tone ?? "primary"}`}>
+                      <span className="material-symbols-outlined">{channel.icon ?? "payments"}</span>
+                    </div>
+                    <div>
+                      <p>{channel.label ?? formatChannelLabel(channel.channel)}</p>
+                      <strong>{channel.amountFormatted}</strong>
+                      <span>占比 {channel.percent}%</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </aside>
+        </div>
+
+        <section className="finance-template-list-card">
+          <div className="finance-template-head">
+            <h3>近期流水明细</h3>
+            <div className="detail-actions-inline">
+              <button className="link-button" onClick={() => navigate("/financial-reports/daily")} type="button">日结报表</button>
+              <button className="link-button" onClick={() => navigate("/financial-reports/monthly")} type="button">月结报表</button>
+              <button className="link-button" onClick={() => window.open("/api/receipts/export.csv", "_blank")} type="button">导出流水</button>
+            </div>
+          </div>
+          <div className="finance-template-list">
+            {rows.map((row) => (
+              <button
+                key={row.id}
+                className="finance-template-list-item finance-list-button"
+                onClick={() => openFinanceRowDetail(navigate, row)}
+                type="button"
+              >
+                <div className={`finance-template-list-icon ${row.amount >= 0 ? "positive" : "negative"}`}>
+                  <span className="material-symbols-outlined">{row.amount >= 0 ? "payments" : "shopping_cart"}</span>
+                </div>
+                <div className="finance-template-list-main">
+                  <strong>{row.title}</strong>
+                  <p>{row.subtitle}</p>
+                </div>
+                <div className="finance-list-right">
+                  <strong className={row.amount >= 0 ? "positive" : "negative"}>{row.amountFormatted}</strong>
+                  <span className={row.statusTone === "success" ? "status-success" : "status-warning"}>{row.statusLabel}</span>
+                </div>
+              </button>
+            ))}
+          </div>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="finance-template-page">
@@ -10447,30 +11634,12 @@ function QueueCard({ order, onOpen, onAction, working }) {
 function BottomNav() {
   return (
     <nav className="bottom-nav">
-      <NavLink className={({ isActive }) => (isActive ? "nav-item active" : "nav-item")} to="/repairs-hub">
-        <span className="material-symbols-outlined">dashboard</span>
-        <span>工作台</span>
-      </NavLink>
-      <NavLink className={({ isActive }) => (isActive ? "nav-item active" : "nav-item")} to="/repair-queue">
-        <span className="material-symbols-outlined">build</span>
-        <span>维修</span>
-      </NavLink>
-      <NavLink className={({ isActive }) => (isActive ? "nav-item active" : "nav-item")} to="/inventory">
-        <span className="material-symbols-outlined">inventory_2</span>
-        <span>库存</span>
-      </NavLink>
-      <NavLink className={({ isActive }) => (isActive ? "nav-item active" : "nav-item")} to="/customers">
-        <span className="material-symbols-outlined">group</span>
-        <span>客户</span>
-      </NavLink>
-      <NavLink className={({ isActive }) => (isActive ? "nav-item active" : "nav-item")} to="/pos/register">
-        <span className="material-symbols-outlined">point_of_sale</span>
-        <span>POS</span>
-      </NavLink>
-      <NavLink className={({ isActive }) => (isActive ? "nav-item active" : "nav-item")} to="/financial-reports">
-        <span className="material-symbols-outlined">payments</span>
-        <span>财务</span>
-      </NavLink>
+      {primaryNavItems.map((item) => (
+        <NavLink key={item.to} className={({ isActive }) => (isActive ? "nav-item active" : "nav-item")} to={item.to}>
+          <span className="material-symbols-outlined">{item.icon}</span>
+          <span>{item.label}</span>
+        </NavLink>
+      ))}
     </nav>
   );
 }
